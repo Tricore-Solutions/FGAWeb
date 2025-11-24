@@ -1,5 +1,2 @@
-<<<<<<< HEAD
-This is a test file only.
-=======
+This is a test file only 123.
 testing
->>>>>>> 7ee00d89894d95baac58dc1b73c8126221833955
