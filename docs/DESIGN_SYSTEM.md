@@ -166,4 +166,92 @@ import { spacing, containerMaxWidths, breakpoints } from '@/styles/design-tokens
 - **Tight spacing**: Use `xs` (4px) or `sm` (8px) for compact layouts
 - **Large spacing**: Use `2xl` (48px) or `3xl` (64px) for hero sections and major separations
 
+## Effects
+
+Effects include shadow levels, border radius, and transition durations that provide visual depth, rounded corners, and smooth animations throughout the interface.
+
+### Shadow Levels
+
+Shadows create depth and elevation, helping users understand the hierarchy and interactivity of elements.
+
+| Level | Value | Visual Example | Usage |
+|-------|-------|----------------|-------|
+| none | `none` | <div style="display: inline-block; padding: 20px; background-color: #f5f5f5;"><div style="width: 60px; height: 60px; background-color: #80b3b4; border-radius: 4px; box-shadow: none;"></div></div> | No shadow, flat elements |
+| sm | `0 1px 2px 0 rgba(0, 0, 0, 0.05)` | <div style="display: inline-block; padding: 20px; background-color: #f5f5f5;"><div style="width: 60px; height: 60px; background-color: #80b3b4; border-radius: 4px; box-shadow: 0 1px 2px 0 rgba(100, 150, 200, 0.4);"></div></div> | Subtle elevation, small cards |
+| base | `0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)` | <div style="display: inline-block; padding: 20px; background-color: #f5f5f5;"><div style="width: 60px; height: 60px; background-color: #80b3b4; border-radius: 4px; box-shadow: 0 1px 3px 0 rgba(100, 150, 200, 0.5), 0 1px 2px -1px rgba(100, 150, 200, 0.5);"></div></div> | Standard cards, default elevation |
+| md | `0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)` | <div style="display: inline-block; padding: 20px; background-color: #f5f5f5;"><div style="width: 60px; height: 60px; background-color: #80b3b4; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(100, 150, 200, 0.6), 0 2px 4px -2px rgba(100, 150, 200, 0.6);"></div></div> | Elevated cards, modals |
+| lg | `0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)` | <div style="display: inline-block; padding: 20px; background-color: #f5f5f5;"><div style="width: 60px; height: 60px; background-color: #80b3b4; border-radius: 4px; box-shadow: 0 10px 15px -3px rgba(100, 150, 200, 0.7), 0 4px 6px -4px rgba(100, 150, 200, 0.7);"></div></div> | Popovers, dropdowns, tooltips |
+| xl | `0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)` | <div style="display: inline-block; padding: 20px; background-color: #f5f5f5;"><div style="width: 60px; height: 60px; background-color: #80b3b4; border-radius: 4px; box-shadow: 0 20px 25px -5px rgba(100, 150, 200, 0.8), 0 8px 10px -6px rgba(100, 150, 200, 0.8);"></div></div> | High elevation, floating elements |
+
+### Border Radius
+
+Border radius creates rounded corners, making elements feel softer and more modern.
+
+| Level | Value | Pixels | Visual Example | Usage |
+|-------|-------|--------|----------------|-------|
+| none | `0` | 0px | <div style="width: 80px; height: 80px; background-color: #80b3b4; border-radius: 0;"></div> | Sharp corners, geometric designs |
+| sm | `0.125rem` | 2px | <div style="width: 80px; height: 80px; background-color: #80b3b4; border-radius: 2px;"></div> | Subtle rounding, inputs |
+| base | `0.25rem` | 4px | <div style="width: 80px; height: 80px; background-color: #80b3b4; border-radius: 4px;"></div> | Standard rounding, badges |
+| md | `0.375rem` | 6px | <div style="width: 80px; height: 80px; background-color: #80b3b4; border-radius: 6px;"></div> | Medium rounding, buttons |
+| lg | `0.5rem` | 8px | <div style="width: 80px; height: 80px; background-color: #80b3b4; border-radius: 8px;"></div> | Large rounding, cards, inputs |
+| full | `9999px` | Fully rounded | <div style="width: 80px; height: 80px; background-color: #80b3b4; border-radius: 9999px;"></div> | Pill-shaped, chips, avatars |
+
+### Transition Durations
+
+Transition durations control the speed of animations and state changes, creating smooth and responsive interactions.
+
+| Duration | Value | Usage | Example |
+|----------|-------|-------|---------|
+| fast | `150ms` | Quick interactions, hover states | Button hover, icon color changes |
+| base | `200ms` | Standard transitions, most UI changes | Card hover, modal open/close |
+| slow | `300ms` | Deliberate animations, complex transitions | Page transitions, complex state changes |
+
+### Usage
+
+Effects tokens are exported from `frontend/src/styles/design-tokens/effects.js`:
+
+```javascript
+import effects from '@/styles/design-tokens/effects';
+// or
+import { shadows, borderRadius, transitions } from '@/styles/design-tokens/effects';
+```
+
+#### Tailwind CSS Classes
+
+- **Shadows**: Use `shadow-none`, `shadow-sm`, `shadow-base`, `shadow-md`, `shadow-lg`, `shadow-xl`
+- **Border Radius**: Use `rounded-none`, `rounded-sm`, `rounded-base`, `rounded-md`, `rounded-lg`, `rounded-full`
+- **Transitions**: Use `duration-fast`, `duration-base`, `duration-slow`
+
+**Example:**
+```jsx
+// Using shadow and border radius
+<div className="bg-white shadow-md rounded-lg p-4">
+  Card content
+</div>
+
+// Using transitions
+<button className="transition-colors duration-fast hover:bg-gulf-stream">
+  Hover me
+</button>
+
+// Using inline styles
+<div style={{ 
+  boxShadow: effects.shadows.md,
+  borderRadius: effects.borderRadius.lg,
+  transition: `all ${effects.transitions.base} ease-in-out`
+}}>
+  Content
+</div>
+```
+
+#### Common Effect Patterns
+
+- **Cards**: Use `shadow-base` or `shadow-md` with `rounded-lg`
+- **Buttons**: Use `rounded-lg` or `rounded-md` with `duration-fast` transitions
+- **Modals**: Use `shadow-lg` or `shadow-xl` with `rounded-lg`
+- **Chips/Tags**: Use `rounded-full` for pill-shaped elements
+- **Inputs**: Use `rounded-lg` with `shadow-sm` on focus
+- **Hover Effects**: Use `duration-fast` (150ms) for responsive feel
+- **Page Transitions**: Use `duration-slow` (300ms) for smooth animations
+
 ## Components
