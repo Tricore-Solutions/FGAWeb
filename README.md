@@ -46,7 +46,8 @@ The system is designed for performance, scalability, and future expansion, such 
 /frontend → React (Vite) app
 /backend → Express server
 /database → SQL schema + migrations
-/docs → PRD, DRD, TRD
+/docs → PRD, DRD, TRD, Design Reference
+/docs/design-references → UI/UX reference materials (Bayer 04 inspired)
 
 
 ---
