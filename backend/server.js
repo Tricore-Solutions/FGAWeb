@@ -31,6 +31,10 @@ app.use('/api/events', eventRoutes);
 const programRoutes = require('./routes/programRoutes');
 app.use('/api/programs', programRoutes);
 
+// Registration routes
+const registrationRoutes = require('./routes/registrationRoutes');
+app.use('/api/registrations', registrationRoutes);
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
