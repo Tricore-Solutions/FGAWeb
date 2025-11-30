@@ -19,11 +19,11 @@ router.get('/:id', getEventById);
 // Create event (protected - requires admin role)
 router.post('/', authMiddleware, adminMiddleware, createEvent);
 
-// Update event (protected - requires admin role)
-router.put('/:id', authMiddleware, adminMiddleware, updateEvent);
+// Update event (protected - requires ownership OR admin role)
+router.put('/:id', authMiddleware, updateEvent);
 
-// Delete event (protected - requires admin role)
-router.delete('/:id', authMiddleware, adminMiddleware, deleteEvent);
+// Delete event (protected - requires ownership OR admin role)
+router.delete('/:id', authMiddleware, deleteEvent);
 
 module.exports = router;
 
