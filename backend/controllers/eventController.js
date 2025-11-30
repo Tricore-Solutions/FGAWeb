@@ -36,7 +36,7 @@ const getEventById = async (req, res) => {
 // Create event
 const createEvent = async (req, res) => {
   try {
-    const { title, description, date, location, image_url, max_participants, registration_open } = req.body;
+    const { title, description, date, location, image_url, max_participants } = req.body;
 
     // Validate required fields
     if (!title || !date) {
@@ -45,7 +45,7 @@ const createEvent = async (req, res) => {
 
     const [result] = await pool.query(
       'INSERT INTO events (title, description, date, location, image_url, max_participants, registration_open) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [title, description, date, location, image_url, max_participants, registration_open ?? true]
+      [title, description, date, location, image_url, max_participants, true]
     );
 
     res.status(201).json({
@@ -57,8 +57,7 @@ const createEvent = async (req, res) => {
         date,
         location,
         image_url,
-        max_participants,
-        registration_open: registration_open ?? true
+        max_participants
       }
     });
   } catch (error) {
