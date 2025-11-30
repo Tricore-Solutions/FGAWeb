@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import colors from './styles/design-tokens/colors';
+import Button from './components/Button';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,42 +20,26 @@ function App() {
           <h2 className="text-3xl font-heading font-semibold text-river-bed mb-6">Buttons</h2>
           <div className="space-y-4">
             <div className="flex flex-wrap gap-4 items-center">
-              <button 
-                className="px-8 py-8 text-white rounded-lg transition-colors font-medium"
-                style={{ padding: '8px', backgroundColor: colors['gulf-stream'] }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#6fa0a1'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors['gulf-stream']}
-              >
-                Primary Button
-              </button>
-              <button 
-                className="px-8 py-8 text-white rounded-lg transition-colors font-medium"
-                style={{ padding: '8px', backgroundColor: colors['river-bed'] }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#3a434b'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors['river-bed']}
-              >
-                Secondary Button
-              </button>
-              <button 
-                className="px-8 py-8 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
-                style={{ padding: '8px' }}
-              >
-                Danger Button
-              </button>
-              <button 
-                className="px-8 py-8 rounded-lg transition-colors font-medium"
-                style={{ padding: '8px', border: '2px solid', borderColor: colors['river-bed'], color: colors['river-bed'] }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = colors['river-bed'];
-                  e.currentTarget.style.color = 'white';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = colors['river-bed'];
-                }}
-              >
-                Outline Button
-              </button>
+              <Button 
+                text="Primary Button"
+                onClick={() => alert('Primary button clicked!')}
+                variant="primary"
+              />
+              <Button 
+                text="Secondary Button"
+                onClick={() => alert('Secondary button clicked!')}
+                variant="secondary"
+              />
+              <Button 
+                text="Danger Button"
+                onClick={() => alert('Danger button clicked!')}
+                variant="danger"
+              />
+              <Button 
+                text="Outline Button"
+                onClick={() => alert('Outline button clicked!')}
+                variant="outline"
+              />
               <button 
                 className="px-8 py-8 rounded-lg transition-colors font-medium"
                 style={{ padding: '8px', color: colors['river-bed'] }}

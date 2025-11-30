@@ -6,79 +6,84 @@
 Buttons are interactive elements used to trigger actions, submit forms, navigate, or confirm user decisions. They provide clear call-to-action points throughout the interface.
 
 ### Variants
-*What this means: Buttons come in 5 different styles and 3 sizes. The Primary button (teal/green color) is your main "click me" button. Secondary (dark gray) is for less important actions. Danger (red) warns users about destructive actions like deleting. Outline buttons have no background, just a border. Ghost buttons are the most subtle. You can also make buttons small, medium, or large.*
+*What this means: Buttons come in 4 different styles. The Primary button (teal/green color) is your main "click me" button. Secondary (gray) is for less important actions. Danger (red) warns users about destructive actions like deleting. Outline buttons have no background, just a border with gulf-stream color.*
 
 - **Primary**: Main action buttons with Gulf Stream background (#80b3b4), used for primary CTAs
-- **Secondary**: Secondary actions with River Bed background (#454f59), used for less prominent actions
+- **Secondary**: Secondary actions with gray background, used for less prominent actions
 - **Danger**: Destructive actions with red/warning colors, used for delete or cancel operations
-- **Outline**: Transparent background with border, used for secondary actions
-- **Ghost**: Minimal styling, used for tertiary actions
-- **Sizes**: 
-  - `sm` (small): Padding `sm` (8px) horizontal and vertical
-  - `md` (medium/default): Padding `sm` (8px) horizontal and vertical
-  - `lg` (large): Padding `sm` (8px) horizontal and vertical
+- **Outline**: Transparent background with 3px gulf-stream border, used for secondary actions
 
 ### Props
-*What this means: When you use a Button, you can tell it what text to show (children), which style to use (variant), how big it should be (size), what happens when clicked (onClick), whether it's disabled, and if it should fill the full width. The type prop controls if it's a regular button, submits a form, or resets a form.*
+*What this means: When you use a Button, you can tell it what text to show (text), which style to use (variant), and what happens when clicked (onClick).*
 
 ```typescript
 {
-  children: React.ReactNode;        // Button text or content
-  variant?: 'primary' | 'secondary' | 'danger' | 'outline' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  text: string;                     // Button text content
+  variant?: 'primary' | 'secondary' | 'danger' | 'outline';
   onClick?: () => void;             // Click handler
-  disabled?: boolean;               // Disabled state
-  type?: 'button' | 'submit' | 'reset';
-  className?: string;               // Additional CSS classes
-  fullWidth?: boolean;              // Full width button
 }
 ```
 
 ### Usage Example
-*What this means: Here's how you actually write Button code. The first example creates a teal "Register Now" button that runs handleSubmit when clicked. The second makes a large dark gray button. The third is a red delete button. The last one shows a disabled button that users can't click (useful when something is processing).*
+*What this means: Here's how you actually write Button code. The first example creates a teal "Register Now" button that runs handleSubmit when clicked. The second makes a gray secondary button. The third is a red delete button. The last one shows an outline button with a border.*
 
 ```jsx
 import Button from '@/components/Button';
 
 // Primary button
-<Button variant="primary" onClick={handleSubmit}>
-  Register Now
-</Button>
+<Button 
+  text="Register Now" 
+  variant="primary" 
+  onClick={handleSubmit}
+/>
 
 // Secondary button
-<Button variant="secondary" size="lg">
-  Learn More
-</Button>
+<Button 
+  text="Learn More" 
+  variant="secondary" 
+  onClick={handleClick}
+/>
 
 // Danger button
-<Button variant="danger" onClick={handleDelete}>
-  Delete Account
-</Button>
+<Button 
+  text="Delete Account" 
+  variant="danger" 
+  onClick={handleDelete}
+/>
 
-// Disabled state
-<Button variant="primary" disabled>
-  Processing...
-</Button>
+// Outline button
+<Button 
+  text="Cancel" 
+  variant="outline" 
+  onClick={handleCancel}
+/>
 ```
 
 ### Visual Preview
-*What this means: When you use a Primary button, it appears as a teal/green box with white text. Secondary buttons are dark gray with white text. All buttons have rounded corners and get slightly brighter when you hover over them. Disabled buttons look grayed out and don't respond to clicks. All buttons use consistent padding following the design system spacing scale: all button sizes use `sm` (8px) for both horizontal and vertical padding.*
+*What this means: When you use a Primary button, it appears as a teal/green box with white text. Secondary buttons are gray with white text. All buttons have fully rounded corners (pill-shaped) and lift up with a shadow when you hover over them. Outline buttons have a transparent background with a gulf-stream colored border and bold text.*
 
 ![Buttons Preview](./images/buttons-preview.png)
 
-Primary buttons use the Gulf Stream color (#80b3b4) with white text. Secondary buttons use River Bed (#454f59) with white text. Buttons have rounded corners, hover effects, and proper spacing following the design system spacing tokens. All buttons use `sm` (8px) spacing token for both horizontal and vertical padding, ensuring consistent spacing across all button variants and sizes.
-
-Disabled buttons are grayed out and non-interactive.
+Primary buttons use the Gulf Stream color (#80b3b4) with white text. Secondary buttons use gray with white text. Buttons have fully rounded corners (pill-shaped), hover effects with lift and shadow, and proper spacing following the design system spacing tokens. All buttons use `md` (12px) spacing token for both horizontal and vertical padding.
 
 **Layout and Spacing Details:**
-- **Padding**: All button sizes use `sm` (8px) for both horizontal and vertical padding
-- **Border Radius**: `rounded-lg` (0.5rem / 8px) for consistent rounded corners
-- **Hover Effects**: Background color lightens on hover (e.g., Gulf Stream #80b3b4 → #6fa0a1)
-- **Outline Variant**: 2px solid border using River Bed color, transparent background
-- **Ghost Variant**: No border, transparent background, hover shows Geyser background
+- **Padding**: All buttons use `md` (12px / 0.75rem) for both horizontal and vertical padding
+- **Border Radius**: `rounded-full` (fully rounded, pill-shaped) for all buttons
+- **Hover Effects** (Primary, Secondary, Danger): 
+  - Button lifts up slightly (`-translate-y-1`)
+  - Shadow appears at the bottom (`box-shadow: 0 8px 16px rgba(0,0,0,0.2)`)
+  - Primary button also has opacity change on hover
+- **Outline Variant**: 
+  - 3px solid border using Gulf Stream color (#80b3b4)
+  - Transparent background
+  - Bold text (`font-bold`)
+  - On hover: Background changes to Gulf Stream, text changes to white
+- **Font Weight**: 
+  - `font-medium` (500) for primary, secondary, and danger buttons
+  - `font-bold` (700) for outline buttons
+- **Text Shadow**: White text on primary/secondary/danger buttons has a subtle text shadow for better readability
+- **Transition**: `transition-all duration-fast` (150ms) for smooth hover effects
 - **Gap Between Buttons**: `gap-4` (16px) when buttons are grouped
-- **Font Weight**: `font-medium` (500) for button text
-- **Transition**: `transition-colors` for smooth hover effects
 
 ## Forms
 
