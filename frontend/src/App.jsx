@@ -4,6 +4,7 @@ import colors from './styles/design-tokens/colors';
 import Button from './components/Button';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Card from './components/Card';
 
 function Home() {
   return (
@@ -28,7 +29,7 @@ function Home() {
               Comprehensive programs designed to develop skills, build character, and foster excellence.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 title: 'Branches',
@@ -46,20 +47,91 @@ function Home() {
                 icon: '🏆'
               }
             ].map((feature, index) => (
-              <div
+              <Card
                 key={index}
-                className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
-                style={{ border: `1px solid ${colors['geyser']}` }}
+                title={feature.title}
+                description={feature.description}
               >
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-heading font-semibold text-river-bed mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-oslo-gray">
-                  {feature.description}
-                </p>
-              </div>
+                <div className="text-4xl mb-2">{feature.icon}</div>
+              </Card>
             ))}
+          </div>
+          
+          {/* Card Preview Section */}
+          <div className="mt-16">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
+                Card Component Preview
+              </h2>
+              <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+                Showcasing different Card variants and use cases
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Default Card */}
+              <Card
+                title="Default Card"
+                description="This is a default card with shadow and border."
+              >
+                <p className="text-sm text-oslo-gray">Default variant styling</p>
+              </Card>
+
+              {/* Elevated Card */}
+              <Card
+                title="Elevated Card"
+                description="This card has a stronger shadow for emphasis."
+                variant="elevated"
+              >
+                <p className="text-sm text-oslo-gray">Elevated variant styling</p>
+              </Card>
+
+              {/* Outlined Card */}
+              <Card
+                title="Outlined Card"
+                description="This card uses a border instead of shadow."
+                variant="outlined"
+              >
+                <p className="text-sm text-oslo-gray">Outlined variant styling</p>
+              </Card>
+
+              {/* Card with Image */}
+              <Card
+                title="Card with Image"
+                description="This card includes a header image."
+                image="https://via.placeholder.com/400x200"
+                imageAlt="Placeholder image"
+              >
+                <p className="text-sm text-oslo-gray mt-2">Image card example</p>
+              </Card>
+
+              {/* Card with Footer */}
+              <Card
+                title="Card with Footer"
+                description="This card includes a footer section."
+                footer={
+                  <Button 
+                    text="Learn More" 
+                    variant="primary"
+                    onClick={() => {}}
+                  />
+                }
+              >
+                <p className="text-sm text-oslo-gray">Footer content example</p>
+              </Card>
+
+              {/* Simple Content Card */}
+              <Card>
+                <div className="text-center">
+                  <div className="text-4xl mb-2">✨</div>
+                  <h3 className="text-lg font-heading font-semibold text-river-bed mb-2">
+                    Simple Content
+                  </h3>
+                  <p className="text-sm text-oslo-gray">
+                    Card can wrap any content without title or description
+                  </p>
+                </div>
+              </Card>
+            </div>
           </div>
         </div>
       </section>
@@ -174,6 +246,14 @@ function Branches() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {branches.map((branch, index) => (
+              Training Camps
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Join our specialized training camps designed to accelerate your development.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {camps.map((camp, index) => (
               <div
                 key={index}
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
@@ -239,6 +319,28 @@ function Camps() {
       duration: '8 Days',
       description: 'Advanced camp for experienced athletes seeking to reach the next level.',
       spots: 'By invitation only'
+function Tournaments() {
+  const tournaments = [
+    {
+      name: 'Regional Championship',
+      date: 'September 10-12, 2024',
+      location: 'Main Arena',
+      status: 'Upcoming',
+      participants: 24
+    },
+    {
+      name: 'Youth League Finals',
+      date: 'October 5-7, 2024',
+      location: 'North Branch',
+      status: 'Registration Open',
+      participants: 16
+    },
+    {
+      name: 'Elite Tournament',
+      date: 'November 15-17, 2024',
+      location: 'Downtown Branch',
+      status: 'Upcoming',
+      participants: 32
     }
   ];
 
