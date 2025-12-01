@@ -9,6 +9,7 @@ import Input from './components/Input';
 import LoadingSpinner from './components/LoadingSpinner';
 import Home from './pages/Home';
 import About from './pages/About';
+import Events from './pages/Events';
 
 function Branches() {
   const branches = [
@@ -367,25 +368,6 @@ function Programs() {
   );
 }
 
-function Events() {
-  return (
-    <div className="min-h-screen bg-white">
-      <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
-              Events
-            </h1>
-            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
-              Discover upcoming events and competitions.
-            </p>
-          </div>
-          <LoadingSpinner message="Loading events..." />
-        </div>
-      </section>
-    </div>
-  );
-}
 
 function EventDetail() {
   const { id } = useParams();
