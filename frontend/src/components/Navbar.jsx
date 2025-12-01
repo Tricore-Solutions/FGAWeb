@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { spacing } from '../styles/design-tokens/spacing';
+import colors from '../styles/design-tokens/colors';
 
 const Navbar = ({ variant = 'white' }) => {
   const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinks = [
     { label: 'Home', path: '/' },
@@ -16,6 +19,14 @@ const Navbar = ({ variant = 'white' }) => {
 
   const isActive = (path) => {
     return location.pathname === path;
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
   };
 
   // Determine navbar classes based on variant (desktop only)
@@ -48,14 +59,20 @@ const Navbar = ({ variant = 'white' }) => {
 
         {/* Navigation Links or Menu - Responsive */}
         {variant === 'menu' ? (
-          <button className="flex items-center gap-2 font-heading font-bold text-base uppercase text-river-bed hover:text-gulf-stream transition-colors duration-fast">
+          <button 
+            onClick={toggleMenu}
+            className="flex items-center gap-2 font-heading font-bold text-base uppercase text-river-bed hover:text-gulf-stream transition-colors duration-fast"
+          >
             <Menu size={24} />
             <span>MENU</span>
           </button>
         ) : (
           <>
             {/* Mobile: Menu button */}
-            <button className="min-[900px]:hidden flex items-center gap-2 font-heading font-bold text-base uppercase text-river-bed hover:text-gulf-stream transition-colors duration-fast">
+            <button 
+              onClick={toggleMenu}
+              className="min-[900px]:hidden flex items-center gap-2 font-heading font-bold text-base uppercase text-river-bed hover:text-gulf-stream transition-colors duration-fast"
+            >
               <Menu size={24} />
               <span>MENU</span>
             </button>
@@ -83,6 +100,82 @@ const Navbar = ({ variant = 'white' }) => {
           </>
         )}
       </div>
+
+      {/* Slide-in Menu Overlay */}
+      <div
+        className={`fixed inset-0 z-40 transition-opacity duration-300 ${
+          isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        style={{ backgroundColor: colors['gulf-stream'] }}
+        onClick={closeMenu}
+      />
+      
+      {/* Slide-in Menu */}
+      <div 
+        className={`fixed top-0 left-0 h-full w-full z-50 transition-transform duration-300 ease-out ${
+          isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        style={{ backgroundColor: colors['gulf-stream'] }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex flex-col h-full" style={{ padding: spacing.xl }}>
+          {/* Close Button */}
+          <div className="flex justify-end">
+            <button
+              onClick={closeMenu}
+              className="text-white hover:opacity-80 transition-opacity duration-fast"
+              aria-label="Close menu"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          {/* Navigation Links - Centered in full page */}
+          <div className="flex-1 flex flex-col items-start justify-center">
+            <nav className="flex flex-col gap-6">
+              {navLinks.map((link, index) => {
+                const active = isActive(link.path);
+                return (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    onClick={closeMenu}
+                    className={`
+                      font-heading font-bold text-2xl uppercase
+                      transition-all duration-300
+                      ${active
+                        ? 'text-white'
+                        : 'text-transparent [webkit-text-stroke-width:1px] [webkit-text-stroke-color:#ffffff] hover:text-white hover:[webkit-text-stroke-width:0]'
+                      }
+                    `}
+                    style={{
+                      animationDelay: `${index * 100}ms`,
+                      animation: isMenuOpen ? 'fadeInUp 0.5s ease-out forwards' : 'none',
+                      opacity: 0
+                    }}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      {/* Add CSS for fade-in animation */}
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </nav>
   );
 };
