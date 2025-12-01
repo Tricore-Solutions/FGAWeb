@@ -270,9 +270,11 @@ Cards have rounded corners, subtle shadows (or borders for outlined variant), co
 Navigation components help users move through the application, understand their current location, and access different sections or pages. They include menus, nav bars, sidebars, and navigation links.
 
 ### Variants
-*What this means: Navigation comes in different forms. The Navbar is the horizontal bar at the top of every page with links like Home, Programs, Events. The Sidebar is a vertical menu on the side (common in admin panels). The Mobile Menu is the hamburger icon (three lines) that opens a menu on phones. Breadcrumbs show where you are (Home > Programs > Basketball). Pagination lets you go through pages of results. Tabs let you switch between different sections on the same page.*
+*What this means: Navigation comes in different forms. The Navbar is the horizontal bar at the top of every page with links like Home, Programs, Events. The Navbar has two desktop variants: white background (standard with border), and menu variant (hamburger icon with "MENU" text instead of nav links). The Sidebar is a vertical menu on the side (common in admin panels). The Mobile Menu is the hamburger icon (three lines) that opens a menu on phones. Breadcrumbs show where you are (Home > Programs > Basketball). Pagination lets you go through pages of results. Tabs let you switch between different sections on the same page.*
 
 - **Navbar**: Horizontal top navigation bar
+  - **White Variant**: White background with border (default)
+  - **Menu Variant**: Hamburger icon with "MENU" text instead of nav links on desktop
 - **Sidebar**: Vertical side navigation
 - **Mobile Menu**: Hamburger menu for mobile devices
 - **Breadcrumbs**: Hierarchical navigation path
@@ -280,19 +282,12 @@ Navigation components help users move through the application, understand their 
 - **Tabs**: Tabbed navigation within a page
 
 ### Props
-*What this means: For the Navbar, you provide a logo (usually an image), an array of links with labels and URLs, and optionally a user menu (like a profile dropdown). Each link can be marked as active to highlight the current page. NavLink is for individual navigation links - you give it the path to navigate to and it handles the routing.*
+*What this means: For the Navbar, you provide a variant prop to choose between transparent, white, or menu styles (desktop only). The logo is automatically included. Nav links are provided internally. NavLink is for individual navigation links - you give it the path to navigate to and it handles the routing.*
 
 ```typescript
 // Navbar component
 {
-  logo?: React.ReactNode;          // Logo component
-  links: Array<{
-    label: string;
-    href: string;
-    active?: boolean;
-  }>;
-  userMenu?: React.ReactNode;       // User menu dropdown
-  className?: string;
+  variant?: 'white' | 'menu';  // Desktop variant (default: 'white')
 }
 
 // NavLink component
@@ -305,26 +300,18 @@ Navigation components help users move through the application, understand their 
 ```
 
 ### Usage Example
-*What this means: This code creates a navbar with the FGA logo on the left, four navigation links in the middle (Home, Programs, Events, About), and a user menu on the right. The NavLink example shows how to create a single link that highlights when the current page matches its path.*
+*What this means: This code shows two navbar variants. The first is the default white background navbar with navigation links. The second shows the menu variant with a hamburger icon and "MENU" text instead of nav links on desktop.*
 
 ```jsx
-import Navbar, { NavLink } from '@/components/Navigation';
+import Navbar from '@/components/Navbar';
 
-<Navbar
-  logo={<img src="/FGA-Logo.png" alt="FGA" />}
-  links={[
-    { label: 'Home', href: '/' },
-    { label: 'Programs', href: '/programs' },
-    { label: 'Events', href: '/events' },
-    { label: 'About', href: '/about' }
-  ]}
-  userMenu={<UserIcon />}
-/>
+// White variant (default)
+<Navbar variant="white" />
+// or simply
+<Navbar />
 
-// Navigation links
-<NavLink to="/programs" active={currentPath === '/programs'}>
-  Programs
-</NavLink>
+// Menu variant (hamburger icon with "MENU" text on desktop)
+<Navbar variant="menu" />
 ```
 
 ### Visual Preview
@@ -335,19 +322,23 @@ import Navbar, { NavLink } from '@/components/Navigation';
 The navbar is sticky at the top with the FGA logo (FGA-Logo.png) on the left, navigation links in the center/right, and a user profile icon on the far right. Active links are highlighted with Gulf Stream color. The profile icon is a circular button with a user icon that has a hover effect. The navbar uses `base` (16px) spacing token for internal padding, ensuring consistent spacing. Mobile view shows a hamburger icon that expands to a slide-in menu.
 
 **Layout and Spacing Details:**
-- **Navbar Padding**: `base` (16px) spacing token for internal padding on all sides
-- **Logo Height**: 48px (auto width to maintain aspect ratio)
+- **Navbar Padding**: `xl` (32px) spacing token for internal padding on all sides
+- **Navbar Height**: `h-24` (96px) on mobile, `h-28` (112px) on desktop
+- **Logo Height**: 80px (auto width to maintain aspect ratio)
 - **Logo File**: `/FGA-Logo.png` from public folder
-- **Navigation Links**: `gap-6` (24px) between navigation links
-- **Active Link**: Gulf Stream color (#80b3b4) with 2px solid bottom border
+- **Variants** (Desktop only):
+  - **White**: White background (default)
+  - **Menu**: Hamburger icon (24px) with "MENU" text, same styling as white variant
+- **Navigation Links**: `gap-3` (12px) between navigation links
+- **Link Typography**: `font-heading` (Poppins), `font-bold` (700 weight), `uppercase` text transform
+- **Active Link**: Gulf Stream background (#80b3b4) with white text, rounded corners (`rounded-lg`), padding (`px-4 py-2`)
 - **Inactive Links**: River Bed color (#454f59), hover changes to Gulf Stream
-- **Profile Icon**: 
-  - Circular button: `w-8 h-8` (32px × 32px)
-  - Background: Geyser color (#d5e0e1), hover changes to Gulf Stream
-  - Icon: 20px × 20px SVG user icon in River Bed color
-- **Border**: 1px solid bottom border using Geyser color
+- **Menu Button**: 
+  - Hamburger icon: 24px × 24px from lucide-react
+  - Text: "MENU" in uppercase, same typography as nav links
+  - Hover: Text color changes to Gulf Stream
 - **Max Width**: `max-w-6xl` (1152px) with centered content
-- **Layout**: Flexbox with `justify-between` for logo, links, and profile icon
+- **Layout**: Flexbox with `justify-between` for logo and nav links/menu button
 
 ## Modals & Dialogs
 

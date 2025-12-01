@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import colors from './styles/design-tokens/colors';
 import Button from './components/Button';
+import Navbar from './components/Navbar';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -9,8 +10,50 @@ function App() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white" style={{ padding: '24px' }}>
-      <div className="max-w-6xl mx-auto space-y-16">
+    <div className="min-h-screen bg-white">
+      {/* Navbar Variants Section */}
+      <section className="border-b pb-12 mb-12">
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          <h1 className="text-4xl font-heading font-bold text-river-bed mb-8">
+            Navbar Variants
+          </h1>
+          
+          <div className="space-y-12">
+            {/* White Variant */}
+            <div>
+              <h2 className="text-2xl font-heading font-semibold text-river-bed mb-4">
+                White Variant (Default)
+              </h2>
+              <div className="bg-white border border-geyser rounded-lg overflow-hidden">
+                <Navbar variant="white" />
+                <div className="px-4 py-8">
+                  <p className="text-river-bed font-body">
+                    This is the default white variant with border.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Menu Variant */}
+            <div>
+              <h2 className="text-2xl font-heading font-semibold text-river-bed mb-4">
+                Menu Variant
+              </h2>
+              <div className="bg-white border border-geyser rounded-lg overflow-hidden">
+                <Navbar variant="menu" />
+                <div className="px-4 py-8">
+                  <p className="text-river-bed font-body">
+                    This variant shows a hamburger icon with "MENU" text instead of navigation links on desktop.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Original Content */}
+      <div className="max-w-6xl mx-auto px-4 py-6 space-y-16">
         <h1 className="text-4xl font-heading font-bold text-river-bed mb-8">
           Component Visual Preview
         </h1>
