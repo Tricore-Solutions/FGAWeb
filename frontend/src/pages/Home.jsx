@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Calendar, MapPin } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
 
@@ -56,37 +56,104 @@ function Home() {
 
       {/* Upcoming Events Section */}
       <section className="w-full py-16 md:py-24 bg-white">
-        <div className="w-full mx-auto px-4 md:px-8">
+        <div className="w-full mx-auto px-[10rem]">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
-              Upcoming Events
-            </h2>
+            <div className="flex flex-col items-center mb-4">
+              <div className="relative">
+                <h2 className="text-6xl md:text-7xl font-heading font-bold text-river-bed uppercase tracking-sm -ml-32 md:-ml-40 relative z-10">
+                  Upcoming
+                </h2>
+                <h2 
+                  className="text-6xl md:text-7xl font-heading font-bold uppercase tracking-sm -ml-32 md:-ml-40 absolute top-0 left-0 z-0"
+                  style={{
+                    color: 'transparent',
+                    WebkitTextStroke: '2px #454f59',
+                    textStroke: '2px #454f59',
+                    transform: 'translate(-4px, 4px)',
+                  }}
+                >
+                  Upcoming
+                </h2>
+              </div>
+              <div className="relative">
+                <h2 className="text-6xl md:text-7xl font-heading font-bold text-river-bed uppercase tracking-sm ml-32 md:ml-40 relative z-10">
+                  Events
+                </h2>
+                <h2 
+                  className="text-6xl md:text-7xl font-heading font-bold uppercase tracking-sm ml-32 md:ml-40 absolute top-0 left-0 z-0"
+                  style={{
+                    color: 'transparent',
+                    WebkitTextStroke: '2px #454f59',
+                    textStroke: '2px #454f59',
+                    transform: 'translate(4px, 4px)',
+                  }}
+                >
+                  Events
+                </h2>
+              </div>
+            </div>
             <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
               Join us for exciting events and competitions
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Featured Event (Soonest) */}
+          <div className="mb-12">
+            <div className="flex flex-col md:flex-row gap-6 md:gap-8">
+              {/* Large Image on Left */}
+              <div className="w-full md:w-1/2">
+                <img
+                  src="/images/events-2.jpg"
+                  alt="Summer Championship"
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
+              {/* Content on Right */}
+              <div className="w-full md:w-1/2 flex flex-col justify-center">
+                <div className="text-sm text-oslo-gray mb-2">
+                  EVENTS - July 15, 2025
+                </div>
+                <h3 className="text-2xl md:text-3xl font-heading font-bold text-river-bed mb-4">
+                  Summer Championship
+                </h3>
+                <p className="text-base text-oslo-gray mb-6 leading-relaxed">
+                  Annual summer championship tournament featuring top athletes from across the region. 
+                  Join us for an exciting competition showcasing the best talent in sports.
+                </p>
+                <div className="text-sm text-oslo-gray mb-6">
+                  <div className="mb-2 flex items-center gap-2">
+                    <Calendar size={16} className="text-oslo-gray" />
+                    <span>July 15, 2025</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin size={16} className="text-oslo-gray" />
+                    <span>Main Arena</span>
+                  </div>
+                </div>
+                <Button
+                  text="Learn More"
+                  variant="primary"
+                  onClick={() => navigate('/events/1')}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Other Events Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
-              {
-                title: 'Summer Championship',
-                description: 'Annual summer championship tournament featuring top athletes from across the region.',
-                date: 'July 15, 2025',
-                location: 'Main Arena',
-                image: 'https://via.placeholder.com/400x250'
-              },
               {
                 title: 'Youth Development Workshop',
                 description: 'Interactive workshop focused on developing fundamental skills for young athletes.',
                 date: 'August 5, 2025',
                 location: 'Training Center',
-                image: 'https://via.placeholder.com/400x250'
+                image: '/images/events-1.jpg'
               },
               {
                 title: 'Elite Training Camp',
                 description: 'Intensive training camp for advanced athletes seeking to reach the next level.',
                 date: 'September 10, 2025',
                 location: 'Sports Complex',
-                image: 'https://via.placeholder.com/400x250'
+                image: '/images/events-3.jpg'
               }
             ].map((event, index) => (
               <Card
@@ -97,16 +164,18 @@ function Home() {
                 imageAlt={event.title}
                 footer={
                   <div className="flex flex-col gap-2">
-                    <div className="text-sm text-oslo-gray">
-                      <span className="font-medium">📅</span> {event.date}
+                    <div className="text-sm text-oslo-gray flex items-center gap-2">
+                      <Calendar size={16} className="text-oslo-gray" />
+                      <span>{event.date}</span>
                     </div>
-                    <div className="text-sm text-oslo-gray">
-                      <span className="font-medium">📍</span> {event.location}
+                    <div className="text-sm text-oslo-gray flex items-center gap-2">
+                      <MapPin size={16} className="text-oslo-gray" />
+                      <span>{event.location}</span>
                     </div>
                     <Button
                       text="Learn More"
                       variant="primary"
-                      onClick={() => navigate(`/events/${index + 1}`)}
+                      onClick={() => navigate(`/events/${index + 2}`)}
                     />
                   </div>
                 }

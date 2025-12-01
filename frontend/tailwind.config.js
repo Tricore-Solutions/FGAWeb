@@ -47,12 +47,16 @@ export default {
           'xl': '2rem',      // 32px
           '2xl': '3rem',     // 48px
           '3xl': '4rem',     // 64px
+          '4xl': '5rem',     // 80px
         },
         fontWeight: {
           'regular': 400,
           'medium': 500,
           'semibold': 600,
           'bold': 700,
+        },
+        letterSpacing: {
+          'sm': '0.05em',
         },
       },
     },

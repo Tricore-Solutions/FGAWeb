@@ -15,8 +15,8 @@ const Card = ({
   // Using rounded-lg (0.5rem / 8px) from design system
   const baseStyles = 'bg-white rounded-lg overflow-hidden';
   
-  // Padding using sm token (8px) - p-2 = 0.5rem = 8px from design system
-  const paddingStyles = 'p-2';
+  // No base padding - padding is applied only to content area
+  const paddingStyles = '';
   
   // Variant-specific styles based on components.md specifications
   const variantStyles = {
@@ -56,7 +56,7 @@ const Card = ({
     >
       {/* Image */}
       {image && (
-        <div className="h-48 w-full overflow-hidden -m-2 mb-2">
+        <div className="h-48 w-full overflow-hidden">
           <img
             src={image}
             alt={imageAlt}
@@ -66,7 +66,7 @@ const Card = ({
       )}
       
       {/* Content - Flexible structure to wrap any content */}
-      <div>
+      <div className="p-[2rem]">
         {/* Title */}
         {title && (
           <h3 className="text-xl font-heading font-semibold text-river-bed mb-2">
