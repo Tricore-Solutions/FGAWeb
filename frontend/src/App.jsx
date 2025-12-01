@@ -195,6 +195,38 @@ function Home() {
                 <Input
                   type="password"
                   placeholder="Enter password"
+                  value=""
+                  onChange={() => {}}
+                />
+              </div>
+
+              {/* Password Input with Error */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Password Input with Error
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Enter password"
+                  value="123"
+                  onChange={() => {}}
+                  error="Password must be at least 6 characters long"
+                />
+              </div>
+
+              {/* Email Input */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Email Input
+                </label>
+                <Input
+                  type="email"
+                  placeholder="example@email.com"
+                  value=""
+                  onChange={() => {}}
+                />
+              </div>
+
                   value="123"
                   onChange={() => {}}
                   error="Password must be at least 6 characters long"
