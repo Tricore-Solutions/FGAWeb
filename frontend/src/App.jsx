@@ -426,7 +426,7 @@ function Dashboard() {
 function App() {
   return (
     <div className="min-h-screen w-full bg-white flex flex-col">
-      <Navbar variant="white" />
+      <Navbar variant="hero" />
       <main className="flex-1 w-full">
         <Routes>
           <Route path="/" element={<Home />} />

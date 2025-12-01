@@ -9,7 +9,7 @@ function Home() {
     <>
       {/* Hero Section */}
       <section 
-        className="relative w-full py-20 md:py-32 flex items-center justify-center min-h-[500px] md:min-h-[600px]"
+        className="relative w-full py-20 md:py-32 flex items-center justify-center min-h-[600px] md:min-h-[700px]"
         style={{
           backgroundImage: 'url(https://via.placeholder.com/1920x1080)',
           backgroundSize: 'cover',
@@ -21,15 +21,17 @@ function Home() {
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
         
         {/* Content */}
-        <div className="relative z-10 text-center px-4 md:px-8">
+        <div className="relative z-10 text-center px-4 md:px-8 flex flex-col items-center justify-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-6">
             Welcome to FGA
           </h1>
-          <Button
-            text="Explore Programs"
-            variant="primary"
-            onClick={() => navigate('/programs')}
-          />
+          <div className="flex justify-center">
+            <Button
+              text="Explore Programs"
+              variant="primary"
+              onClick={() => navigate('/programs')}
+            />
+          </div>
         </div>
       </section>
 

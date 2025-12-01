@@ -301,12 +301,12 @@ Navigation components help users move through the application, understand their 
 - **Tabs**: Tabbed navigation within a page
 
 ### Props
-*What this means: For the Navbar, you provide a variant prop to choose between transparent, white, or menu styles (desktop only). The logo is automatically included. Nav links are provided internally. NavLink is for individual navigation links - you give it the path to navigate to and it handles the routing.*
+*What this means: For the Navbar, you provide a variant prop to choose between hero, white, or menu styles (desktop only). The logo is automatically included. Nav links are provided internally. NavLink is for individual navigation links - you give it the path to navigate to and it handles the routing.*
 
 ```typescript
 // Navbar component
 {
-  variant?: 'white' | 'menu';  // Desktop variant (default: 'white')
+  variant?: 'white' | 'menu' | 'hero';  // Desktop variant (default: 'white')
 }
 
 // NavLink component
@@ -319,7 +319,7 @@ Navigation components help users move through the application, understand their 
 ```
 
 ### Usage Example
-*What this means: This code shows two navbar variants. The first is the default white background navbar with navigation links. The second shows the menu variant with a hamburger icon and "MENU" text instead of nav links on desktop.*
+*What this means: This code shows three navbar variants. The first is the default white background navbar with navigation links. The second shows the menu variant with a hamburger icon and "MENU" text instead of nav links on desktop. The third shows the hero variant, which is transparent over the home hero section and becomes solid white once you scroll past the hero.*
 
 ```jsx
 import Navbar from '@/components/Navbar';
@@ -331,6 +331,10 @@ import Navbar from '@/components/Navbar';
 
 // Menu variant (hamburger icon with "MENU" text on desktop)
 <Navbar variant="menu" />
+
+// Hero variant (transparent over home hero, white after scrolling past hero)
+// Only applies on the home route (`/`). On other routes, it behaves like the white variant.
+<Navbar variant="hero" />
 ```
 
 ### Visual Preview
@@ -349,6 +353,7 @@ The navbar is sticky at the top with the FGA logo (FGA-Logo.png) on the left, na
 - **Variants** (Responsive):
   - **White**: White background (default) - Shows menu button on mobile (< 900px), navigation links on desktop (≥ 900px)
   - **Menu**: Hamburger icon (24px) with "MENU" text on all screen sizes, same styling as white variant
+  - **Hero**: On the home route (`/`), navbar starts transparent over the hero section and transitions to a solid white background after scrolling about 200px; on all other routes, it behaves like the white variant
 - **Navigation Links**: `gap-3` (12px) between navigation links
 - **Link Typography**: `font-heading` (Poppins), `font-bold` (700 weight), `uppercase` text transform
 - **Active Link**: Gulf Stream background (#80b3b4) with white text, rounded corners (`rounded-lg`), padding (`px-4 py-2`)

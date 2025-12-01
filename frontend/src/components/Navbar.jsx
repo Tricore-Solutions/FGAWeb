@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { spacing } from '../styles/design-tokens/spacing';
@@ -7,6 +7,7 @@ import colors from '../styles/design-tokens/colors';
 const Navbar = ({ variant = 'white' }) => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isTransparent, setIsTransparent] = useState(false);
 
   const navLinks = [
     { label: 'Home', path: '/' },
@@ -29,16 +30,57 @@ const Navbar = ({ variant = 'white' }) => {
     setIsMenuOpen(false);
   };
 
+  // Handle transparent navbar over hero section on home page
+  useEffect(() => {
+    const isHomeHeroVariant = variant === 'hero' && location.pathname === '/';
+
+    // If not on home hero, ensure navbar is solid and remove any listeners
+    if (!isHomeHeroVariant) {
+      setIsTransparent(false);
+      return;
+    }
+
+    const heroScrollThreshold = 200;
+
+    const handleScroll = () => {
+      const shouldBeTransparent = window.scrollY < heroScrollThreshold;
+      setIsTransparent(shouldBeTransparent);
+    };
+
+    // Set initial state based on current scroll position
+    handleScroll();
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [location.pathname, variant]);
+
   // Determine navbar classes based on variant (desktop only)
   const getNavbarClasses = () => {
-    const baseClasses = 'sticky top-0 z-50';
-    
-    if (variant === 'menu') {
-      return `${baseClasses} min-[900px]:bg-white bg-white`;
-    } else {
-      // Default: white background
+    const isHeroOnHome = variant === 'hero' && location.pathname === '/';
+
+    // On the home hero, make the navbar fixed so it overlays the hero background
+    if (isHeroOnHome) {
+      const baseClasses = 'fixed top-0 left-0 right-0 z-50 transition-colors duration-300';
+
+      if (isTransparent) {
+        return `${baseClasses} bg-transparent`;
+      }
+
       return `${baseClasses} bg-white`;
     }
+
+    // For all other cases, use sticky behavior
+    const baseClasses = 'sticky top-0 z-50 transition-colors duration-300';
+
+    if (variant === 'menu') {
+      return `${baseClasses} min-[900px]:bg-white bg-white`;
+    }
+
+    // Default: white background
+    return `${baseClasses} bg-white`;
   };
 
   return (
@@ -71,7 +113,11 @@ const Navbar = ({ variant = 'white' }) => {
             {/* Mobile: Menu button */}
             <button 
               onClick={toggleMenu}
-              className="min-[900px]:hidden flex items-center gap-2 font-heading font-bold text-base uppercase text-river-bed hover:text-gulf-stream transition-colors duration-fast"
+              className={`min-[900px]:hidden flex items-center gap-2 font-heading font-bold text-base uppercase transition-colors duration-fast ${
+                variant === 'hero' && location.pathname === '/' && isTransparent
+                  ? 'text-white hover:text-gulf-stream'
+                  : 'text-river-bed hover:text-gulf-stream'
+              }`}
             >
               <Menu size={24} />
               <span>MENU</span>
@@ -80,6 +126,7 @@ const Navbar = ({ variant = 'white' }) => {
             <div className="hidden min-[900px]:flex items-center gap-3">
               {navLinks.map((link) => {
                 const active = isActive(link.path);
+                const isTransparentNav = variant === 'hero' && location.pathname === '/' && isTransparent;
                 return (
                   <Link
                     key={link.path}
@@ -88,6 +135,8 @@ const Navbar = ({ variant = 'white' }) => {
                       font-heading font-bold text-sm uppercase transition-colors duration-fast px-4 py-2 rounded-lg
                       ${active
                         ? 'bg-gulf-stream text-white'
+                        : isTransparentNav
+                        ? 'text-white hover:text-gulf-stream hover:bg-white/20'
                         : 'text-river-bed hover:text-gulf-stream'
                       }
                     `}
