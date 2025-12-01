@@ -21,17 +21,15 @@ function Home() {
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
         
         {/* Content */}
-        <div className="relative z-10 text-center px-4 md:px-8 flex flex-col items-center justify-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-6">
+        <div className="relative z-10 text-center px-4 md:px-8 flex flex-col items-center justify-center gap-6 md:gap-8">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white">
             Welcome to FGA
           </h1>
-          <div className="flex justify-center">
-            <Button
-              text="Explore Programs"
-              variant="primary"
-              onClick={() => navigate('/programs')}
-            />
-          </div>
+          <Button
+            text="Explore Programs"
+            variant="primary"
+            onClick={() => navigate('/programs')}
+          />
         </div>
       </section>
 
