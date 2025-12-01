@@ -1,12 +1,16 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+require('./config/db'); // Initialize database connection
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -14,6 +18,22 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.json({ message: 'Server is running!' });
 });
+
+// Auth routes
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
+
+// Event routes
+const eventRoutes = require('./routes/eventRoutes');
+app.use('/api/events', eventRoutes);
+
+// Program routes
+const programRoutes = require('./routes/programRoutes');
+app.use('/api/programs', programRoutes);
+
+// Registration routes
+const registrationRoutes = require('./routes/registrationRoutes');
+app.use('/api/registrations', registrationRoutes);
 
 // Start server
 app.listen(PORT, () => {
