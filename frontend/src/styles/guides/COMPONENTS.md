@@ -6,79 +6,84 @@
 Buttons are interactive elements used to trigger actions, submit forms, navigate, or confirm user decisions. They provide clear call-to-action points throughout the interface.
 
 ### Variants
-*What this means: Buttons come in 5 different styles and 3 sizes. The Primary button (teal/green color) is your main "click me" button. Secondary (dark gray) is for less important actions. Danger (red) warns users about destructive actions like deleting. Outline buttons have no background, just a border. Ghost buttons are the most subtle. You can also make buttons small, medium, or large.*
+*What this means: Buttons come in 4 different styles. The Primary button (teal/green color) is your main "click me" button. Secondary (gray) is for less important actions. Danger (red) warns users about destructive actions like deleting. Outline buttons have no background, just a border with gulf-stream color.*
 
 - **Primary**: Main action buttons with Gulf Stream background (#80b3b4), used for primary CTAs
-- **Secondary**: Secondary actions with River Bed background (#454f59), used for less prominent actions
+- **Secondary**: Secondary actions with gray background, used for less prominent actions
 - **Danger**: Destructive actions with red/warning colors, used for delete or cancel operations
-- **Outline**: Transparent background with border, used for secondary actions
-- **Ghost**: Minimal styling, used for tertiary actions
-- **Sizes**: 
-  - `sm` (small): Padding `sm` (8px) horizontal and vertical
-  - `md` (medium/default): Padding `sm` (8px) horizontal and vertical
-  - `lg` (large): Padding `sm` (8px) horizontal and vertical
+- **Outline**: Transparent background with 3px gulf-stream border, used for secondary actions
 
 ### Props
-*What this means: When you use a Button, you can tell it what text to show (children), which style to use (variant), how big it should be (size), what happens when clicked (onClick), whether it's disabled, and if it should fill the full width. The type prop controls if it's a regular button, submits a form, or resets a form.*
+*What this means: When you use a Button, you can tell it what text to show (text), which style to use (variant), and what happens when clicked (onClick).*
 
 ```typescript
 {
-  children: React.ReactNode;        // Button text or content
-  variant?: 'primary' | 'secondary' | 'danger' | 'outline' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  text: string;                     // Button text content
+  variant?: 'primary' | 'secondary' | 'danger' | 'outline';
   onClick?: () => void;             // Click handler
-  disabled?: boolean;               // Disabled state
-  type?: 'button' | 'submit' | 'reset';
-  className?: string;               // Additional CSS classes
-  fullWidth?: boolean;              // Full width button
 }
 ```
 
 ### Usage Example
-*What this means: Here's how you actually write Button code. The first example creates a teal "Register Now" button that runs handleSubmit when clicked. The second makes a large dark gray button. The third is a red delete button. The last one shows a disabled button that users can't click (useful when something is processing).*
+*What this means: Here's how you actually write Button code. The first example creates a teal "Register Now" button that runs handleSubmit when clicked. The second makes a gray secondary button. The third is a red delete button. The last one shows an outline button with a border.*
 
 ```jsx
 import Button from '@/components/Button';
 
 // Primary button
-<Button variant="primary" onClick={handleSubmit}>
-  Register Now
-</Button>
+<Button 
+  text="Register Now" 
+  variant="primary" 
+  onClick={handleSubmit}
+/>
 
 // Secondary button
-<Button variant="secondary" size="lg">
-  Learn More
-</Button>
+<Button 
+  text="Learn More" 
+  variant="secondary" 
+  onClick={handleClick}
+/>
 
 // Danger button
-<Button variant="danger" onClick={handleDelete}>
-  Delete Account
-</Button>
+<Button 
+  text="Delete Account" 
+  variant="danger" 
+  onClick={handleDelete}
+/>
 
-// Disabled state
-<Button variant="primary" disabled>
-  Processing...
-</Button>
+// Outline button
+<Button 
+  text="Cancel" 
+  variant="outline" 
+  onClick={handleCancel}
+/>
 ```
 
 ### Visual Preview
-*What this means: When you use a Primary button, it appears as a teal/green box with white text. Secondary buttons are dark gray with white text. All buttons have rounded corners and get slightly brighter when you hover over them. Disabled buttons look grayed out and don't respond to clicks. All buttons use consistent padding following the design system spacing scale: all button sizes use `sm` (8px) for both horizontal and vertical padding.*
+*What this means: When you use a Primary button, it appears as a teal/green box with white text. Secondary buttons are gray with white text. All buttons have fully rounded corners (pill-shaped) and lift up with a shadow when you hover over them. Outline buttons have a transparent background with a gulf-stream colored border and bold text.*
 
 ![Buttons Preview](./images/buttons-preview.png)
 
-Primary buttons use the Gulf Stream color (#80b3b4) with white text. Secondary buttons use River Bed (#454f59) with white text. Buttons have rounded corners, hover effects, and proper spacing following the design system spacing tokens. All buttons use `sm` (8px) spacing token for both horizontal and vertical padding, ensuring consistent spacing across all button variants and sizes.
-
-Disabled buttons are grayed out and non-interactive.
+Primary buttons use the Gulf Stream color (#80b3b4) with white text. Secondary buttons use gray with white text. Buttons have fully rounded corners (pill-shaped), hover effects with lift and shadow, and proper spacing following the design system spacing tokens. All buttons use `md` (12px) spacing token for both horizontal and vertical padding.
 
 **Layout and Spacing Details:**
-- **Padding**: All button sizes use `sm` (8px) for both horizontal and vertical padding
-- **Border Radius**: `rounded-lg` (0.5rem / 8px) for consistent rounded corners
-- **Hover Effects**: Background color lightens on hover (e.g., Gulf Stream #80b3b4 → #6fa0a1)
-- **Outline Variant**: 2px solid border using River Bed color, transparent background
-- **Ghost Variant**: No border, transparent background, hover shows Geyser background
+- **Padding**: All buttons use `md` (12px / 0.75rem) for both horizontal and vertical padding
+- **Border Radius**: `rounded-full` (fully rounded, pill-shaped) for all buttons
+- **Hover Effects** (Primary, Secondary, Danger): 
+  - Button lifts up slightly (`-translate-y-1`)
+  - Shadow appears at the bottom (`box-shadow: 0 8px 16px rgba(0,0,0,0.2)`)
+  - Primary button also has opacity change on hover
+- **Outline Variant**: 
+  - 3px solid border using Gulf Stream color (#80b3b4)
+  - Transparent background
+  - Bold text (`font-bold`)
+  - On hover: Background changes to Gulf Stream, text changes to white
+- **Font Weight**: 
+  - `font-medium` (500) for primary, secondary, and danger buttons
+  - `font-bold` (700) for outline buttons
+- **Text Shadow**: White text on primary/secondary/danger buttons has a subtle text shadow for better readability
+- **Transition**: `transition-all duration-fast` (150ms) for smooth hover effects
 - **Gap Between Buttons**: `gap-4` (16px) when buttons are grouped
-- **Font Weight**: `font-medium` (500) for button text
-- **Transition**: `transition-colors` for smooth hover effects
 
 ## Forms
 
@@ -182,60 +187,75 @@ Form inputs have consistent spacing, clear labels, and error states with red bor
 Cards are container components that group related content and actions together. They provide visual separation and organization for content blocks, making information easier to scan and interact with.
 
 ### Variants
-*What this means: Cards come in different styles. Default cards have a subtle shadow that makes them look like they're floating. Elevated cards have a stronger shadow to really stand out. Outlined cards use a border instead of shadow for a cleaner look. Image Cards have a picture at the top. Action Cards have buttons or links at the bottom. Interactive cards change slightly when you hover over them (useful for clickable cards).*
+*What this means: Cards come in different styles. Default cards have a subtle shadow that makes them look like they're floating. Elevated cards have a stronger shadow to really stand out. Outlined cards use a border instead of shadow for a cleaner look. All cards have hover effects that increase the shadow on hover. Image Cards have a picture at the top. Action Cards have buttons or links at the bottom. Interactive cards become clickable when you provide an onClick handler.*
 
-- **Default**: Standard card with shadow and rounded corners
-- **Elevated**: Higher shadow for emphasis
-- **Outlined**: Border instead of shadow
-- **Image Card**: Card with header image
-- **Action Card**: Card with footer actions
-- **Interactive**: Hover effects for clickable cards
+- **Default**: Standard card with shadow and rounded corners (`shadow-md`)
+- **Elevated**: Higher shadow for emphasis (`shadow-xl`)
+- **Outlined**: Border instead of shadow (2px River Bed border, no shadow)
+- **Image Card**: Card with header image (192px height)
+- **Action Card**: Card with footer actions (buttons, links)
+- **Interactive**: Clickable card with cursor pointer (when `onClick` is provided)
 
 ### Props
-*What this means: You can give a Card a title and description at the top. You can add an image that appears at the top of the card. The children prop is where you put the main content of the card. The footer is where you put buttons or links. If you provide an onClick function, the whole card becomes clickable. You can choose which style variant to use.*
+*What this means: You can give a Card a title and description at the top. You can add an image that appears at the top of the card. The children prop is where you put the main content of the card - it can wrap any React content (text, components, arrays, etc.). The footer is where you put buttons or links. If you provide an onClick function, the whole card becomes clickable with keyboard support (Enter/Space keys). You can choose which style variant to use. All props are optional, allowing you to create cards with just children content if needed.*
 
 ```typescript
 {
-  title?: string;                   // Card title
-  description?: string;             // Card description
+  title?: string;                   // Card title (rendered as h3 heading)
+  description?: string;             // Card description text
   image?: string;                   // Optional header image URL
-  imageAlt?: string;               // Image alt text
-  children: React.ReactNode;        // Card content
+  imageAlt?: string;               // Image alt text (default: '')
+  children?: React.ReactNode;        // Card content - can wrap any React content
   footer?: React.ReactNode;         // Footer content (buttons, links)
-  onClick?: () => void;            // Click handler for interactive cards
-  className?: string;
-  variant?: 'default' | 'elevated' | 'outlined';
+  onClick?: () => void;            // Click handler - makes card clickable with keyboard support
+  className?: string;               // Additional CSS classes
+  variant?: 'default' | 'elevated' | 'outlined';  // Card style variant (default: 'default')
 }
 ```
 
 ### Usage Example
-*What this means: The first example creates a simple card with a title, description, and extra content inside. The second example adds an image at the top and a "Register" button at the bottom. The third example makes the whole card clickable - when users click anywhere on it, they navigate to a program details page. The elevated variant makes it stand out more.*
+*What this means: The first example creates a simple card with a title, description, and extra content inside. The second example adds an image at the top and a "Register" button at the bottom. The third example makes the whole card clickable - when users click anywhere on it (or press Enter/Space), they navigate to a program details page. The fourth example shows that cards can wrap any content without title or description. The elevated variant makes it stand out more.*
 
 ```jsx
-import Card from '@/components/Card';
+import Card from './components/Card';
 
-// Basic card
+// Basic card with title and description
 <Card title="Event Title" description="Event description here">
   <p>Additional content goes here</p>
 </Card>
 
-// Card with image
+// Card with image and footer
 <Card
   title="Summer Tournament"
   description="Join us for the annual summer tournament"
   image="/images/tournament.jpg"
+  imageAlt="Summer Tournament event"
   footer={
-    <Button variant="primary">Register</Button>
+    <Button text="Register" variant="primary" onClick={handleRegister} />
   }
 />
 
-// Interactive card
+// Interactive clickable card
 <Card
   title="Program Details"
   onClick={() => navigate('/programs/1')}
   variant="elevated"
 >
   Click to view details
+</Card>
+
+// Card wrapping any content (no title/description required)
+<Card>
+  <div className="text-center">
+    <div className="text-4xl mb-2">✨</div>
+    <h3 className="text-lg font-semibold mb-2">Simple Content</h3>
+    <p>Card can wrap any React content</p>
+  </div>
+</Card>
+
+// Card with only children
+<Card>
+  <p>Just content, no title or description</p>
 </Card>
 ```
 
@@ -247,17 +267,21 @@ import Card from '@/components/Card';
 Cards have rounded corners, subtle shadows (or borders for outlined variant), consistent padding, and clear visual hierarchy. Image cards show the image at the top with content below. Interactive cards have hover effects that slightly elevate the card.
 
 **Layout and Spacing Details:**
-- **Card Padding**: `sm` (8px) spacing token for internal padding on all sides
-- **Border Radius**: `rounded-lg` (0.5rem / 8px)
+- **Card Padding**: `p-2` (8px / `sm` spacing token) for internal padding on all sides
+- **Border Radius**: `rounded-lg` (0.5rem / 8px) from design system
 - **Default Shadow**: `shadow-md` for subtle elevation
 - **Elevated Shadow**: `shadow-xl` for stronger emphasis
-- **Outlined Variant**: 2px solid border using River Bed color (#454f59), no shadow
-- **Default Variant**: 1px solid border using Geyser color (#d5e0e1) with shadow
+- **Outlined Variant**: `border-2 border-river-bed` (2px solid border using River Bed color #454f59), `shadow-none`
+- **Default Variant**: `border border-geyser` (1px solid border using Geyser color #d5e0e1) with `shadow-md`
 - **Title Spacing**: `mb-2` (8px) below card title
-- **Content Spacing**: `mb-4` (16px) below description/content
-- **Grid Layout**: `gap-6` (24px) between cards in grid layouts
-- **Image Card**: Image at top (h-48 / 192px), content area below with same padding
-- **Hover Effects**: Shadow increases on interactive cards
+- **Description Spacing**: `mb-4` (16px) below description
+- **Grid Layout**: `gap-6` (24px) between cards in grid layouts (recommended)
+- **Image Card**: Image at top (`h-48` / 192px), full width with `object-cover`, negative margin to extend to card edges
+- **Hover Effects**: All cards have `transition-shadow duration-fast hover:shadow-lg` - shadow increases on hover (not just interactive cards)
+- **Interactive Cards**: When `onClick` is provided, card becomes clickable with `cursor-pointer` and keyboard support (Enter/Space keys)
+- **Footer**: Separated with `mt-4 pt-4 border-t border-geyser` (top border divider)
+- **Accessibility**: Interactive cards support keyboard navigation with proper `role`, `tabIndex`, and `onKeyDown` handlers
+- **Content Flexibility**: Card can wrap any React content - children are always rendered when provided, no conditional restrictions
 
 ## Navigation
 
@@ -265,9 +289,11 @@ Cards have rounded corners, subtle shadows (or borders for outlined variant), co
 Navigation components help users move through the application, understand their current location, and access different sections or pages. They include menus, nav bars, sidebars, and navigation links.
 
 ### Variants
-*What this means: Navigation comes in different forms. The Navbar is the horizontal bar at the top of every page with links like Home, Programs, Events. The Sidebar is a vertical menu on the side (common in admin panels). The Mobile Menu is the hamburger icon (three lines) that opens a menu on phones. Breadcrumbs show where you are (Home > Programs > Basketball). Pagination lets you go through pages of results. Tabs let you switch between different sections on the same page.*
+*What this means: Navigation comes in different forms. The Navbar is the horizontal bar at the top of every page with links like Home, Programs, Events. The Navbar has two desktop variants: white background (standard with border), and menu variant (hamburger icon with "MENU" text instead of nav links). The Sidebar is a vertical menu on the side (common in admin panels). The Mobile Menu is the hamburger icon (three lines) that opens a menu on phones. Breadcrumbs show where you are (Home > Programs > Basketball). Pagination lets you go through pages of results. Tabs let you switch between different sections on the same page.*
 
 - **Navbar**: Horizontal top navigation bar
+  - **White Variant**: White background with border (default)
+  - **Menu Variant**: Hamburger icon with "MENU" text instead of nav links on desktop
 - **Sidebar**: Vertical side navigation
 - **Mobile Menu**: Hamburger menu for mobile devices
 - **Breadcrumbs**: Hierarchical navigation path
@@ -275,19 +301,12 @@ Navigation components help users move through the application, understand their 
 - **Tabs**: Tabbed navigation within a page
 
 ### Props
-*What this means: For the Navbar, you provide a logo (usually an image), an array of links with labels and URLs, and optionally a user menu (like a profile dropdown). Each link can be marked as active to highlight the current page. NavLink is for individual navigation links - you give it the path to navigate to and it handles the routing.*
+*What this means: For the Navbar, you provide a variant prop to choose between transparent, white, or menu styles (desktop only). The logo is automatically included. Nav links are provided internally. NavLink is for individual navigation links - you give it the path to navigate to and it handles the routing.*
 
 ```typescript
 // Navbar component
 {
-  logo?: React.ReactNode;          // Logo component
-  links: Array<{
-    label: string;
-    href: string;
-    active?: boolean;
-  }>;
-  userMenu?: React.ReactNode;       // User menu dropdown
-  className?: string;
+  variant?: 'white' | 'menu';  // Desktop variant (default: 'white')
 }
 
 // NavLink component
@@ -300,26 +319,18 @@ Navigation components help users move through the application, understand their 
 ```
 
 ### Usage Example
-*What this means: This code creates a navbar with the FGA logo on the left, four navigation links in the middle (Home, Programs, Events, About), and a user menu on the right. The NavLink example shows how to create a single link that highlights when the current page matches its path.*
+*What this means: This code shows two navbar variants. The first is the default white background navbar with navigation links. The second shows the menu variant with a hamburger icon and "MENU" text instead of nav links on desktop.*
 
 ```jsx
-import Navbar, { NavLink } from '@/components/Navigation';
+import Navbar from '@/components/Navbar';
 
-<Navbar
-  logo={<img src="/FGA-Logo.png" alt="FGA" />}
-  links={[
-    { label: 'Home', href: '/' },
-    { label: 'Programs', href: '/programs' },
-    { label: 'Events', href: '/events' },
-    { label: 'About', href: '/about' }
-  ]}
-  userMenu={<UserIcon />}
-/>
+// White variant (default)
+<Navbar variant="white" />
+// or simply
+<Navbar />
 
-// Navigation links
-<NavLink to="/programs" active={currentPath === '/programs'}>
-  Programs
-</NavLink>
+// Menu variant (hamburger icon with "MENU" text on desktop)
+<Navbar variant="menu" />
 ```
 
 ### Visual Preview
@@ -330,19 +341,24 @@ import Navbar, { NavLink } from '@/components/Navigation';
 The navbar is sticky at the top with the FGA logo (FGA-Logo.png) on the left, navigation links in the center/right, and a user profile icon on the far right. Active links are highlighted with Gulf Stream color. The profile icon is a circular button with a user icon that has a hover effect. The navbar uses `base` (16px) spacing token for internal padding, ensuring consistent spacing. Mobile view shows a hamburger icon that expands to a slide-in menu.
 
 **Layout and Spacing Details:**
-- **Navbar Padding**: `base` (16px) spacing token for internal padding on all sides
-- **Logo Height**: 48px (auto width to maintain aspect ratio)
+- **Navbar Padding**: `xl` (32px) spacing token for internal padding on all sides
+- **Navbar Height**: `h-24` (96px) on mobile, `h-28` (112px) on desktop (≥ 900px)
+- **Responsive Breakpoint**: 900px - Navigation links show at 900px and above to prevent logo from being squashed
+- **Logo Height**: 80px (auto width to maintain aspect ratio)
 - **Logo File**: `/FGA-Logo.png` from public folder
-- **Navigation Links**: `gap-6` (24px) between navigation links
-- **Active Link**: Gulf Stream color (#80b3b4) with 2px solid bottom border
+- **Variants** (Responsive):
+  - **White**: White background (default) - Shows menu button on mobile (< 900px), navigation links on desktop (≥ 900px)
+  - **Menu**: Hamburger icon (24px) with "MENU" text on all screen sizes, same styling as white variant
+- **Navigation Links**: `gap-3` (12px) between navigation links
+- **Link Typography**: `font-heading` (Poppins), `font-bold` (700 weight), `uppercase` text transform
+- **Active Link**: Gulf Stream background (#80b3b4) with white text, rounded corners (`rounded-lg`), padding (`px-4 py-2`)
 - **Inactive Links**: River Bed color (#454f59), hover changes to Gulf Stream
-- **Profile Icon**: 
-  - Circular button: `w-8 h-8` (32px × 32px)
-  - Background: Geyser color (#d5e0e1), hover changes to Gulf Stream
-  - Icon: 20px × 20px SVG user icon in River Bed color
-- **Border**: 1px solid bottom border using Geyser color
-- **Max Width**: `max-w-6xl` (1152px) with centered content
-- **Layout**: Flexbox with `justify-between` for logo, links, and profile icon
+- **Menu Button**: 
+  - Hamburger icon: 24px × 24px from lucide-react
+  - Text: "MENU" in uppercase, same typography as nav links
+  - Hover: Text color changes to Gulf Stream
+- **Max Width**: `max-w-7xl` (1280px) with centered content
+- **Layout**: Flexbox with `justify-between` for logo and nav links/menu button
 
 ## Modals & Dialogs
 

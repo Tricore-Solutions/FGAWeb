@@ -12,6 +12,7 @@ export default {
         },
         colors: {
           'gulf-stream': '#80b3b4',
+          'gulf-stream-dark': '#6fa0a1', // Hover state for gulf-stream
           'river-bed': '#454f59',
           'oslo-gray': '#7f858c',
           'geyser': '#d5e0e1',
@@ -36,6 +37,22 @@ export default {
           'fast': '150ms',
           'base': '200ms',
           'slow': '300ms',
+        },
+        spacing: {
+          'xs': '0.25rem',   // 4px
+          'sm': '0.5rem',    // 8px
+          'md': '0.75rem',   // 12px
+          'base': '1rem',    // 16px
+          'lg': '1.5rem',    // 24px
+          'xl': '2rem',      // 32px
+          '2xl': '3rem',     // 48px
+          '3xl': '4rem',     // 64px
+        },
+        fontWeight: {
+          'regular': 400,
+          'medium': 500,
+          'semibold': 600,
+          'bold': 700,
         },
       },
     },
