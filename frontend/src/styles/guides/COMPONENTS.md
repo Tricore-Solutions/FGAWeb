@@ -323,12 +323,13 @@ The navbar is sticky at the top with the FGA logo (FGA-Logo.png) on the left, na
 
 **Layout and Spacing Details:**
 - **Navbar Padding**: `xl` (32px) spacing token for internal padding on all sides
-- **Navbar Height**: `h-24` (96px) on mobile, `h-28` (112px) on desktop
+- **Navbar Height**: `h-24` (96px) on mobile, `h-28` (112px) on desktop (≥ 900px)
+- **Responsive Breakpoint**: 900px - Navigation links show at 900px and above to prevent logo from being squashed
 - **Logo Height**: 80px (auto width to maintain aspect ratio)
 - **Logo File**: `/FGA-Logo.png` from public folder
-- **Variants** (Desktop only):
-  - **White**: White background (default)
-  - **Menu**: Hamburger icon (24px) with "MENU" text, same styling as white variant
+- **Variants** (Responsive):
+  - **White**: White background (default) - Shows menu button on mobile (< 900px), navigation links on desktop (≥ 900px)
+  - **Menu**: Hamburger icon (24px) with "MENU" text on all screen sizes, same styling as white variant
 - **Navigation Links**: `gap-3` (12px) between navigation links
 - **Link Typography**: `font-heading` (Poppins), `font-bold` (700 weight), `uppercase` text transform
 - **Active Link**: Gulf Stream background (#80b3b4) with white text, rounded corners (`rounded-lg`), padding (`px-4 py-2`)
@@ -337,7 +338,7 @@ The navbar is sticky at the top with the FGA logo (FGA-Logo.png) on the left, na
   - Hamburger icon: 24px × 24px from lucide-react
   - Text: "MENU" in uppercase, same typography as nav links
   - Hover: Text color changes to Gulf Stream
-- **Max Width**: `max-w-6xl` (1152px) with centered content
+- **Max Width**: `max-w-7xl` (1280px) with centered content
 - **Layout**: Flexbox with `justify-between` for logo and nav links/menu button
 
 ## Modals & Dialogs
