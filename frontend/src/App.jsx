@@ -5,6 +5,7 @@ import Button from './components/Button';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Card from './components/Card';
+import Input from './components/Input';
 
 function Home() {
   return (
@@ -131,6 +132,99 @@ function Home() {
                   </p>
                 </div>
               </Card>
+            </div>
+          </div>
+          
+          {/* Input Component Preview */}
+          <div className="mt-16">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
+                Input Component Preview
+              </h2>
+              <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+                Showcasing Input component with validation states
+              </p>
+            </div>
+            <div className="max-w-2xl mx-auto space-y-6">
+              {/* Default Input */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Default Input
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Enter your name"
+                  value=""
+                  onChange={() => {}}
+                />
+              </div>
+
+              {/* Input with Error */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Input with Validation Error
+                </label>
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value="invalid-email"
+                  onChange={() => {}}
+                  error="Please enter a valid email address"
+                />
+              </div>
+
+              {/* Password Input */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Password Input
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Enter password"
+                  value=""
+                  onChange={() => {}}
+                />
+              </div>
+
+              {/* Password Input with Error */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Password Input with Error
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Enter password"
+                  value="123"
+                  onChange={() => {}}
+                  error="Password must be at least 6 characters long"
+                />
+              </div>
+
+              {/* Email Input */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Email Input
+                </label>
+                <Input
+                  type="email"
+                  placeholder="example@email.com"
+                  value=""
+                  onChange={() => {}}
+                />
+              </div>
+
+              {/* Number Input */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Number Input
+                </label>
+                <Input
+                  type="number"
+                  placeholder="Enter a number"
+                  value=""
+                  onChange={() => {}}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -496,33 +590,25 @@ function Contact() {
             <div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-river-bed mb-1">
+                  <label className="block text-sm font-medium text-river-bed mb-2">
                     Name
                   </label>
-                  <input
+                  <Input
                     type="text"
-                    required
+                    placeholder="Enter your name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
-                    style={{ borderColor: colors['geyser'] }}
-                    onFocus={(e) => e.currentTarget.style.boxShadow = `0 0 0 2px ${colors['gulf-stream']}`}
-                    onBlur={(e) => e.currentTarget.style.boxShadow = 'none'}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-river-bed mb-1">
+                  <label className="block text-sm font-medium text-river-bed mb-2">
                     Email
                   </label>
-                  <input
+                  <Input
                     type="email"
-                    required
+                    placeholder="Enter your email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
-                    style={{ borderColor: colors['geyser'] }}
-                    onFocus={(e) => e.currentTarget.style.boxShadow = `0 0 0 2px ${colors['gulf-stream']}`}
-                    onBlur={(e) => e.currentTarget.style.boxShadow = 'none'}
                   />
                 </div>
                 <div>
