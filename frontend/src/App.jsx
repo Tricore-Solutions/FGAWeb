@@ -246,14 +246,6 @@ function Branches() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {branches.map((branch, index) => (
-              Training Camps
-            </h1>
-            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
-              Join our specialized training camps designed to accelerate your development.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {camps.map((camp, index) => (
               <div
                 key={index}
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
@@ -319,28 +311,6 @@ function Camps() {
       duration: '8 Days',
       description: 'Advanced camp for experienced athletes seeking to reach the next level.',
       spots: 'By invitation only'
-function Tournaments() {
-  const tournaments = [
-    {
-      name: 'Regional Championship',
-      date: 'September 10-12, 2024',
-      location: 'Main Arena',
-      status: 'Upcoming',
-      participants: 24
-    },
-    {
-      name: 'Youth League Finals',
-      date: 'October 5-7, 2024',
-      location: 'North Branch',
-      status: 'Registration Open',
-      participants: 16
-    },
-    {
-      name: 'Elite Tournament',
-      date: 'November 15-17, 2024',
-      location: 'Downtown Branch',
-      status: 'Upcoming',
-      participants: 32
     }
   ];
 
