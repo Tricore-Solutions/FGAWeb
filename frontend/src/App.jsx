@@ -8,57 +8,7 @@ import Card from './components/Card';
 import Input from './components/Input';
 import LoadingSpinner from './components/LoadingSpinner';
 import Home from './pages/Home';
-
-function About() {
-  return (
-    <div className="min-h-screen bg-white">
-      <section className="py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-4 md:px-8">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-8">
-            About FGA
-          </h1>
-          <div className="prose prose-lg max-w-none">
-            <p className="text-lg text-oslo-gray mb-6 leading-relaxed">
-              FGA is dedicated to fostering excellence in sports through comprehensive training programs, 
-              state-of-the-art facilities, and a commitment to developing well-rounded athletes.
-            </p>
-            <p className="text-lg text-oslo-gray mb-6 leading-relaxed">
-              Our mission is to provide athletes of all levels with the resources, guidance, and 
-              opportunities they need to reach their full potential. We believe in the power of 
-              sports to build character, discipline, and lifelong friendships.
-            </p>
-            <div 
-              className="rounded-lg p-8 mb-8"
-              style={{ backgroundColor: colors['geyser'] }}
-            >
-              <h2 className="text-2xl font-heading font-semibold text-river-bed mb-4">
-                Our Values
-              </h2>
-              <ul className="space-y-3 text-oslo-gray">
-                <li className="flex items-start">
-                  <span className="mr-3" style={{ color: colors['gulf-stream'] }}>✓</span>
-                  <span>Excellence in everything we do</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-3" style={{ color: colors['gulf-stream'] }}>✓</span>
-                  <span>Integrity and sportsmanship</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-3" style={{ color: colors['gulf-stream'] }}>✓</span>
-                  <span>Community and teamwork</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-3" style={{ color: colors['gulf-stream'] }}>✓</span>
-                  <span>Continuous improvement and growth</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
+import About from './pages/About';
 
 function Branches() {
   const branches = [
