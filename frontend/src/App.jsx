@@ -547,6 +547,120 @@ function Camps() {
                     text="Register Now"
                     onClick={() => {}}
                     variant="primary"
+                style={{ border: `1px solid ${colors['geyser']}` }}
+              >
+                <div 
+                  className="h-48"
+                  style={{ backgroundColor: branch.image, opacity: 0.8 }}
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-heading font-semibold text-river-bed mb-2">
+                    {branch.name}
+                  </h3>
+                  <p className="text-oslo-gray mb-4">{branch.address}</p>
+                  <div className="mb-4">
+                    <p className="text-sm font-medium text-river-bed mb-2">Programs:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {branch.programs.map((program, i) => (
+                        <span
+                          key={i}
+                          className="text-xs px-3 py-1 rounded-full text-white"
+                          style={{ backgroundColor: colors['gulf-stream'] }}
+                        >
+                          {program}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <Button 
+                    text="Learn More"
+                    onClick={() => {}}
+                    variant="outline"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Camps() {
+  const camps = [
+    {
+      title: 'Summer Intensive Camp',
+      date: 'July 15-20, 2024',
+      duration: '6 Days',
+      description: 'An intensive training camp focusing on advanced techniques and team strategies.',
+      spots: 'Limited spots available'
+    },
+    {
+      title: 'Youth Development Camp',
+      date: 'August 1-5, 2024',
+      duration: '5 Days',
+      description: 'Perfect for young athletes looking to develop fundamental skills and build confidence.',
+      spots: 'Open for registration'
+    },
+    {
+      title: 'Elite Performance Camp',
+      date: 'August 15-22, 2024',
+      duration: '8 Days',
+      description: 'Advanced camp for experienced athletes seeking to reach the next level.',
+      spots: 'By invitation only'
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Programs
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Explore our comprehensive training programs designed for all skill levels.
+            </p>
+          </div>
+          <LoadingSpinner message="Loading programs..." />
+              Training Camps
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Join our specialized training camps designed to accelerate your development.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {camps.map((camp, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                style={{ border: `1px solid ${colors['geyser']}` }}
+              >
+                <div 
+                  className="h-40"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${colors['gulf-stream']}, ${colors['river-bed']})`,
+                    opacity: 0.9
+                  }}
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-heading font-semibold text-river-bed mb-2">
+                    {camp.title}
+                  </h3>
+                  <div className="flex items-center gap-4 mb-3 text-sm text-oslo-gray">
+                    <span>📅 {camp.date}</span>
+                    <span>⏱️ {camp.duration}</span>
+                  </div>
+                  <p className="text-oslo-gray mb-4">{camp.description}</p>
+                  <p className="text-sm font-medium mb-4" style={{ color: colors['gulf-stream'] }}>
+                    {camp.spots}
+                  </p>
+                  <Button 
+                    text="Register Now"
+                    onClick={() => {}}
+                    variant="primary"
                   />
                 </div>
               </div>
@@ -589,6 +703,13 @@ function Tournaments() {
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Events
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Discover upcoming events and competitions.
+            </p>
+          </div>
+          <LoadingSpinner message="Loading events..." />
               Tournaments
             </h1>
             <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
@@ -636,6 +757,8 @@ function Tournaments() {
   );
 }
 
+function EventDetail() {
+  const { id } = useParams();
 function Contact() {
   const [formData, setFormData] = useState({
     name: '',
@@ -655,6 +778,13 @@ function Contact() {
         <div className="max-w-4xl mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Event Details
+            </h1>
+            <p className="text-lg text-oslo-gray">
+              Event ID: {id}
+            </p>
+          </div>
+          <LoadingSpinner message="Loading event details..." />
               Contact Us
             </h1>
             <p className="text-lg text-oslo-gray">
@@ -737,6 +867,24 @@ function Contact() {
   );
 }
 
+function Login() {
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-md mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Login
+            </h1>
+            <p className="text-lg text-oslo-gray">
+              Sign in to your account
+            </p>
+          </div>
+          <Card>
+            <LoadingSpinner message="Login form coming soon..." />
+          </Card>
+        </div>
+      </section>
 function App() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -749,6 +897,69 @@ function App() {
           <Route path="/camps" element={<Camps />} />
           <Route path="/tournaments" element={<Tournaments />} />
           <Route path="/contact" element={<Contact />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+function Signup() {
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-md mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Sign Up
+            </h1>
+            <p className="text-lg text-oslo-gray">
+              Create a new account
+            </p>
+          </div>
+          <Card>
+            <LoadingSpinner message="Signup form coming soon..." />
+          </Card>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Dashboard() {
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Dashboard
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Welcome to your dashboard
+            </p>
+          </div>
+          <LoadingSpinner message="Loading dashboard..." />
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      <Navbar variant="white" />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/programs" element={<Programs />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/events/:id" element={<EventDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </main>
       <Footer />
