@@ -34,7 +34,7 @@ function About() {
 
       {/* History Section */}
       <section className="w-full py-12 sm:py-16 md:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
               Our History
@@ -98,7 +98,7 @@ function About() {
 
       {/* Mission/Vision Section */}
       <section className="w-full py-12 sm:py-16 md:py-24" style={{ backgroundColor: colors['geyser'] }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
             {/* Mission */}
             <div>
@@ -161,7 +161,7 @@ function About() {
 
       {/* Coaching Staff Section */}
       <section className="w-full py-12 sm:py-16 md:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
               Our Coaching Staff
@@ -250,7 +250,7 @@ function About() {
 
       {/* Values Section */}
       <section className="w-full py-12 sm:py-16 md:py-24" style={{ backgroundColor: colors['geyser'] }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
               Our Core Values
@@ -297,7 +297,7 @@ function About() {
 
       {/* What We Offer Section */}
       <section className="w-full py-12 sm:py-16 md:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
               What We Offer

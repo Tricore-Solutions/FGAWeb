@@ -36,7 +36,7 @@ function Branches() {
   return (
     <div className="min-h-screen bg-white">
       <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="w-full mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
               Our Branches
@@ -110,7 +110,7 @@ function Camps() {
   return (
     <div className="min-h-screen bg-white">
       <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="w-full mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
               Training Camps
@@ -170,7 +170,7 @@ function Tournaments() {
   return (
     <div className="min-h-screen bg-white">
       <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="w-full mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
               Tournaments
@@ -326,7 +326,7 @@ function Programs() {
   return (
     <div className="min-h-screen bg-white">
       <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="w-full mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
               Programs
@@ -407,7 +407,7 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-white">
       <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="w-full mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
               Dashboard

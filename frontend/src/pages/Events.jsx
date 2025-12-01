@@ -112,7 +112,7 @@ function Events() {
 
       {/* Search and Filter Section */}
       <section className="w-full py-8 sm:py-12 bg-white border-b border-geyser">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
           <div className="flex flex-col md:flex-row gap-4 md:gap-6">
             {/* Search Input */}
             <div className="flex-1">
@@ -146,7 +146,7 @@ function Events() {
 
       {/* Events Listing Section */}
       <section className="w-full py-12 sm:py-16 md:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
           {filteredEvents.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-lg text-oslo-gray mb-4">No events found matching your criteria.</p>

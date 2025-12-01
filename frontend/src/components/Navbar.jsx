@@ -44,7 +44,7 @@ const Navbar = ({ variant = 'white' }) => {
   return (
     <nav className={getNavbarClasses()}>
       <div 
-        className="max-w-7xl mx-auto flex items-center justify-between h-24 min-[900px]:h-28"
+        className="w-full mx-auto flex items-center justify-between h-24 min-[900px]:h-28"
         style={{ padding: spacing.xl }}
       >
         {/* Logo */}
