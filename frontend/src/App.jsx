@@ -5,6 +5,8 @@ import Button from './components/Button';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Card from './components/Card';
+import Input from './components/Input';
+import LoadingSpinner from './components/LoadingSpinner';
 
 function Home() {
   return (
@@ -133,6 +135,163 @@ function Home() {
               </Card>
             </div>
           </div>
+          
+          {/* Input Component Preview */}
+          <div className="mt-16">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
+                Input Component Preview
+              </h2>
+              <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+                Showcasing Input component with validation states
+              </p>
+            </div>
+            <div className="max-w-2xl mx-auto space-y-6">
+              {/* Default Input */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Default Input
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Enter your name"
+                  value=""
+                  onChange={() => {}}
+                />
+              </div>
+
+              {/* Input with Error */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Input with Validation Error
+                </label>
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value="invalid-email"
+                  onChange={() => {}}
+                  error="Please enter a valid email address"
+                />
+              </div>
+
+              {/* Password Input */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Password Input
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Enter password"
+                  value=""
+                  onChange={() => {}}
+                />
+              </div>
+
+              {/* Password Input with Error */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Password Input with Error
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Enter password"
+                  value="123"
+                  onChange={() => {}}
+                  error="Password must be at least 6 characters long"
+                />
+              </div>
+
+              {/* Email Input */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Email Input
+                </label>
+                <Input
+                  type="email"
+                  placeholder="example@email.com"
+                  value=""
+                  onChange={() => {}}
+                />
+              </div>
+
+              {/* Number Input */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Number Input
+                </label>
+                <Input
+                  type="number"
+                  placeholder="Enter a number"
+                  value=""
+                  onChange={() => {}}
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* LoadingSpinner Component Preview */}
+          <div className="mt-16">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
+                Loading Spinner Component Preview
+              </h2>
+              <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+                Showcasing LoadingSpinner in data loading scenarios
+              </p>
+            </div>
+            
+            {/* Simulated Data Loading Scenario */}
+            <div className="mb-12">
+              <h3 className="text-xl font-heading font-semibold text-river-bed mb-6 text-center">
+                Simulated Data Loading
+              </h3>
+              <Card title="Loading Events" description="Fetching events from server...">
+                <LoadingSpinner message="Loading events..." />
+              </Card>
+            </div>
+            
+            {/* Different Spinner Sizes */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              <Card title="Small Spinner" description="For inline use">
+                <LoadingSpinner size="sm" message="Loading..." />
+              </Card>
+              
+              <Card title="Medium Spinner" description="Default size">
+                <LoadingSpinner size="md" message="Loading data..." />
+              </Card>
+              
+              <Card title="Large Spinner" description="For important loading states">
+                <LoadingSpinner size="lg" message="Please wait..." />
+              </Card>
+            </div>
+            
+            {/* Inline Usage Example */}
+            <div className="mb-12">
+              <h3 className="text-xl font-heading font-semibold text-river-bed mb-6 text-center">
+                Inline Usage Examples
+              </h3>
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <LoadingSpinner inline size="sm" />
+                  <Button 
+                    text="Processing..."
+                    variant="primary"
+                    onClick={() => {}}
+                  />
+                </div>
+                
+                <div className="flex items-center gap-2 text-oslo-gray">
+                  <LoadingSpinner inline size="sm" />
+                  <span>Fetching user data...</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-oslo-gray">
+                  <LoadingSpinner inline size="sm" />
+                  <span>Loading events...</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -246,14 +405,6 @@ function Branches() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {branches.map((branch, index) => (
-              Training Camps
-            </h1>
-            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
-              Join our specialized training camps designed to accelerate your development.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {camps.map((camp, index) => (
               <div
                 key={index}
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
@@ -319,28 +470,6 @@ function Camps() {
       duration: '8 Days',
       description: 'Advanced camp for experienced athletes seeking to reach the next level.',
       spots: 'By invitation only'
-function Tournaments() {
-  const tournaments = [
-    {
-      name: 'Regional Championship',
-      date: 'September 10-12, 2024',
-      location: 'Main Arena',
-      status: 'Upcoming',
-      participants: 24
-    },
-    {
-      name: 'Youth League Finals',
-      date: 'October 5-7, 2024',
-      location: 'North Branch',
-      status: 'Registration Open',
-      participants: 16
-    },
-    {
-      name: 'Elite Tournament',
-      date: 'November 15-17, 2024',
-      location: 'Downtown Branch',
-      status: 'Upcoming',
-      participants: 32
     }
   ];
 
@@ -526,33 +655,25 @@ function Contact() {
             <div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-river-bed mb-1">
+                  <label className="block text-sm font-medium text-river-bed mb-2">
                     Name
                   </label>
-                  <input
+                  <Input
                     type="text"
-                    required
+                    placeholder="Enter your name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
-                    style={{ borderColor: colors['geyser'] }}
-                    onFocus={(e) => e.currentTarget.style.boxShadow = `0 0 0 2px ${colors['gulf-stream']}`}
-                    onBlur={(e) => e.currentTarget.style.boxShadow = 'none'}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-river-bed mb-1">
+                  <label className="block text-sm font-medium text-river-bed mb-2">
                     Email
                   </label>
-                  <input
+                  <Input
                     type="email"
-                    required
+                    placeholder="Enter your email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
-                    style={{ borderColor: colors['geyser'] }}
-                    onFocus={(e) => e.currentTarget.style.boxShadow = `0 0 0 2px ${colors['gulf-stream']}`}
-                    onBlur={(e) => e.currentTarget.style.boxShadow = 'none'}
                   />
                 </div>
                 <div>
