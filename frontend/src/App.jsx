@@ -9,6 +9,7 @@ import Input from './components/Input';
 import LoadingSpinner from './components/LoadingSpinner';
 import Home from './pages/Home';
 import About from './pages/About';
+import Events from './pages/Events';
 
 function Branches() {
   const branches = [
@@ -35,6 +36,15 @@ function Branches() {
   return (
     <div className="min-h-screen bg-white">
       <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Our Branches
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Visit one of our state-of-the-art facilities located across the region.
+            </p>
+          </div>
 
 function About() {
   return (
@@ -159,6 +169,52 @@ function Branches() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Camps() {
+  const camps = [
+    {
+      title: 'Summer Intensive Camp',
+      date: 'July 15-20, 2024',
+      duration: '6 Days',
+      description: 'An intensive training camp focusing on advanced techniques and team strategies.',
+      spots: 'Limited spots available'
+    },
+    {
+      title: 'Youth Development Camp',
+      date: 'August 1-5, 2024',
+      duration: '5 Days',
+      description: 'Perfect for young athletes looking to develop fundamental skills and build confidence.',
+      spots: 'Open for registration'
+    },
+    {
+      title: 'Elite Performance Camp',
+      date: 'August 15-22, 2024',
+      duration: '8 Days',
+      description: 'Advanced camp for experienced athletes seeking to reach the next level.',
+      spots: 'By invitation only'
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Training Camps
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Join our specialized training camps designed to accelerate your development.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {camps.map((camp, index) => (
           </div>
         </div>
       </section>
@@ -439,6 +495,62 @@ function Tournaments() {
                 Get in Touch
               </h2>
               <div className="space-y-4">
+                <div>
+                  <p className="font-medium text-river-bed mb-1">Email</p>
+                  <p className="text-oslo-gray">info@fga.com</p>
+                </div>
+                <div>
+                  <p className="font-medium text-river-bed mb-1">Phone</p>
+                  <p className="text-oslo-gray">+1 (555) 123-4567</p>
+                </div>
+                <div>
+                  <p className="font-medium text-river-bed mb-1">Address</p>
+                  <p className="text-oslo-gray">
+                    123 Main Street<br />
+                    City Center, State 12345
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-river-bed mb-2">
+                    Name
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Enter your name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-river-bed mb-2">
+                    Email
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-river-bed mb-1">
+                    Message
+                  </label>
+                  <textarea
+                    required
+                    rows={5}
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
+                    style={{ borderColor: colors['geyser'] }}
+                    onFocus={(e) => e.currentTarget.style.boxShadow = `0 0 0 2px ${colors['gulf-stream']}`}
+                    onBlur={(e) => e.currentTarget.style.boxShadow = 'none'}
+                  />
+                </div>
                 <div>
                   <p className="font-medium text-river-bed mb-1">Email</p>
                   <p className="text-oslo-gray">info@fga.com</p>
@@ -708,6 +820,29 @@ function Contact() {
                   variant="primary"
                 />
               </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// Placeholder components for new routes
+function Programs() {
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Programs
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Explore our comprehensive training programs designed for all skill levels.
+            </p>
+          </div>
+          <LoadingSpinner message="Loading programs..." />
 
 function Home() {
   return (
@@ -1031,6 +1166,9 @@ function Home() {
   );
 }
 
+
+function EventDetail() {
+  const { id } = useParams();
 function Login() {
   return (
     <div className="min-h-screen bg-white">
@@ -1098,6 +1236,15 @@ function About() {
     <div className="min-h-screen bg-white">
       <section className="py-16 md:py-24">
         <div className="max-w-4xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Event Details
+            </h1>
+            <p className="text-lg text-oslo-gray">
+              Event ID: {id}
+            </p>
+          </div>
+          <LoadingSpinner message="Loading event details..." />
           <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-8">
             About FGA
           </h1>
@@ -1374,6 +1521,10 @@ function Login() {
           <Card>
             <LoadingSpinner message="Login form coming soon..." />
           </Card>
+          </div>
+          <Card>
+            <LoadingSpinner message="Login form coming soon..." />
+          </Card>
 function Camps() {
   const camps = [
     {
@@ -1584,6 +1735,22 @@ function Tournaments() {
   );
 }
 
+function Signup() {
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-md mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Sign Up
+            </h1>
+            <p className="text-lg text-oslo-gray">
+              Create a new account
+            </p>
+          </div>
+          <Card>
+            <LoadingSpinner message="Signup form coming soon..." />
+          </Card>
 function Dashboard() {
   return (
     <div className="min-h-screen bg-white">
@@ -1708,6 +1875,22 @@ function Contact() {
   );
 }
 
+function Dashboard() {
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Dashboard
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Welcome to your dashboard
+            </p>
+          </div>
+          <LoadingSpinner message="Loading dashboard..." />
+        </div>
+      </section>
 function App() {
   return (
     <div className="min-h-screen w-full bg-white flex flex-col">
@@ -1759,6 +1942,23 @@ function App() {
   );
 }
 
+function App() {
+  return (
+    <div className="min-h-screen w-full bg-white flex flex-col">
+      <Navbar variant="white" />
+      <main className="flex-1 w-full">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/programs" element={<Programs />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/events/:id" element={<EventDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </main>
+      <Footer />
 function Signup() {
   return (
     <div className="min-h-screen bg-white">
