@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import colors from './styles/design-tokens/colors';
 import Button from './components/Button';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 function Home() {
   return (
@@ -495,12 +496,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </main>
-      {/* Footer placeholder */}
-      <section className="py-12 flex items-center justify-center border-t border-geyser">
-        <p className="text-river-bed font-heading text-lg text-center">
-          Footer Section Here
-        </p>
-      </section>
+      <Footer />
     </div>
   );
 }
