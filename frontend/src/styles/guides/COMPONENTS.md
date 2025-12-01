@@ -187,60 +187,75 @@ Form inputs have consistent spacing, clear labels, and error states with red bor
 Cards are container components that group related content and actions together. They provide visual separation and organization for content blocks, making information easier to scan and interact with.
 
 ### Variants
-*What this means: Cards come in different styles. Default cards have a subtle shadow that makes them look like they're floating. Elevated cards have a stronger shadow to really stand out. Outlined cards use a border instead of shadow for a cleaner look. Image Cards have a picture at the top. Action Cards have buttons or links at the bottom. Interactive cards change slightly when you hover over them (useful for clickable cards).*
+*What this means: Cards come in different styles. Default cards have a subtle shadow that makes them look like they're floating. Elevated cards have a stronger shadow to really stand out. Outlined cards use a border instead of shadow for a cleaner look. All cards have hover effects that increase the shadow on hover. Image Cards have a picture at the top. Action Cards have buttons or links at the bottom. Interactive cards become clickable when you provide an onClick handler.*
 
-- **Default**: Standard card with shadow and rounded corners
-- **Elevated**: Higher shadow for emphasis
-- **Outlined**: Border instead of shadow
-- **Image Card**: Card with header image
-- **Action Card**: Card with footer actions
-- **Interactive**: Hover effects for clickable cards
+- **Default**: Standard card with shadow and rounded corners (`shadow-md`)
+- **Elevated**: Higher shadow for emphasis (`shadow-xl`)
+- **Outlined**: Border instead of shadow (2px River Bed border, no shadow)
+- **Image Card**: Card with header image (192px height)
+- **Action Card**: Card with footer actions (buttons, links)
+- **Interactive**: Clickable card with cursor pointer (when `onClick` is provided)
 
 ### Props
-*What this means: You can give a Card a title and description at the top. You can add an image that appears at the top of the card. The children prop is where you put the main content of the card. The footer is where you put buttons or links. If you provide an onClick function, the whole card becomes clickable. You can choose which style variant to use.*
+*What this means: You can give a Card a title and description at the top. You can add an image that appears at the top of the card. The children prop is where you put the main content of the card - it can wrap any React content (text, components, arrays, etc.). The footer is where you put buttons or links. If you provide an onClick function, the whole card becomes clickable with keyboard support (Enter/Space keys). You can choose which style variant to use. All props are optional, allowing you to create cards with just children content if needed.*
 
 ```typescript
 {
-  title?: string;                   // Card title
-  description?: string;             // Card description
+  title?: string;                   // Card title (rendered as h3 heading)
+  description?: string;             // Card description text
   image?: string;                   // Optional header image URL
-  imageAlt?: string;               // Image alt text
-  children: React.ReactNode;        // Card content
+  imageAlt?: string;               // Image alt text (default: '')
+  children?: React.ReactNode;        // Card content - can wrap any React content
   footer?: React.ReactNode;         // Footer content (buttons, links)
-  onClick?: () => void;            // Click handler for interactive cards
-  className?: string;
-  variant?: 'default' | 'elevated' | 'outlined';
+  onClick?: () => void;            // Click handler - makes card clickable with keyboard support
+  className?: string;               // Additional CSS classes
+  variant?: 'default' | 'elevated' | 'outlined';  // Card style variant (default: 'default')
 }
 ```
 
 ### Usage Example
-*What this means: The first example creates a simple card with a title, description, and extra content inside. The second example adds an image at the top and a "Register" button at the bottom. The third example makes the whole card clickable - when users click anywhere on it, they navigate to a program details page. The elevated variant makes it stand out more.*
+*What this means: The first example creates a simple card with a title, description, and extra content inside. The second example adds an image at the top and a "Register" button at the bottom. The third example makes the whole card clickable - when users click anywhere on it (or press Enter/Space), they navigate to a program details page. The fourth example shows that cards can wrap any content without title or description. The elevated variant makes it stand out more.*
 
 ```jsx
-import Card from '@/components/Card';
+import Card from './components/Card';
 
-// Basic card
+// Basic card with title and description
 <Card title="Event Title" description="Event description here">
   <p>Additional content goes here</p>
 </Card>
 
-// Card with image
+// Card with image and footer
 <Card
   title="Summer Tournament"
   description="Join us for the annual summer tournament"
   image="/images/tournament.jpg"
+  imageAlt="Summer Tournament event"
   footer={
-    <Button variant="primary">Register</Button>
+    <Button text="Register" variant="primary" onClick={handleRegister} />
   }
 />
 
-// Interactive card
+// Interactive clickable card
 <Card
   title="Program Details"
   onClick={() => navigate('/programs/1')}
   variant="elevated"
 >
   Click to view details
+</Card>
+
+// Card wrapping any content (no title/description required)
+<Card>
+  <div className="text-center">
+    <div className="text-4xl mb-2">✨</div>
+    <h3 className="text-lg font-semibold mb-2">Simple Content</h3>
+    <p>Card can wrap any React content</p>
+  </div>
+</Card>
+
+// Card with only children
+<Card>
+  <p>Just content, no title or description</p>
 </Card>
 ```
 
@@ -252,17 +267,21 @@ import Card from '@/components/Card';
 Cards have rounded corners, subtle shadows (or borders for outlined variant), consistent padding, and clear visual hierarchy. Image cards show the image at the top with content below. Interactive cards have hover effects that slightly elevate the card.
 
 **Layout and Spacing Details:**
-- **Card Padding**: `sm` (8px) spacing token for internal padding on all sides
-- **Border Radius**: `rounded-lg` (0.5rem / 8px)
+- **Card Padding**: `p-2` (8px / `sm` spacing token) for internal padding on all sides
+- **Border Radius**: `rounded-lg` (0.5rem / 8px) from design system
 - **Default Shadow**: `shadow-md` for subtle elevation
 - **Elevated Shadow**: `shadow-xl` for stronger emphasis
-- **Outlined Variant**: 2px solid border using River Bed color (#454f59), no shadow
-- **Default Variant**: 1px solid border using Geyser color (#d5e0e1) with shadow
+- **Outlined Variant**: `border-2 border-river-bed` (2px solid border using River Bed color #454f59), `shadow-none`
+- **Default Variant**: `border border-geyser` (1px solid border using Geyser color #d5e0e1) with `shadow-md`
 - **Title Spacing**: `mb-2` (8px) below card title
-- **Content Spacing**: `mb-4` (16px) below description/content
-- **Grid Layout**: `gap-6` (24px) between cards in grid layouts
-- **Image Card**: Image at top (h-48 / 192px), content area below with same padding
-- **Hover Effects**: Shadow increases on interactive cards
+- **Description Spacing**: `mb-4` (16px) below description
+- **Grid Layout**: `gap-6` (24px) between cards in grid layouts (recommended)
+- **Image Card**: Image at top (`h-48` / 192px), full width with `object-cover`, negative margin to extend to card edges
+- **Hover Effects**: All cards have `transition-shadow duration-fast hover:shadow-lg` - shadow increases on hover (not just interactive cards)
+- **Interactive Cards**: When `onClick` is provided, card becomes clickable with `cursor-pointer` and keyboard support (Enter/Space keys)
+- **Footer**: Separated with `mt-4 pt-4 border-t border-geyser` (top border divider)
+- **Accessibility**: Interactive cards support keyboard navigation with proper `role`, `tabIndex`, and `onKeyDown` handlers
+- **Content Flexibility**: Card can wrap any React content - children are always rendered when provided, no conditional restrictions
 
 ## Navigation
 
