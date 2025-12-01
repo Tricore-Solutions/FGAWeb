@@ -19,10 +19,6 @@ app.get('/', (req, res) => {
   res.json({ message: 'Server is running!' });
 });
 
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'API is working' });
-});
-
 // Auth routes
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
