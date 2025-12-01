@@ -64,10 +64,10 @@ import Button from '@/components/Button';
 
 ![Buttons Preview](./images/buttons-preview.png)
 
-Primary buttons use the Gulf Stream color (#80b3b4) with white text. Secondary buttons use gray with white text. Buttons have fully rounded corners (pill-shaped), hover effects with lift and shadow, and proper spacing following the design system spacing tokens. All buttons use `md` (12px) spacing token for both horizontal and vertical padding.
+Primary buttons use the Gulf Stream color (#80b3b4) with white text. Secondary buttons use gray with white text. Buttons have fully rounded corners (pill-shaped), hover effects with lift and shadow, and proper spacing following the design system spacing tokens. All buttons use `lg` (24px) spacing token for both horizontal and vertical padding.
 
 **Layout and Spacing Details:**
-- **Padding**: All buttons use `md` (12px / 0.75rem) for both horizontal and vertical padding
+- **Padding**: All buttons use `lg` (24px / 1.5rem) for both horizontal and vertical padding
 - **Border Radius**: `rounded-full` (fully rounded, pill-shaped) for all buttons
 - **Hover Effects** (Primary, Secondary, Danger): 
   - Button lifts up slightly (`-translate-y-1`)

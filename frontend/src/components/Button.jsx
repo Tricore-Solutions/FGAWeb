@@ -2,8 +2,8 @@ import React from 'react';
 
 const Button = ({ text, onClick, variant = 'primary' }) => {
   // Base styles common to all variants
-  // Using Tailwind arbitrary value: px-[0.75rem] = md token (12px) from design system
-  const baseStyles = 'px-[0.75rem] py-[0.75rem] rounded-full font-medium transition-all duration-fast cursor-pointer';
+  // Using lg spacing token (1.5rem / 24px) for padding
+  const baseStyles = 'px-6 py-6 rounded-full font-medium transition-all duration-fast cursor-pointer';
   
   // Text color and shadow - different for outline variant
   const textStyles = variant === 'outline' 

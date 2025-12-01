@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
 
@@ -30,6 +31,26 @@ function Home() {
             variant="primary"
             onClick={() => navigate('/programs')}
           />
+        </div>
+      </section>
+
+      {/* About Us Preview Section */}
+      <section className="w-full py-16 md:py-24 bg-white">
+        <div className="max-w-5xl mx-auto px-4 md:px-8">
+          <div className="text-center">
+            <p className="text-xl md:text-3xl font-heading font-thin text-river-bed mb-16 leading-normal">
+              Future Generation Academy (FGA) is dedicated to fostering excellence in sports through 
+              comprehensive training programs, state-of-the-art facilities, and a commitment to 
+              developing well-rounded athletes.
+            </p>
+            <button
+              onClick={() => navigate('/about')}
+              className="px-6 py-6 rounded-full font-bold transition-all duration-fast cursor-pointer bg-transparent border-3 border-gulf-stream hover:bg-gulf-stream text-gulf-stream hover:text-white flex items-center gap-2 mx-auto"
+            >
+              More About Us
+              <ArrowRight size={20} />
+            </button>
+          </div>
         </div>
       </section>
 
@@ -91,29 +112,6 @@ function Home() {
                 }
               />
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* About Us Preview Section */}
-      <section className="w-full py-16 md:py-24 bg-white">
-        <div className="max-w-4xl mx-auto px-4 md:px-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
-              About Us
-            </h2>
-          </div>
-          <div className="prose prose-lg max-w-none text-center">
-            <p className="text-lg text-oslo-gray mb-6 leading-relaxed">
-              Future Generation Academy (FGA) is dedicated to fostering excellence in sports through 
-              comprehensive training programs, state-of-the-art facilities, and a commitment to 
-              developing well-rounded athletes.
-            </p>
-            <Button
-              text="Learn More About Us"
-              variant="outline"
-              onClick={() => navigate('/about')}
-            />
           </div>
         </div>
       </section>
