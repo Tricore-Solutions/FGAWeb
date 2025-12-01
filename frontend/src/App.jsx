@@ -12,45 +12,47 @@ function App() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar Variants Section */}
-      <section className="border-b pb-12 mb-12">
+      <div className="mb-16">
         <div className="max-w-6xl mx-auto px-4 py-6">
           <h1 className="text-4xl font-heading font-bold text-river-bed mb-8">
             Navbar Variants
           </h1>
-          
-          <div className="space-y-12">
-            {/* White Variant */}
-            <div>
-              <h2 className="text-2xl font-heading font-semibold text-river-bed mb-4">
-                White Variant (Default)
-              </h2>
-              <div className="bg-white border border-geyser rounded-lg overflow-hidden">
-                <Navbar variant="white" />
-                <div className="px-4 py-8">
-                  <p className="text-river-bed font-body">
-                    This is the default white variant with border.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Menu Variant */}
-            <div>
-              <h2 className="text-2xl font-heading font-semibold text-river-bed mb-4">
-                Menu Variant
-              </h2>
-              <div className="bg-white border border-geyser rounded-lg overflow-hidden">
-                <Navbar variant="menu" />
-                <div className="px-4 py-8">
-                  <p className="text-river-bed font-body">
-                    This variant shows a hamburger icon with "MENU" text instead of navigation links on desktop.
-                  </p>
-                </div>
-              </div>
-            </div>
+        </div>
+        
+        {/* White Variant - Full Width */}
+        <div className="mb-24">
+          <div className="max-w-6xl mx-auto px-4 mb-4">
+            <h2 className="text-2xl font-heading font-semibold text-river-bed">
+              White Variant (Default)
+            </h2>
+          </div>
+          <div className="relative">
+            <Navbar variant="white" />
+          </div>
+          <div className="max-w-6xl mx-auto px-4 pt-8 pb-4">
+            <p className="text-river-bed font-body">
+              This is the default white variant. On mobile, it shows a menu button. On desktop, it shows navigation links.
+            </p>
           </div>
         </div>
-      </section>
+
+        {/* Menu Variant - Full Width */}
+        <div className="mb-24">
+          <div className="max-w-6xl mx-auto px-4 mb-4">
+            <h2 className="text-2xl font-heading font-semibold text-river-bed">
+              Menu Variant
+            </h2>
+          </div>
+          <div className="relative">
+            <Navbar variant="menu" />
+          </div>
+          <div className="max-w-6xl mx-auto px-4 pt-8 pb-4">
+            <p className="text-river-bed font-body">
+              This variant shows a hamburger icon with "MENU" text on all screen sizes.
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Original Content */}
       <div className="max-w-6xl mx-auto px-4 py-6 space-y-16">
