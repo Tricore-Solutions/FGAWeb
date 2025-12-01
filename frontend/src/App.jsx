@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useParams } from 'react-router-dom';
 import colors from './styles/design-tokens/colors';
 import Button from './components/Button';
 import Navbar from './components/Navbar';
@@ -705,6 +705,132 @@ function Contact() {
   );
 }
 
+// Placeholder components for new routes
+function Programs() {
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Programs
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Explore our comprehensive training programs designed for all skill levels.
+            </p>
+          </div>
+          <LoadingSpinner message="Loading programs..." />
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Events() {
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Events
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Discover upcoming events and competitions.
+            </p>
+          </div>
+          <LoadingSpinner message="Loading events..." />
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function EventDetail() {
+  const { id } = useParams();
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Event Details
+            </h1>
+            <p className="text-lg text-oslo-gray">
+              Event ID: {id}
+            </p>
+          </div>
+          <LoadingSpinner message="Loading event details..." />
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Login() {
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-md mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Login
+            </h1>
+            <p className="text-lg text-oslo-gray">
+              Sign in to your account
+            </p>
+          </div>
+          <Card>
+            <LoadingSpinner message="Login form coming soon..." />
+          </Card>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Signup() {
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-md mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Sign Up
+            </h1>
+            <p className="text-lg text-oslo-gray">
+              Create a new account
+            </p>
+          </div>
+          <Card>
+            <LoadingSpinner message="Signup form coming soon..." />
+          </Card>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Dashboard() {
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Dashboard
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Welcome to your dashboard
+            </p>
+          </div>
+          <LoadingSpinner message="Loading dashboard..." />
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function App() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -713,10 +839,12 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/branches" element={<Branches />} />
-          <Route path="/camps" element={<Camps />} />
-          <Route path="/tournaments" element={<Tournaments />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/programs" element={<Programs />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/events/:id" element={<EventDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </main>
       <Footer />
