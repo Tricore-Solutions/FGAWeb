@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Card from './components/Card';
 import Input from './components/Input';
+import LoadingSpinner from './components/LoadingSpinner';
 
 function Home() {
   return (
@@ -194,6 +195,38 @@ function Home() {
                 <Input
                   type="password"
                   placeholder="Enter password"
+                  value=""
+                  onChange={() => {}}
+                />
+              </div>
+
+              {/* Password Input with Error */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Password Input with Error
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Enter password"
+                  value="123"
+                  onChange={() => {}}
+                  error="Password must be at least 6 characters long"
+                />
+              </div>
+
+              {/* Email Input */}
+              <div>
+                <label className="block text-sm font-medium text-river-bed mb-2">
+                  Email Input
+                </label>
+                <Input
+                  type="email"
+                  placeholder="example@email.com"
+                  value=""
+                  onChange={() => {}}
+                />
+              </div>
+
                   value="123"
                   onChange={() => {}}
                   error="Password must be at least 6 characters long"
@@ -224,6 +257,70 @@ function Home() {
                   value=""
                   onChange={() => {}}
                 />
+              </div>
+            </div>
+          </div>
+          
+          {/* LoadingSpinner Component Preview */}
+          <div className="mt-16">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
+                Loading Spinner Component Preview
+              </h2>
+              <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+                Showcasing LoadingSpinner in data loading scenarios
+              </p>
+            </div>
+            
+            {/* Simulated Data Loading Scenario */}
+            <div className="mb-12">
+              <h3 className="text-xl font-heading font-semibold text-river-bed mb-6 text-center">
+                Simulated Data Loading
+              </h3>
+              <Card title="Loading Events" description="Fetching events from server...">
+                <LoadingSpinner message="Loading events..." />
+              </Card>
+            </div>
+            
+            {/* Different Spinner Sizes */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              <Card title="Small Spinner" description="For inline use">
+                <LoadingSpinner size="sm" message="Loading..." />
+              </Card>
+              
+              <Card title="Medium Spinner" description="Default size">
+                <LoadingSpinner size="md" message="Loading data..." />
+              </Card>
+              
+              <Card title="Large Spinner" description="For important loading states">
+                <LoadingSpinner size="lg" message="Please wait..." />
+              </Card>
+            </div>
+            
+            {/* Inline Usage Example */}
+            <div className="mb-12">
+              <h3 className="text-xl font-heading font-semibold text-river-bed mb-6 text-center">
+                Inline Usage Examples
+              </h3>
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <LoadingSpinner inline size="sm" />
+                  <Button 
+                    text="Processing..."
+                    variant="primary"
+                    onClick={() => {}}
+                  />
+                </div>
+                
+                <div className="flex items-center gap-2 text-oslo-gray">
+                  <LoadingSpinner inline size="sm" />
+                  <span>Fetching user data...</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-oslo-gray">
+                  <LoadingSpinner inline size="sm" />
+                  <span>Loading events...</span>
+                </div>
               </div>
             </div>
           </div>
