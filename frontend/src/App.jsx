@@ -14,6 +14,7 @@ import EventDetail from './pages/EventDetail';
 import Programs from './pages/Programs';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function Branches() {
@@ -331,25 +332,6 @@ function Contact() {
 
 
 
-function Dashboard() {
-  return (
-    <div className="min-h-screen bg-white">
-      <section className="py-16 md:py-24">
-        <div className="w-full mx-auto px-4 md:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
-              Dashboard
-            </h1>
-            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
-              Welcome to your personalized dashboard.
-            </p>
-          </div>
-          <LoadingSpinner message="Loading dashboard data..." />
-        </div>
-      </section>
-    </div>
-  );
-}
 
 function App() {
   return (
