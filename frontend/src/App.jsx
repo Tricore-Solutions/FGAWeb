@@ -15,13 +15,6 @@ import About from './pages/About';
 import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
 import Programs from './pages/Programs';
-import Programs from './pages/Programs';
-import Signup from './pages/Signup';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import EventsManager from './pages/admin/EventsManager';
-import ProtectedRoute from './components/ProtectedRoute';
 
 function Branches() {
   const branches = [
