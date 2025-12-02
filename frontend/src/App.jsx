@@ -15,6 +15,7 @@ import About from './pages/About';
 import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
 import Programs from './pages/Programs';
+import Programs from './pages/Programs';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
