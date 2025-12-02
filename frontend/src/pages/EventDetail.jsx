@@ -4,6 +4,7 @@ import { Calendar, MapPin, Users, Clock, ArrowLeft } from 'lucide-react';
 import Button from '../components/Button';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { fetchEventById } from '../services/eventsService';
+import { registerForEvent, getMyRegistrations } from '../services/registrationService';
 import colors from '../styles/design-tokens/colors';
 
 function EventDetail() {
@@ -13,6 +14,11 @@ function EventDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [registering, setRegistering] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [registrationError, setRegistrationError] = useState(null);
+  const [isAlreadyRegistered, setIsAlreadyRegistered] = useState(false);
+  const [checkingRegistration, setCheckingRegistration] = useState(false);
 
   // Check if user is authenticated
   useEffect(() => {
@@ -35,6 +41,37 @@ function EventDetail() {
       window.removeEventListener('focus', checkAuth);
     };
   }, []);
+
+  // Check if user is already registered for this event
+  useEffect(() => {
+    const checkRegistrationStatus = async () => {
+      if (!isAuthenticated || !id) {
+        setIsAlreadyRegistered(false);
+        return;
+      }
+
+      try {
+        setCheckingRegistration(true);
+        const registrations = await getMyRegistrations();
+        
+        // Check if current event is in user's registrations
+        const eventId = parseInt(id);
+        const isRegistered = registrations.some(
+          reg => reg.event && reg.event.id === eventId && reg.status !== 'cancelled'
+        );
+        
+        setIsAlreadyRegistered(isRegistered);
+      } catch (error) {
+        console.error('Error checking registration status:', error);
+        // Don't set error state here, just assume not registered
+        setIsAlreadyRegistered(false);
+      } finally {
+        setCheckingRegistration(false);
+      }
+    };
+
+    checkRegistrationStatus();
+  }, [isAuthenticated, id]);
 
   // Fetch event details on component mount
   useEffect(() => {
@@ -323,18 +360,47 @@ function EventDetail() {
               {event.registrationOpen && (
                 <div className="relative">
                   <Button
-                    text="Register Now"
+                    text={
+                      registering 
+                        ? 'Registering...' 
+                        : registrationSuccess || isAlreadyRegistered 
+                        ? 'Already Registered' 
+                        : 'Register Now'
+                    }
                     variant="primary"
-                    onClick={() => {
+                    onClick={async () => {
                       if (isAuthenticated) {
-                        // TODO: Navigate to registration page or open registration modal
-                        console.log('Register for event:', event.id);
+                        try {
+                          setRegistering(true);
+                          setRegistrationError(null);
+                          setRegistrationSuccess(false);
+                          
+                          await registerForEvent(event.id);
+                          
+                          setRegistrationSuccess(true);
+                          setIsAlreadyRegistered(true); // Update registration status
+                          // Optionally refresh event data to show updated registration count
+                        } catch (error) {
+                          console.error('Registration error:', error);
+                          if (error.response?.status === 409) {
+                            setRegistrationError('You are already registered for this event');
+                          } else if (error.response?.status === 400) {
+                            setRegistrationError(error.response.data?.error || 'Registration failed. Event may be full or closed.');
+                          } else if (error.response?.status === 401) {
+                            setRegistrationError('Please log in to register');
+                            navigate(`/login?redirect=/events/${event.id}`);
+                          } else {
+                            setRegistrationError(error.response?.data?.error || 'Failed to register. Please try again.');
+                          }
+                        } finally {
+                          setRegistering(false);
+                        }
                       } else {
                         // Navigate to login page with return URL
                         navigate(`/login?redirect=/events/${event.id}`);
                       }
                     }}
-                    disabled={!isAuthenticated}
+                    disabled={!isAuthenticated || registering || registrationSuccess || isAlreadyRegistered || checkingRegistration}
                   />
                   {!isAuthenticated && (
                     <div className="absolute -bottom-6 left-0 right-0 text-center mt-2">
@@ -346,6 +412,20 @@ function EventDetail() {
                           Log in
                         </button>
                         {' '}to register
+                      </p>
+                    </div>
+                  )}
+                  {(registrationSuccess || isAlreadyRegistered) && (
+                    <div className="absolute -bottom-6 left-0 right-0 text-center mt-2">
+                      <p className="text-xs text-green-600 font-medium">
+                        ✓ {registrationSuccess ? 'Successfully registered!' : 'You are registered for this event'}
+                      </p>
+                    </div>
+                  )}
+                  {registrationError && (
+                    <div className="absolute -bottom-6 left-0 right-0 text-center mt-2">
+                      <p className="text-xs text-red-600">
+                        {registrationError}
                       </p>
                     </div>
                   )}
