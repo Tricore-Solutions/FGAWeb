@@ -14,6 +14,7 @@ import EventDetail from './pages/EventDetail';
 import Programs from './pages/Programs';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function Branches() {
   const branches = [
@@ -367,7 +368,14 @@ function App() {
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
         </Routes>
       </main>
       <Footer />
