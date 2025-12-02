@@ -11,6 +11,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
+import Programs from './pages/Programs';
 
 function Branches() {
   const branches = [
@@ -323,25 +324,6 @@ function Contact() {
 }
 
 // Placeholder components for new routes
-function Programs() {
-  return (
-    <div className="min-h-screen bg-white">
-      <section className="py-16 md:py-24">
-        <div className="w-full mx-auto px-4 md:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
-              Programs
-            </h1>
-            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
-              Explore our comprehensive training programs designed for all skill levels.
-            </p>
-          </div>
-          <LoadingSpinner message="Loading programs..." />
-        </div>
-      </section>
-    </div>
-  );
-}
 
 
 function Login() {
