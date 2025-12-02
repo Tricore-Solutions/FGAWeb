@@ -14,3 +14,18 @@ export const fetchEvents = async () => {
   }
 };
 
+/**
+ * Fetch a single event by ID from the API
+ * @param {string|number} id - The event ID
+ * @returns {Promise} Promise that resolves to the event data
+ */
+export const fetchEventById = async (id) => {
+  try {
+    const response = await api.get(`/api/events/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching event:', error);
+    throw error;
+  }
+};
+

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route, useParams } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import colors from './styles/design-tokens/colors';
 import Button from './components/Button';
 import Navbar from './components/Navbar';
@@ -10,6 +10,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import Home from './pages/Home';
 import About from './pages/About';
 import Events from './pages/Events';
+import EventDetail from './pages/EventDetail';
 
 function Branches() {
   const branches = [
@@ -342,26 +343,6 @@ function Programs() {
   );
 }
 
-function EventDetail() {
-  const { id } = useParams();
-  return (
-    <div className="min-h-screen bg-white">
-      <section className="py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-4 md:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
-              Event Details
-            </h1>
-            <p className="text-lg text-oslo-gray">
-              Details for Event ID: {id}
-            </p>
-          </div>
-          <LoadingSpinner message={`Loading event ${id} details...`} />
-        </div>
-      </section>
-    </div>
-  );
-}
 
 function Login() {
   return (
