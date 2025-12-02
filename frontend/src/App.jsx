@@ -15,10 +15,6 @@ import About from './pages/About';
 import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
 import Programs from './pages/Programs';
-import Signup from './pages/Signup';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import ProtectedRoute from './components/ProtectedRoute';
 
 function Branches() {
   const branches = [
@@ -460,201 +456,67 @@ function Contact() {
 // Placeholder components for new routes
 
 
+function Login() {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center py-16 md:py-24">
+      <div className="max-w-md w-full px-4 md:px-8">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+            Login
+          </h1>
+          <p className="text-lg text-oslo-gray">
+            Sign in to your account
+          </p>
+        </div>
+        <Card>
+          <LoadingSpinner message="Login form coming soon..." />
+        </Card>
+      </div>
+    </div>
+  );
+}
 
+function Signup() {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center py-16 md:py-24">
+      <div className="max-w-md w-full px-4 md:px-8">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+            Sign Up
+          </h1>
+          <p className="text-lg text-oslo-gray">
+            Create a new account
+          </p>
+        </div>
+        <Card>
+          <LoadingSpinner message="Signup form coming soon..." />
+        </Card>
+      </div>
+    </div>
+  );
+}
 
-
-
-
-
+function Dashboard() {
+  return (
+    <div className="min-h-screen bg-white">
+      <section className="py-16 md:py-24">
+        <div className="w-full mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Dashboard
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Welcome to your personalized dashboard.
+            </p>
+          </div>
+          <LoadingSpinner message="Loading dashboard data..." />
+        </div>
+      </section>
+    </div>
+  );
+}
 
 function App() {
-  const location = useLocation();
-  // Initialize navbar transparency based on current route
-  // On home page, navbar should start transparent (over hero video)
-  const isHomePage = location.pathname === '/';
-  const [isNavbarTransparent, setIsNavbarTransparent] = useState(isHomePage);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [isFadingOut, setIsFadingOut] = useState(false);
-  const [isRouteLoading, setIsRouteLoading] = useState(false);
-  const [isRouteFadingOut, setIsRouteFadingOut] = useState(false);
-  const hasLoadedRef = useRef(false);
-  const prevLocationRef = useRef(location.pathname);
-  const [isNavbarHidden, setIsNavbarHidden] = useState(false);
-  const curvedLoopRef = useRef(null);
-  const footerRef = useRef(null);
-  const lastScrollY = useRef(0);
-
-  // Handle initial page load - only show on first load and page refresh
-  useEffect(() => {
-    // Skip if already loaded (prevents showing on route changes)
-    if (hasLoadedRef.current) return;
-
-    let fadeTimer;
-    let hideTimer;
-
-    const startFadeOut = () => {
-      // Start fade-out animation
-      setIsFadingOut(true);
-      
-      // Hide preloader after fade-out completes (500ms transition)
-      hideTimer = setTimeout(() => {
-        setIsInitialLoad(false);
-        hasLoadedRef.current = true;
-      }, 500);
-    };
-
-    // Check if page is already loaded
-    if (document.readyState === 'complete') {
-      // Give preloader more time to display (1000ms) before starting fade-out
-      fadeTimer = setTimeout(() => {
-        startFadeOut();
-      }, 1000);
-    } else {
-      // Wait for page to fully load
-      const handleLoad = () => {
-        // Give preloader more time to display (1000ms) before starting fade-out
-        fadeTimer = setTimeout(() => {
-          startFadeOut();
-        }, 1000);
-      };
-
-      window.addEventListener('load', handleLoad, { once: true });
-
-      return () => {
-        if (fadeTimer) clearTimeout(fadeTimer);
-        if (hideTimer) clearTimeout(hideTimer);
-        window.removeEventListener('load', handleLoad);
-      };
-    }
-
-    return () => {
-      if (fadeTimer) clearTimeout(fadeTimer);
-      if (hideTimer) clearTimeout(hideTimer);
-    };
-  }, []);
-
-  // Handle route transitions and redirects
-  useEffect(() => {
-    // Skip if initial load hasn't completed yet
-    if (!hasLoadedRef.current) return;
-
-    // Check if route actually changed
-    if (prevLocationRef.current !== location.pathname) {
-      // Don't show preloader when navigating FROM login or signup pages
-      const isNavigatingFromAuth = prevLocationRef.current === '/login' || prevLocationRef.current === '/signup';
-      
-      if (!isNavigatingFromAuth) {
-        // Show preloader for route transition
-        setIsRouteLoading(true);
-        setIsRouteFadingOut(false);
-      }
-      
-      prevLocationRef.current = location.pathname;
-
-      let fadeTimer;
-      let hideTimer;
-
-      if (!isNavigatingFromAuth) {
-        // Brief delay before starting fade-out (allows route to start loading)
-        fadeTimer = setTimeout(() => {
-          setIsRouteFadingOut(true);
-          
-          // Hide preloader after fade-out completes
-          hideTimer = setTimeout(() => {
-            setIsRouteLoading(false);
-            setIsRouteFadingOut(false);
-          }, 500); // Match fade-out duration
-        }, 300); // Short delay to show preloader
-      }
-
-      return () => {
-        if (fadeTimer) clearTimeout(fadeTimer);
-        if (hideTimer) clearTimeout(hideTimer);
-      };
-    }
-  }, [location.pathname]);
-
-  // Determine if TopBar should be shown
-  // TopBar should be hidden when navbar is transparent (hamburger mode on hero section)
-  // TopBar should be shown when navbar has white background with nav links
-  const shouldShowTopBar = !isNavbarTransparent;
-
-  // Hide navbar on login and signup pages
-  const isLoginPage = location.pathname === '/login';
-  const isSignupPage = location.pathname === '/signup';
-  const isAuthPage = isLoginPage || isSignupPage;
-
-  // Handle navbar visibility when scrolling through CurvedLoop section
-  useEffect(() => {
-    if (isAuthPage) {
-      setIsNavbarHidden(false);
-      return;
-    }
-
-    // Initialize scroll position
-    lastScrollY.current = window.scrollY;
-
-    let rafId = null;
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const isScrollingUp = currentScrollY < lastScrollY.current;
-      lastScrollY.current = currentScrollY;
-
-      // Cancel any pending animation frame
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
-
-      rafId = requestAnimationFrame(() => {
-        if (!curvedLoopRef.current || !footerRef.current) {
-          setIsNavbarHidden(false);
-          return;
-        }
-
-        const curvedLoopRect = curvedLoopRef.current.getBoundingClientRect();
-        const footerRect = footerRef.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-
-        // Hide navbar when:
-        // 1. CurvedLoop has entered the viewport (top is at or above viewport bottom)
-        // 2. Footer hasn't entered the viewport yet (top is below viewport top)
-        // This ensures navbar only hides between CurvedLoop and Footer sections
-        const curvedLoopHasStarted = curvedLoopRect.top <= windowHeight;
-        
-        // When scrolling up, show navbar earlier (more lenient threshold)
-        // When scrolling down, use stricter threshold
-        const footerThreshold = isScrollingUp ? -400 : 0;
-        const footerHasNotStarted = footerRect.top > footerThreshold;
-
-        setIsNavbarHidden(curvedLoopHasStarted && footerHasNotStarted);
-      });
-    };
-
-    // Initial check
-    handleScroll();
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll, { passive: true });
-
-    return () => {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
-    };
-  }, [isAuthPage, location.pathname]);
-
-  // Show preloader during initial load (with fade-out animation)
-  if (isInitialLoad) {
-    return <Preloader isFadingOut={isFadingOut} />;
-  }
-
-  // Show preloader during route transitions/redirects
-  if (isRouteLoading) {
-    return <Preloader isFadingOut={isRouteFadingOut} />;
-  }
-
   return (
     <div className="min-h-screen w-full bg-white flex flex-col">
       {!isAuthPage && <TopBar show={shouldShowTopBar} />}
