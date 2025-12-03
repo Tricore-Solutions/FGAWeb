@@ -38,6 +38,10 @@ app.use('/api/programs', programRoutes);
 const registrationRoutes = require('./routes/registrationRoutes');
 app.use('/api/registrations', registrationRoutes);
 
+// User routes
+const userRoutes = require('./routes/userRoutes');
+app.use('/api/users', userRoutes);
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
