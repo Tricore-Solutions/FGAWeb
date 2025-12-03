@@ -48,3 +48,17 @@ export const getMyRegistrations = async () => {
   }
 };
 
+/**
+ * Fetch all registrations (admin only)
+ * @returns {Promise} Promise that resolves to all registrations data
+ */
+export const getAllRegistrations = async () => {
+  try {
+    const response = await api.get('/api/registrations/all');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching all registrations:', error);
+    throw error;
+  }
+};
+

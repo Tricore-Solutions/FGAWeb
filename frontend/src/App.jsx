@@ -21,6 +21,7 @@ import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import EventsManager from './pages/admin/EventsManager';
 import ProgramsManager from './pages/admin/ProgramsManager';
+import RegistrationsManager from './pages/admin/RegistrationsManager';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function Branches() {
@@ -575,6 +576,14 @@ function App() {
             element={
               <ProtectedRoute requiredRole="admin">
                 <ProgramsManager />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/registrations" 
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <RegistrationsManager />
               </ProtectedRoute>
             } 
           />
