@@ -44,15 +44,38 @@ const ProtectedRoute = ({
 
   // Check for role requirement if specified
   if (requiredRole && !hasRole(requiredRole)) {
-    // Redirect to home or show unauthorized message
+    // Show 403 Forbidden error page
     return (
-      <Navigate 
-        to="/" 
-        state={{ 
-          error: `Access denied. This page requires ${requiredRole} role.` 
-        }} 
-        replace 
-      />
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center p-8">
+          <div className="mb-6">
+            <h1 className="text-6xl font-heading font-bold text-river-bed mb-2">403</h1>
+            <h2 className="text-2xl font-heading font-bold text-river-bed mb-4">
+              Forbidden
+            </h2>
+            <p className="text-lg text-oslo-gray mb-2">
+              Access Denied
+            </p>
+            <p className="text-oslo-gray">
+              This page requires {requiredRole} role. You don't have permission to access this resource.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => window.history.back()}
+              className="px-6 py-3 bg-river-bed text-white rounded-lg hover:bg-gulf-stream transition-colors duration-fast font-heading font-medium"
+            >
+              Go Back
+            </button>
+            <button
+              onClick={() => window.location.href = '/'}
+              className="px-6 py-3 bg-gulf-stream text-white rounded-lg hover:bg-river-bed transition-colors duration-fast font-heading font-medium"
+            >
+              Go to Home
+            </button>
+          </div>
+        </div>
+      </div>
     );
   }
 

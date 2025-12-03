@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Input from '../components/Input';
-import { useAuth } from '../context/AuthContext';
+import LoadingSpinner from '../components/LoadingSpinner';
+import AuthContext from '../context/AuthContext';
 
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated } = useAuth();
-  const isLoggingInRef = useRef(false);
+  const { login: loginContext } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -110,14 +110,15 @@ function Login() {
     setSuccessMessage('');
 
     try {
-      await login(formData.email.trim(), formData.password);
-      
-      // Wait for some time to show the loading.gif in the button before redirecting
-      await new Promise(resolve => setTimeout(resolve, 5000));
-      
-      // Redirect to dashboard (or the redirect parameter)
+      // Use AuthContext login function which handles state updates
+      await loginContext(
+        formData.email.trim(),
+        formData.password
+      );
+
+      // Redirect based on redirect parameter or default to dashboard
       const redirectTo = new URLSearchParams(location.search).get('redirect') || '/dashboard';
-      navigate(redirectTo, { replace: true });
+      navigate(redirectTo);
     } catch (error) {
       console.error('Login error:', error);
       
