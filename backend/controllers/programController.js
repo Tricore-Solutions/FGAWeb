@@ -36,7 +36,7 @@ const getProgramById = async (req, res) => {
 // Create program
 const createProgram = async (req, res) => {
   try {
-    const { name, description, age_group, schedule, price } = req.body;
+    const { name, description, age_group, schedule, price, is_active } = req.body;
 
     // Validate required fields
     if (!name) {
@@ -44,8 +44,8 @@ const createProgram = async (req, res) => {
     }
 
     const [result] = await pool.query(
-      'INSERT INTO programs (name, description, age_group, schedule, price) VALUES (?, ?, ?, ?, ?)',
-      [name, description, age_group, schedule, price]
+      'INSERT INTO programs (name, description, age_group, schedule, price, is_active) VALUES (?, ?, ?, ?, ?, ?)',
+      [name, description, age_group, schedule, price, is_active !== undefined ? is_active : true]
     );
 
     res.status(201).json({
@@ -56,7 +56,8 @@ const createProgram = async (req, res) => {
         description,
         age_group,
         schedule,
-        price
+        price,
+        is_active: is_active !== undefined ? is_active : true
       }
     });
   } catch (error) {
@@ -69,7 +70,7 @@ const createProgram = async (req, res) => {
 const updateProgram = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, age_group, schedule, price } = req.body;
+    const { name, description, age_group, schedule, price, is_active } = req.body;
     const userId = req.user.id;
     const userRole = req.user.role;
 
@@ -117,6 +118,10 @@ const updateProgram = async (req, res) => {
     if (price !== undefined) {
       updateFields.push('price = ?');
       updateValues.push(price);
+    }
+    if (is_active !== undefined) {
+      updateFields.push('is_active = ?');
+      updateValues.push(is_active);
     }
 
     // If no fields to update, return error
