@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Button = ({ text, onClick, variant = 'primary', disabled = false, className = '' }) => {
+const Button = ({ text, onClick, variant = 'primary', disabled = false, className = '', type = 'button' }) => {
   // Base styles common to all variants
   // Using lg spacing token (1.5rem / 24px) for padding
   const baseStyles = 'px-6 py-6 rounded-full font-medium transition-all duration-fast';
@@ -36,7 +36,7 @@ const Button = ({ text, onClick, variant = 'primary', disabled = false, classNam
 
   return (
     <button
-      type="button"
+      type={type}
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
       className={combinedClassName}

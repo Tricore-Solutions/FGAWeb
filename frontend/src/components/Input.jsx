@@ -6,7 +6,9 @@ const Input = ({
   value,
   onChange,
   error,
-  className = ''
+  className = '',
+  id,
+  name
 }) => {
   // Base styles common to all input states
   // Using px-4 py-2 (16px horizontal, 8px vertical) from design system
@@ -36,6 +38,8 @@ const Input = ({
       {/* Input field */}
       <input
         type={type}
+        id={id}
+        name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}

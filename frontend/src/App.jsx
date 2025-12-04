@@ -12,6 +12,7 @@ import About from './pages/About';
 import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
 import Programs from './pages/Programs';
+import Signup from './pages/Signup';
 
 function Branches() {
   const branches = [
@@ -346,25 +347,6 @@ function Login() {
   );
 }
 
-function Signup() {
-  return (
-    <div className="min-h-screen bg-white flex items-center justify-center py-16 md:py-24">
-      <div className="max-w-md w-full px-4 md:px-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
-            Sign Up
-          </h1>
-          <p className="text-lg text-oslo-gray">
-            Create a new account
-          </p>
-        </div>
-        <Card>
-          <LoadingSpinner message="Signup form coming soon..." />
-        </Card>
-      </div>
-    </div>
-  );
-}
 
 function Dashboard() {
   return (
