@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Calendar, MapPin } from 'lucide-react';
 import Button from '../components/Button';
@@ -8,9 +8,19 @@ import { fetchEvents } from '../services/eventsService';
 
 function Home() {
   const navigate = useNavigate();
+  const videoRef = useRef(null);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Force video to play on mount
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(err => {
+        console.log('Video autoplay failed:', err);
+      });
+    }
+  }, []);
 
   // Fetch events on component mount
   useEffect(() => {
@@ -91,28 +101,44 @@ function Home() {
     <>
       {/* Hero Section */}
       <section 
-        className="relative w-full py-20 md:py-32 flex items-center justify-center min-h-[600px] md:min-h-[700px]"
-        style={{
-          backgroundImage: 'url(https://via.placeholder.com/1920x1080)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
+        className="relative w-full flex items-center justify-center overflow-hidden"
+        style={{ minHeight: '100vh' }}
       >
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        {/* Video Background */}
+        <video
+          ref={videoRef}
+          src="/videos/hero-video.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: 0
+          }}
+          onError={(e) => console.error('Video failed to load:', e)}
+          onLoadedData={() => console.log('Video loaded successfully')}
+        />
         
-        {/* Content */}
-        <div className="relative z-10 text-center px-4 md:px-8 flex flex-col items-center justify-center gap-6 md:gap-8">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white">
-            Welcome to FGA
-          </h1>
-          <Button
-            text="Explore Programs"
-            variant="primary"
-            onClick={() => navigate('/programs')}
-          />
-        </div>
+        {/* Overlay for better text readability */}
+        <div 
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            zIndex: 1
+          }}
+        />
+        
       </section>
 
       {/* About Us Preview Section */}
