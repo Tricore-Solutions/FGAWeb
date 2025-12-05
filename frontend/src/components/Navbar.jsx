@@ -11,6 +11,8 @@ const Navbar = ({ variant = 'white' }) => {
   const { isAuthenticated, logout } = useContext(AuthContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTransparent, setIsTransparent] = useState(false);
+  const [showNavLinks, setShowNavLinks] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
 
   const navLinks = [
     { label: 'Home', path: '/' },
@@ -43,9 +45,11 @@ const Navbar = ({ variant = 'white' }) => {
   useEffect(() => {
     const isHomeHeroVariant = variant === 'hero' && location.pathname === '/';
 
-    // If not on home hero, ensure navbar is solid and remove any listeners
+    // If not on home hero, ensure navbar is solid and show nav links immediately
     if (!isHomeHeroVariant) {
       setIsTransparent(false);
+      setShowNavLinks(true);
+      setHasAnimated(true);
       return;
     }
 
@@ -54,6 +58,18 @@ const Navbar = ({ variant = 'white' }) => {
     const handleScroll = () => {
       const shouldBeTransparent = window.scrollY < heroScrollThreshold;
       setIsTransparent(shouldBeTransparent);
+      
+      // When transitioning from transparent to white, trigger nav links animation
+      if (!shouldBeTransparent && !hasAnimated) {
+        setHasAnimated(true);
+        setShowNavLinks(true);
+      }
+      
+      // Reset animation state when scrolling back to hero
+      if (shouldBeTransparent) {
+        setShowNavLinks(false);
+        setHasAnimated(false);
+      }
     };
 
     // Set initial state based on current scroll position
@@ -64,7 +80,7 @@ const Navbar = ({ variant = 'white' }) => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [location.pathname, variant]);
+  }, [location.pathname, variant, hasAnimated]);
 
   // Determine navbar classes based on variant (desktop only)
   const getNavbarClasses = () => {
@@ -119,7 +135,7 @@ const Navbar = ({ variant = 'white' }) => {
           </button>
         ) : (
           <>
-            {/* Mobile: Menu button */}
+            {/* Mobile: Menu button (always visible on mobile) */}
             <button 
               onClick={toggleMenu}
               className={`min-[900px]:hidden flex items-center gap-2 font-heading font-bold text-base uppercase transition-colors duration-fast ${
@@ -131,11 +147,26 @@ const Navbar = ({ variant = 'white' }) => {
               <Menu size={24} />
               <span>MENU</span>
             </button>
-            {/* Desktop: Navigation links */}
-            <div className="hidden min-[900px]:flex items-center gap-3">
-              {navLinks.map((link) => {
+            
+            {/* Desktop: Hamburger menu when transparent (hero section) */}
+            {variant === 'hero' && location.pathname === '/' && isTransparent && (
+              <button 
+                onClick={toggleMenu}
+                className="hidden min-[900px]:flex items-center gap-2 font-heading font-bold text-base uppercase text-white hover:text-gulf-stream transition-colors duration-fast"
+              >
+                <Menu size={24} />
+                <span>MENU</span>
+              </button>
+            )}
+            
+            {/* Desktop: Navigation links (visible when NOT transparent or not hero variant) */}
+            <div className={`hidden min-[900px]:flex items-center gap-3 ${
+              variant === 'hero' && location.pathname === '/' && isTransparent ? '!hidden' : ''
+            }`}>
+              {navLinks.map((link, index) => {
                 const active = isActive(link.path);
-                const isTransparentNav = variant === 'hero' && location.pathname === '/' && isTransparent;
+                const totalLinks = navLinks.length + (isAuthenticated ? 2 : 2); // +2 for auth links
+                const reverseIndex = totalLinks - 1 - index; // Reverse for right-to-left animation
                 return (
                   <Link
                     key={link.path}
@@ -144,11 +175,14 @@ const Navbar = ({ variant = 'white' }) => {
                       font-heading font-bold text-sm uppercase transition-colors duration-fast px-4 py-2 rounded-lg
                       ${active
                         ? 'bg-gulf-stream text-white'
-                        : isTransparentNav
-                        ? 'text-white hover:text-gulf-stream hover:bg-white/20'
                         : 'text-river-bed hover:text-gulf-stream'
                       }
                     `}
+                    style={{
+                      opacity: showNavLinks ? 1 : 0,
+                      transform: showNavLinks ? 'translateX(0)' : 'translateX(20px)',
+                      transition: `opacity 0.15s ease-out ${reverseIndex * 0.04}s, transform 0.15s ease-out ${reverseIndex * 0.04}s`
+                    }}
                   >
                     {link.label}
                   </Link>
@@ -163,23 +197,25 @@ const Navbar = ({ variant = 'white' }) => {
                       font-heading font-bold text-sm uppercase transition-colors duration-fast px-4 py-2 rounded-lg
                       ${isActive('/dashboard')
                         ? 'bg-gulf-stream text-white'
-                        : variant === 'hero' && location.pathname === '/' && isTransparent
-                        ? 'text-white hover:text-gulf-stream hover:bg-white/20'
                         : 'text-river-bed hover:text-gulf-stream'
                       }
                     `}
+                    style={{
+                      opacity: showNavLinks ? 1 : 0,
+                      transform: showNavLinks ? 'translateX(0)' : 'translateX(20px)',
+                      transition: `opacity 0.15s ease-out 0.04s, transform 0.15s ease-out 0.04s`
+                    }}
                   >
                     Dashboard
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className={`
-                      font-heading font-bold text-sm uppercase transition-colors duration-fast px-4 py-2 rounded-lg
-                      ${variant === 'hero' && location.pathname === '/' && isTransparent
-                        ? 'text-white hover:text-gulf-stream hover:bg-white/20'
-                        : 'text-river-bed hover:text-gulf-stream'
-                      }
-                    `}
+                    className="font-heading font-bold text-sm uppercase transition-colors duration-fast px-4 py-2 rounded-lg text-river-bed hover:text-gulf-stream"
+                    style={{
+                      opacity: showNavLinks ? 1 : 0,
+                      transform: showNavLinks ? 'translateX(0)' : 'translateX(20px)',
+                      transition: `opacity 0.15s ease-out 0s, transform 0.15s ease-out 0s`
+                    }}
                   >
                     Logout
                   </button>
@@ -194,11 +230,14 @@ const Navbar = ({ variant = 'white' }) => {
                       font-heading font-bold text-sm uppercase transition-colors duration-fast px-4 py-2 rounded-lg
                       ${isActive('/login')
                         ? 'bg-gulf-stream text-white'
-                        : variant === 'hero' && location.pathname === '/' && isTransparent
-                        ? 'text-white hover:text-gulf-stream hover:bg-white/20'
                         : 'text-river-bed hover:text-gulf-stream'
                       }
                     `}
+                    style={{
+                      opacity: showNavLinks ? 1 : 0,
+                      transform: showNavLinks ? 'translateX(0)' : 'translateX(20px)',
+                      transition: `opacity 0.15s ease-out 0.04s, transform 0.15s ease-out 0.04s`
+                    }}
                   >
                     Login
                   </Link>
@@ -208,11 +247,14 @@ const Navbar = ({ variant = 'white' }) => {
                       font-heading font-bold text-sm uppercase transition-colors duration-fast px-4 py-2 rounded-lg
                       ${isActive('/signup')
                         ? 'bg-gulf-stream text-white'
-                        : variant === 'hero' && location.pathname === '/' && isTransparent
-                        ? 'text-white hover:text-gulf-stream hover:bg-white/20'
                         : 'text-river-bed hover:text-gulf-stream'
                       }
                     `}
+                    style={{
+                      opacity: showNavLinks ? 1 : 0,
+                      transform: showNavLinks ? 'translateX(0)' : 'translateX(20px)',
+                      transition: `opacity 0.15s ease-out 0s, transform 0.15s ease-out 0s`
+                    }}
                   >
                     Signup
                   </Link>
