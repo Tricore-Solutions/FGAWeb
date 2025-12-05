@@ -1114,3 +1114,128 @@ Pagination shows page numbers in the center with Previous/Next buttons on the si
 - **Container Layout**: Flexbox with `items-center justify-center` for centered alignment
 - **Text Spacing**: `gap-4` (16px) between text elements (e.g., "Page 2 of 10")
 - **Section Spacing**: `space-y-6` (24px) between different pagination variants
+
+## Outlined Heading
+
+### Purpose
+Outlined Heading is a dynamic, large-scale heading component with a decorative outlined shadow effect. It features optional scroll-linked animations that create engaging visual effects as users scroll through the page. The component is ideal for section headers that need to stand out and create visual interest.
+
+### Variants
+*What this means: Outlined Headings can animate from the left or right side of the screen. They can use different text colors (like River Bed dark gray or Gulf Stream teal) and different outline colors. The animation is directly tied to scroll position - when you scroll, the heading moves. If you stop scrolling, the heading stops moving. This creates a smooth, interactive experience.*
+
+- **Animate From Left**: Heading slides in from the left side
+- **Animate From Right**: Heading slides in from the right side
+- **Color Variants**: Customizable text and outline colors
+- **Scroll-Linked Animation**: Position directly tied to scroll progress (0-1)
+- **Static**: Can be used without animation (scrollProgress = 1)
+
+### Props
+*What this means: You provide the text to display. The offset prop controls horizontal positioning using Tailwind margin classes (like "-ml-48" to move left or "ml-48" to move right). Shadow direction controls which way the outline shadow appears (left or right). Scroll progress is a number from 0 to 1 - 0 means the heading is at its starting position (far off-screen), 1 means it's at its final position. Animate from tells it which direction to come from. Text color and stroke color let you customize the appearance.*
+
+```typescript
+{
+  text: string;                        // Heading text content
+  offset?: string;                     // Tailwind margin classes for horizontal positioning (e.g., "-ml-48 md:-ml-56")
+  shadowDirection?: 'left' | 'right'; // Direction of shadow offset (default: 'left')
+  scrollProgress?: number;             // Scroll progress value 0-1 (0 = initial position, 1 = final position, default: 1)
+  animateFrom?: 'left' | 'right';     // Direction to animate from (default: 'left')
+  textColor?: string;                 // Tailwind text color class (default: 'text-river-bed')
+  strokeColor?: string;               // Hex color for outline stroke (default: '#454f59')
+}
+```
+
+### Usage Example
+*What this means: The first example shows two headings that animate as you scroll - "Next On" slides in from the left, "The Lineup" slides in from the right. The scroll progress is calculated based on scroll position. The second example shows a static heading (no animation) that you can still customize with colors. The third example shows how to use different colors - one heading uses Gulf Stream color for both text and outline.*
+
+```jsx
+import OutlinedHeading from '@/components/OutlinedHeading';
+import { useState, useEffect, useRef } from 'react';
+
+// Scroll-linked animated headings
+function EventsSection() {
+  const sectionRef = useRef(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      
+      const section = sectionRef.current;
+      const rect = section.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      const startPoint = windowHeight;
+      const endPoint = windowHeight * 0.3;
+      const progress = Math.max(0, Math.min(1, (startPoint - rect.top) / (startPoint - endPoint)));
+      
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <section ref={sectionRef}>
+      <div className="flex flex-col items-center">
+        <OutlinedHeading 
+          text="Next On" 
+          offset="-ml-48 md:-ml-56" 
+          shadowDirection="left" 
+          scrollProgress={scrollProgress} 
+          animateFrom="left" 
+        />
+        <OutlinedHeading 
+          text="The Lineup" 
+          offset="ml-48 md:ml-56" 
+          shadowDirection="right" 
+          scrollProgress={scrollProgress} 
+          animateFrom="right" 
+          textColor="text-gulf-stream" 
+          strokeColor="#80b3b4" 
+        />
+      </div>
+    </section>
+  );
+}
+
+// Static heading (no animation)
+<OutlinedHeading 
+  text="Our Programs" 
+  offset="-ml-32 md:-ml-40" 
+  shadowDirection="left" 
+/>
+
+// Custom colors
+<OutlinedHeading 
+  text="Featured Event" 
+  offset="ml-32 md:ml-40" 
+  shadowDirection="right" 
+  textColor="text-gulf-stream" 
+  strokeColor="#80b3b4" 
+/>
+```
+
+### Visual Preview
+*What this means: Outlined Headings are very large (7xl to 8xl font size) with bold, uppercase text. They have a decorative outline shadow that appears slightly offset from the main text, creating depth. When animated, the headings start far off-screen (500px to the left or right) and smoothly slide into their final position as you scroll. The animation is directly tied to scroll position - if you scroll slowly, they move slowly. If you stop scrolling, they stop immediately. The headings use the Poppins font family and have tight line spacing for a modern, bold look.*
+
+Outlined Headings are large-scale, bold headings with a decorative outlined shadow effect. They feature smooth scroll-linked animations that create engaging visual effects. The headings use uppercase text with tight line spacing and can be customized with different colors for both text and outline.
+
+**Layout and Spacing Details:**
+- **Font Size**: `text-7xl` (4.5rem / 72px) on mobile, `md:text-8xl` (6rem / 96px) on desktop
+- **Font Weight**: `font-bold` (700 weight)
+- **Font Family**: `font-heading` (Poppins)
+- **Text Transform**: `uppercase` for all text
+- **Letter Spacing**: `tracking-sm` (small tracking)
+- **Line Height**: `leading-tight` (1.25)
+- **Outline Stroke**: 2px solid stroke using customizable color
+- **Shadow Offset**: 4px offset in the direction specified (left or right)
+- **Initial Animation Position**: 500px off-screen (left or right depending on animateFrom)
+- **Final Position**: Controlled by `offset` prop (Tailwind margin classes)
+- **Animation Range**: Smoothly transitions from initial position (scrollProgress = 0) to final position (scrollProgress = 1)
+- **Default Text Color**: River Bed (#454f59) via `text-river-bed` class
+- **Default Stroke Color**: River Bed (#454f59) via hex value
+- **Z-Index**: Main text at `z-10`, outline shadow at `z-0`
+- **Positioning**: Uses `relative` container with `absolute` positioned outline for proper layering
+- **Responsive**: Offset positioning can be different on mobile vs desktop (e.g., "-ml-48 md:-ml-56")

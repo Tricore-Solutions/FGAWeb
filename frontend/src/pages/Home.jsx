@@ -4,14 +4,17 @@ import { ArrowRight, Calendar, MapPin } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import LoadingSpinner from '../components/LoadingSpinner';
+import OutlinedHeading from '../components/OutlinedHeading';
 import { fetchEvents } from '../services/eventsService';
 
 function Home() {
   const navigate = useNavigate();
   const videoRef = useRef(null);
+  const eventsSectionRef = useRef(null);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [headingScrollProgress, setHeadingScrollProgress] = useState(0);
 
   // Force video to play on mount
   useEffect(() => {
@@ -20,6 +23,34 @@ function Home() {
         console.log('Video autoplay failed:', err);
       });
     }
+  }, []);
+
+  // Scroll-linked animation for Upcoming Events heading
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!eventsSectionRef.current) return;
+      
+      const section = eventsSectionRef.current;
+      const rect = section.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      // Calculate progress: 0 when section top enters viewport bottom, 1 when section top reaches viewport center
+      // This gives a nice range for the animation
+      const startPoint = windowHeight; // Section top at bottom of viewport
+      const endPoint = windowHeight * 0.3; // Section top at 30% from top of viewport
+      
+      // Progress calculation
+      const progress = Math.max(0, Math.min(1, (startPoint - rect.top) / (startPoint - endPoint)));
+      
+      setHeadingScrollProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial calculation
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   // Fetch events on component mount
@@ -144,7 +175,7 @@ function Home() {
       {/* About Us Preview Section */}
       <section className="w-full py-16 md:py-24 bg-white">
         <div className="max-w-5xl mx-auto px-4 md:px-8">
-          <div className="text-center">
+          <div className="text-center pt-16 md:pt-24">
             <p className="text-xl md:text-3xl font-heading font-thin text-river-bed mb-16 leading-normal">
               Future Generation Academy (FGA) is dedicated to fostering excellence in sports through 
               comprehensive training programs, state-of-the-art facilities, and a commitment to 
@@ -162,42 +193,12 @@ function Home() {
       </section>
 
       {/* Upcoming Events Section */}
-      <section className="w-full py-16 md:py-24 bg-white">
-        <div className="w-full mx-auto px-[10rem]">
+      <section ref={eventsSectionRef} className="w-full py-16 md:py-24 bg-white overflow-hidden">
+        <div className="w-full mx-auto px-12 md:px-16 lg:px-24">
           <div className="text-center mb-12">
             <div className="flex flex-col items-center mb-4">
-              <div className="relative">
-                <h2 className="text-6xl md:text-7xl font-heading font-bold text-river-bed uppercase tracking-sm -ml-32 md:-ml-40 relative z-10">
-                  Upcoming
-                </h2>
-                <h2 
-                  className="text-6xl md:text-7xl font-heading font-bold uppercase tracking-sm -ml-32 md:-ml-40 absolute top-0 left-0 z-0"
-                  style={{
-                    color: 'transparent',
-                    WebkitTextStroke: '2px #454f59',
-                    textStroke: '2px #454f59',
-                    transform: 'translate(-4px, 4px)',
-                  }}
-                >
-                  Upcoming
-                </h2>
-              </div>
-              <div className="relative">
-                <h2 className="text-6xl md:text-7xl font-heading font-bold text-river-bed uppercase tracking-sm ml-32 md:ml-40 relative z-10">
-                  Events
-                </h2>
-                <h2 
-                  className="text-6xl md:text-7xl font-heading font-bold uppercase tracking-sm ml-32 md:ml-40 absolute top-0 left-0 z-0"
-                  style={{
-                    color: 'transparent',
-                    WebkitTextStroke: '2px #454f59',
-                    textStroke: '2px #454f59',
-                    transform: 'translate(4px, 4px)',
-                  }}
-                >
-                  Events
-                </h2>
-              </div>
+              <OutlinedHeading text="Next On" offset="-ml-48 md:-ml-56" shadowDirection="left" scrollProgress={headingScrollProgress} animateFrom="left" />
+              <OutlinedHeading text="The Lineup" offset="ml-48 md:ml-56" shadowDirection="right" scrollProgress={headingScrollProgress} animateFrom="right" textColor="text-gulf-stream" strokeColor="#80b3b4" />
             </div>
             <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
               Join us for exciting events and competitions
