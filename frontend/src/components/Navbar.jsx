@@ -1,11 +1,14 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect, useContext } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { spacing } from '../styles/design-tokens/spacing';
 import colors from '../styles/design-tokens/colors';
+import AuthContext from '../context/AuthContext';
 
 const Navbar = ({ variant = 'white' }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated, logout } = useContext(AuthContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTransparent, setIsTransparent] = useState(false);
 
@@ -28,6 +31,12 @@ const Navbar = ({ variant = 'white' }) => {
 
   const closeMenu = () => {
     setIsMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    closeMenu();
+    navigate('/');
   };
 
   // Handle transparent navbar over hero section on home page
@@ -145,6 +154,70 @@ const Navbar = ({ variant = 'white' }) => {
                   </Link>
                 );
               })}
+              {/* Dashboard and Logout links when logged in */}
+              {isAuthenticated && (
+                <>
+                  <Link
+                    to="/dashboard"
+                    className={`
+                      font-heading font-bold text-sm uppercase transition-colors duration-fast px-4 py-2 rounded-lg
+                      ${isActive('/dashboard')
+                        ? 'bg-gulf-stream text-white'
+                        : variant === 'hero' && location.pathname === '/' && isTransparent
+                        ? 'text-white hover:text-gulf-stream hover:bg-white/20'
+                        : 'text-river-bed hover:text-gulf-stream'
+                      }
+                    `}
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className={`
+                      font-heading font-bold text-sm uppercase transition-colors duration-fast px-4 py-2 rounded-lg
+                      ${variant === 'hero' && location.pathname === '/' && isTransparent
+                        ? 'text-white hover:text-gulf-stream hover:bg-white/20'
+                        : 'text-river-bed hover:text-gulf-stream'
+                      }
+                    `}
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
+              {/* Login and Signup links when logged out */}
+              {!isAuthenticated && (
+                <>
+                  <Link
+                    to="/login"
+                    className={`
+                      font-heading font-bold text-sm uppercase transition-colors duration-fast px-4 py-2 rounded-lg
+                      ${isActive('/login')
+                        ? 'bg-gulf-stream text-white'
+                        : variant === 'hero' && location.pathname === '/' && isTransparent
+                        ? 'text-white hover:text-gulf-stream hover:bg-white/20'
+                        : 'text-river-bed hover:text-gulf-stream'
+                      }
+                    `}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className={`
+                      font-heading font-bold text-sm uppercase transition-colors duration-fast px-4 py-2 rounded-lg
+                      ${isActive('/signup')
+                        ? 'bg-gulf-stream text-white'
+                        : variant === 'hero' && location.pathname === '/' && isTransparent
+                        ? 'text-white hover:text-gulf-stream hover:bg-white/20'
+                        : 'text-river-bed hover:text-gulf-stream'
+                      }
+                    `}
+                  >
+                    Signup
+                  </Link>
+                </>
+              )}
             </div>
           </>
         )}
@@ -207,6 +280,88 @@ const Navbar = ({ variant = 'white' }) => {
                   </Link>
                 );
               })}
+              {/* Dashboard and Logout links when logged in */}
+              {isAuthenticated && (
+                <>
+                  <Link
+                    to="/dashboard"
+                    onClick={closeMenu}
+                    className={`
+                      font-heading font-bold text-2xl uppercase
+                      transition-all duration-300
+                      ${isActive('/dashboard')
+                        ? 'text-white'
+                        : 'text-transparent [webkit-text-stroke-width:1px] [webkit-text-stroke-color:#ffffff] hover:text-white hover:[webkit-text-stroke-width:0]'
+                      }
+                    `}
+                    style={{
+                      animationDelay: `${navLinks.length * 100}ms`,
+                      animation: isMenuOpen ? 'fadeInUp 0.5s ease-out forwards' : 'none',
+                      opacity: 0
+                    }}
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className={`
+                      font-heading font-bold text-2xl uppercase
+                      transition-all duration-300
+                      text-transparent [webkit-text-stroke-width:1px] [webkit-text-stroke-color:#ffffff] hover:text-white hover:[webkit-text-stroke-width:0]
+                    `}
+                    style={{
+                      animationDelay: `${(navLinks.length + 1) * 100}ms`,
+                      animation: isMenuOpen ? 'fadeInUp 0.5s ease-out forwards' : 'none',
+                      opacity: 0
+                    }}
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
+              {/* Login and Signup links when logged out */}
+              {!isAuthenticated && (
+                <>
+                  <Link
+                    to="/login"
+                    onClick={closeMenu}
+                    className={`
+                      font-heading font-bold text-2xl uppercase
+                      transition-all duration-300
+                      ${isActive('/login')
+                        ? 'text-white'
+                        : 'text-transparent [webkit-text-stroke-width:1px] [webkit-text-stroke-color:#ffffff] hover:text-white hover:[webkit-text-stroke-width:0]'
+                      }
+                    `}
+                    style={{
+                      animationDelay: `${navLinks.length * 100}ms`,
+                      animation: isMenuOpen ? 'fadeInUp 0.5s ease-out forwards' : 'none',
+                      opacity: 0
+                    }}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    onClick={closeMenu}
+                    className={`
+                      font-heading font-bold text-2xl uppercase
+                      transition-all duration-300
+                      ${isActive('/signup')
+                        ? 'text-white'
+                        : 'text-transparent [webkit-text-stroke-width:1px] [webkit-text-stroke-color:#ffffff] hover:text-white hover:[webkit-text-stroke-width:0]'
+                      }
+                    `}
+                    style={{
+                      animationDelay: `${(navLinks.length + 1) * 100}ms`,
+                      animation: isMenuOpen ? 'fadeInUp 0.5s ease-out forwards' : 'none',
+                      opacity: 0
+                    }}
+                  >
+                    Signup
+                  </Link>
+                </>
+              )}
             </nav>
           </div>
         </div>
