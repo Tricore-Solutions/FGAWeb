@@ -49,6 +49,67 @@ The system is designed for performance, scalability, and future expansion, such 
 /docs → PRD, DRD, TRD, Design Reference
 /docs/design-references → UI/UX reference materials (Bayer 04 inspired)
 
+---
+
+## 🛠️ Setup Instructions
+
+### Prerequisites
+- Node.js (v16 or higher)
+- MySQL Server (v8.0 or higher)
+- npm or yarn
+
+### Backend Setup
+
+1. **Install dependencies:**
+   ```bash
+   cd backend
+   npm install
+   ```
+
+2. **Set up MySQL database:**
+   - Make sure MySQL server is running
+   - Create the database:
+     ```sql
+     CREATE DATABASE fgaweb;
+     ```
+   - Run the schema file:
+     ```bash
+     mysql -u root -p fgaweb < database/schema.sql
+     ```
+     Or import it through MySQL Workbench/phpMyAdmin
+
+3. **Configure environment variables:**
+   - Copy `.env.example` to `.env`:
+     ```bash
+     cp .env.example .env
+     ```
+   - Edit `.env` with your database credentials:
+     ```
+     DB_HOST=localhost
+     DB_USER=root
+     DB_PASS=your_mysql_password
+     DB_NAME=fgaweb
+     JWT_SECRET=your_secure_random_string_here
+     PORT=5000
+     ```
+
+4. **Start the server:**
+   ```bash
+   npm run dev
+   ```
+
+### Frontend Setup
+
+1. **Install dependencies:**
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+2. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
 
 ---
 
