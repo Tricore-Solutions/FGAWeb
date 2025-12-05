@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Calendar, MapPin } from 'lucide-react';
+import { ArrowRight, Calendar, MapPin, Clock } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -20,6 +20,7 @@ function Home() {
   const [awardsReceived, setAwardsReceived] = useState(120);
   const [totalPlayersTrained, setTotalPlayersTrained] = useState(4000);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   // Force video to play on mount
   useEffect(() => {
@@ -159,6 +160,35 @@ function Home() {
       }
     };
   }, [hasAnimated]);
+
+  // Countdown timer for next match
+  useEffect(() => {
+    // Set next match date (example: 7 days from now)
+    const nextMatchDate = new Date();
+    nextMatchDate.setDate(nextMatchDate.getDate() + 7);
+    nextMatchDate.setHours(18, 30, 0, 0);
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const distance = nextMatchDate.getTime() - now;
+
+      if (distance > 0) {
+        setCountdown({
+          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((distance % (1000 * 60)) / 1000)
+        });
+      } else {
+        setCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      }
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Helper function to format date
   const formatDate = (dateString) => {
@@ -409,6 +439,107 @@ function Home() {
                   <div className="text-base md:text-lg text-gulf-stream/90 font-light">
                     Total Players Trained
                   </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Calendar Section */}
+          <section className="w-full mt-20 md:mt-32">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 md:mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 md:mb-0 uppercase">CALENDAR</h2>
+              <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
+                <span className="text-lg md:text-xl font-bold italic text-white uppercase">NEXT MATCH</span>
+                {/* Countdown Timer */}
+                <div className="flex items-center gap-2 md:gap-4">
+                  <div className="text-center">
+                    <div className="text-3xl md:text-4xl font-bold text-white">
+                      {String(countdown.days).padStart(2, '0')}
+                    </div>
+                    <div className="text-xs md:text-sm text-white uppercase">DAYS</div>
+                  </div>
+                  <span className="text-2xl md:text-3xl font-bold text-white">:</span>
+                  <div className="text-center">
+                    <div className="text-3xl md:text-4xl font-bold text-white">
+                      {String(countdown.hours).padStart(2, '0')}
+                    </div>
+                    <div className="text-xs md:text-sm text-white uppercase">HOURS</div>
+                  </div>
+                  <span className="text-2xl md:text-3xl font-bold text-white">:</span>
+                  <div className="text-center">
+                    <div className="text-3xl md:text-4xl font-bold text-white">
+                      {String(countdown.minutes).padStart(2, '0')}
+                    </div>
+                    <div className="text-xs md:text-sm text-white uppercase">MINS</div>
+                  </div>
+                  <span className="text-2xl md:text-3xl font-bold text-white">:</span>
+                  <div className="text-center">
+                    <div className="text-3xl md:text-4xl font-bold text-white">
+                      {String(countdown.seconds).padStart(2, '0')}
+                    </div>
+                    <div className="text-xs md:text-sm text-white uppercase">SECS</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Match Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+              {/* Match Card 1 */}
+              <div className="bg-white rounded-lg border border-geyser p-6 flex flex-col">
+                <div className="text-xs text-oslo-gray mb-4 uppercase">Next Match 1XBET</div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center">
+                    <span className="text-2xl">⚽</span>
+                  </div>
+                  <div className="text-3xl font-bold text-river-bed">VS</div>
+                  <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center">
+                    <span className="text-2xl">⚽</span>
+                  </div>
+                </div>
+                <div className="space-y-2 mb-6">
+                  <div className="text-sm font-bold text-river-bed">Saturday, December 06, 18:30</div>
+                  <div className="text-sm text-river-bed">La Liga, Matchday 15</div>
+                  <div className="text-sm text-river-bed">Estadio La Cartuja de Sevilla</div>
+                </div>
+              </div>
+
+              {/* Match Card 2 */}
+              <div className="bg-white rounded-lg border border-geyser p-6 flex flex-col">
+                <div className="text-xs text-oslo-gray mb-4 uppercase">UEFA CHAMPIONS LEAGUE</div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center">
+                    <span className="text-2xl">⚽</span>
+                  </div>
+                  <div className="text-3xl font-bold text-river-bed">VS</div>
+                  <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center">
+                    <span className="text-2xl">⚽</span>
+                  </div>
+                </div>
+                <div className="space-y-2 mb-6">
+                  <div className="text-sm font-bold text-river-bed">Tuesday, December 09, 21:00</div>
+                  <div className="text-sm text-river-bed">UEFA Champions League, Matchday 6</div>
+                  <div className="text-sm text-river-bed">Spotify Camp Nou</div>
+                </div>
+              </div>
+
+              {/* Match Card 3 */}
+              <div className="bg-white rounded-lg border border-geyser p-6 flex flex-col">
+                <div className="text-xs text-oslo-gray mb-4 uppercase">La Liga</div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center">
+                    <span className="text-2xl">⚽</span>
+                  </div>
+                  <div className="text-3xl font-bold text-river-bed">VS</div>
+                  <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center">
+                    <span className="text-2xl">⚽</span>
+                  </div>
+                </div>
+                <div className="space-y-2 mb-6">
+                  <div className="text-sm font-bold text-river-bed">Saturday, December 13, 18:30</div>
+                  <div className="text-sm text-river-bed">La Liga, Matchday 16</div>
+                  <div className="text-sm text-river-bed">Spotify Camp Nou</div>
                 </div>
               </div>
             </div>
