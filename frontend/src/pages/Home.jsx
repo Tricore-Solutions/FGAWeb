@@ -11,10 +11,15 @@ function Home() {
   const navigate = useNavigate();
   const videoRef = useRef(null);
   const eventsSectionRef = useRef(null);
+  const statsSectionRef = useRef(null);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [headingScrollProgress, setHeadingScrollProgress] = useState(0);
+  const [activeMembers, setActiveMembers] = useState(200);
+  const [awardsReceived, setAwardsReceived] = useState(120);
+  const [totalPlayersTrained, setTotalPlayersTrained] = useState(4000);
+  const [hasAnimated, setHasAnimated] = useState(false);
 
   // Force video to play on mount
   useEffect(() => {
@@ -94,6 +99,66 @@ function Home() {
 
     loadEvents();
   }, []);
+
+  // Statistics animation on scroll
+  useEffect(() => {
+    // Helper function to animate counting
+    const animateValue = (setter, start, end, duration) => {
+      let startTime = null;
+      const range = end - start;
+
+      const animate = (currentTime) => {
+        if (startTime === null) startTime = currentTime;
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const current = Math.floor(start + range * easeOutQuart);
+        
+        setter(current);
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          setter(end);
+        }
+      };
+
+      requestAnimationFrame(animate);
+    };
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.2 // Trigger when 20% of the section is visible
+    };
+
+    const observerCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+          // Start animations from 80% of final value for shorter animation
+          animateValue(setActiveMembers, 200, 250, 1500);
+          animateValue(setAwardsReceived, 120, 150, 1500);
+          animateValue(setTotalPlayersTrained, 4000, 5000, 1500);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    const currentRef = statsSectionRef.current;
+    
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [hasAnimated]);
 
   // Helper function to format date
   const formatDate = (dateString) => {
@@ -307,6 +372,49 @@ function Home() {
           )}
         </div>
       </section>
+
+      {/* Container for sections after upcoming events */}
+      <div className="w-full px-1.5 md:px-3 lg:px-4 pb-1.5 md:pb-3 lg:pb-4">
+        <div className="max-w-full bg-gulf-stream rounded-2xl mx-auto px-4 md:px-8 lg:px-12 py-16 md:py-24">
+          {/* Statistics Section */}
+          <section ref={statsSectionRef} className="w-full relative overflow-hidden rounded-xl bg-white">
+            {/* Statistics Content */}
+            <div className="relative z-10 px-8 md:px-12 lg:px-16 py-12 md:py-16">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+                {/* Active Members */}
+                <div className="text-center">
+                  <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-gulf-stream mb-2">
+                    {activeMembers.toLocaleString()}+
+                  </div>
+                  <div className="text-base md:text-lg text-gulf-stream/90 font-light">
+                    Active Members
+                  </div>
+                </div>
+
+                {/* Awards Received */}
+                <div className="text-center">
+                  <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-gulf-stream mb-2">
+                    {awardsReceived}+
+                  </div>
+                  <div className="text-base md:text-lg text-gulf-stream/90 font-light">
+                    Awards Received
+                  </div>
+                </div>
+
+                {/* Total Players Trained */}
+                <div className="text-center">
+                  <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-gulf-stream mb-2">
+                    {totalPlayersTrained.toLocaleString()}+
+                  </div>
+                  <div className="text-base md:text-lg text-gulf-stream/90 font-light">
+                    Total Players Trained
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
     </>
   );
 }
