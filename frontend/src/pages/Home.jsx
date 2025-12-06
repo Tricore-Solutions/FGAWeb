@@ -42,7 +42,7 @@ function Home() {
       
       // Calculate progress: 0 when section top enters viewport bottom, 1 when section top reaches viewport center
       // This gives a nice range for the animation
-      const startPoint = windowHeight; // Section top at bottom of viewport
+      const startPoint = windowHeight * 0.85; // Section top at 85% of viewport (slightly delayed start)
       const endPoint = windowHeight * 0.3; // Section top at 30% from top of viewport
       
       // Progress calculation
@@ -268,10 +268,10 @@ function Home() {
       </section>
 
       {/* About Us Preview Section */}
-      <section className="w-full py-16 md:py-24 bg-white">
-        <div className="max-w-5xl mx-auto px-4 md:px-8">
-          <div className="text-center pt-16 md:pt-24">
-            <p className="text-xl md:text-3xl font-heading font-thin text-river-bed mb-16 leading-normal">
+      <section className="w-full py-12 md:py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-4 md:px-8">
+          <div className="text-center pt-12 md:pt-20">
+            <p className="text-xl md:text-3xl font-heading font-thin text-river-bed mb-10 leading-normal">
               Future Generation Academy (FGA) is dedicated to fostering excellence in sports through 
               comprehensive training programs, state-of-the-art facilities, and a commitment to 
               developing well-rounded athletes.
