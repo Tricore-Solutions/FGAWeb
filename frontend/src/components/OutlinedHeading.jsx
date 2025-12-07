@@ -22,30 +22,49 @@ const OutlinedHeading = ({
   textColor = 'text-river-bed', 
   strokeColor = '#454f59' 
 }) => {
-  const shadowTransform = shadowDirection === 'left' ? 'translate(-4px, 4px)' : 'translate(4px, 4px)';
+  // Base shadow transform - desktop
+  const baseShadowTransform = shadowDirection === 'left' ? 'translate(-4px, 4px)' : 'translate(4px, 4px)';
+  // Responsive shadow transform - mobile (adjusted: left moves right, right moves left, and moved up)
+  const responsiveShadowTransform = shadowDirection === 'left' ? 'translate(-2px, 2px)' : 'translate(2px, 2px)';
   
   // Calculate position based on scroll progress
   // Start very far off-screen (e.g., -500px for left, +500px for right)
   const initialOffset = animateFrom === 'left' ? -500 : 500;
   const currentTranslate = initialOffset * (1 - scrollProgress);
   
+  // Generate unique ID for this instance
+  const shadowId = `shadow-${shadowDirection}-${Math.random().toString(36).substr(2, 9)}`;
+  
   return (
-    <div className="relative" style={{ transform: `translateX(${currentTranslate}px)` }}>
-      <h2 className={`text-5xl md:text-8xl font-heading font-bold ${textColor} uppercase tracking-sm leading-tight ${offset} relative z-10`}>
-        {text}
-      </h2>
-      <h2 
-        className={`text-5xl md:text-8xl font-heading font-bold uppercase tracking-sm leading-tight ${offset} absolute top-0 left-0 z-0`}
-        style={{
-          color: 'transparent',
-          WebkitTextStroke: `2px ${strokeColor}`,
-          textStroke: `2px ${strokeColor}`,
-          transform: shadowTransform,
-        }}
-      >
-        {text}
-      </h2>
-    </div>
+    <>
+      <style>{`
+        #${shadowId} {
+          transform: ${responsiveShadowTransform};
+        }
+        @media (min-width: 768px) {
+          #${shadowId} {
+            transform: ${baseShadowTransform};
+          }
+        }
+      `}</style>
+      <div className="relative" style={{ transform: `translate3d(${currentTranslate}px, 0, 0)`, willChange: 'transform' }}>
+        <h2 className={`text-5xl md:text-8xl font-heading font-bold ${textColor} uppercase tracking-sm leading-tight ${offset} relative z-10`} style={{ willChange: 'transform' }}>
+          {text}
+        </h2>
+        <h2 
+          id={shadowId}
+          className={`text-5xl md:text-8xl font-heading font-bold uppercase tracking-sm leading-tight ${offset} absolute top-0 left-0 z-0`}
+          style={{
+            color: 'transparent',
+            WebkitTextStroke: `2px ${strokeColor}`,
+            textStroke: `2px ${strokeColor}`,
+            willChange: 'transform',
+          }}
+        >
+          {text}
+        </h2>
+      </div>
+    </>
   );
 };
 

@@ -22,33 +22,52 @@ function Home() {
   const [hasAnimated, setHasAnimated] = useState(false);
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
-  // Force video to play on mount
+  // Detect mobile device
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
+
+  // Force video to play on mount (with mobile optimizations)
   useEffect(() => {
     if (videoRef.current) {
+      // Optimize video for mobile
+      if (isMobile) {
+        videoRef.current.setAttribute('playsinline', 'true');
+        videoRef.current.setAttribute('preload', 'metadata');
+      }
+      
       videoRef.current.play().catch(err => {
         console.log('Video autoplay failed:', err);
       });
     }
-  }, []);
+  }, [isMobile]);
 
-  // Scroll-linked animation for Upcoming Events heading
+  // Scroll-linked animation for Upcoming Events heading (optimized with requestAnimationFrame)
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
       if (!eventsSectionRef.current) return;
       
-      const section = eventsSectionRef.current;
-      const rect = section.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      
-      // Calculate progress: 0 when section top enters viewport bottom, 1 when section top reaches viewport center
-      // This gives a nice range for the animation
-      const startPoint = windowHeight * 0.85; // Section top at 85% of viewport (slightly delayed start)
-      const endPoint = windowHeight * 0.3; // Section top at 30% from top of viewport
-      
-      // Progress calculation
-      const progress = Math.max(0, Math.min(1, (startPoint - rect.top) / (startPoint - endPoint)));
-      
-      setHeadingScrollProgress(progress);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const section = eventsSectionRef.current;
+          if (!section) return;
+          
+          const rect = section.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          
+          // Calculate progress: 0 when section top enters viewport bottom, 1 when section top reaches viewport center
+          const startPoint = windowHeight * 0.85;
+          const endPoint = windowHeight * 0.3;
+          
+          // Progress calculation
+          const progress = Math.max(0, Math.min(1, (startPoint - rect.top) / (startPoint - endPoint)));
+          
+          setHeadingScrollProgress(progress);
+          ticking = false;
+        });
+        
+        ticking = true;
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -238,7 +257,7 @@ function Home() {
           loop
           muted
           playsInline
-          preload="auto"
+          preload={isMobile ? "metadata" : "auto"}
           style={{
             position: 'absolute',
             top: 0,
@@ -246,7 +265,9 @@ function Home() {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            zIndex: 0
+            zIndex: 0,
+            willChange: 'auto',
+            transform: 'translateZ(0)', // Force GPU acceleration
           }}
           onError={(e) => console.error('Video failed to load:', e)}
           onLoadedData={() => console.log('Video loaded successfully')}
@@ -268,32 +289,32 @@ function Home() {
       </section>
 
       {/* About Us Preview Section */}
-      <section className="w-full py-12 md:py-20 bg-white">
+      <section className="w-full py-8 md:py-20 bg-white">
         <div className="max-w-6xl mx-auto px-4 md:px-8">
-          <div className="text-center pt-12 md:pt-20">
-            <p className="text-xl md:text-3xl font-heading font-thin text-river-bed mb-10 leading-normal">
+          <div className="text-center pt-8 md:pt-20">
+            <p className="text-lg md:text-3xl font-heading font-thin text-river-bed mb-10 leading-normal">
               Future Generation Academy (FGA) is dedicated to fostering excellence in sports through 
               comprehensive training programs, state-of-the-art facilities, and a commitment to 
               developing well-rounded athletes.
             </p>
             <button
               onClick={() => navigate('/about')}
-              className="px-6 py-6 rounded-full font-bold transition-all duration-fast cursor-pointer bg-transparent border-3 border-gulf-stream hover:bg-gulf-stream text-gulf-stream hover:text-white flex items-center gap-2 mx-auto"
+              className="px-4 py-4 md:px-6 md:py-6 rounded-full text-sm md:text-base font-bold transition-all duration-fast cursor-pointer bg-transparent border-3 border-gulf-stream hover:bg-gulf-stream text-gulf-stream hover:text-white flex items-center gap-2 mx-auto"
             >
               More About Us
-              <ArrowRight size={20} />
+              <ArrowRight size={20} className="w-4 h-4 md:w-5 md:h-5" />
             </button>
           </div>
         </div>
       </section>
 
       {/* Upcoming Events Section */}
-      <section ref={eventsSectionRef} className="w-full py-16 md:py-24 bg-white overflow-hidden">
+      <section ref={eventsSectionRef} className="w-full py-16 md:py-24 bg-white overflow-hidden" style={{ willChange: 'auto' }}>
         <div className="w-full mx-auto px-12 md:px-16 lg:px-24">
           <div className="text-center mb-12">
-            <div className="flex flex-col items-center mb-4">
-              <OutlinedHeading text="Next On" offset="-ml-20 md:-ml-24" shadowDirection="left" scrollProgress={headingScrollProgress} animateFrom="left" />
-              <OutlinedHeading text="The Lineup" offset="ml-20 md:ml-24" shadowDirection="right" scrollProgress={headingScrollProgress} animateFrom="right" textColor="text-gulf-stream" strokeColor="#80b3b4" />
+            <div className="flex flex-col items-center mb-4" style={{ willChange: 'transform' }}>
+              <OutlinedHeading text="Next On" offset="-ml-20 md:-ml-56" shadowDirection="left" scrollProgress={headingScrollProgress} animateFrom="left" />
+              <OutlinedHeading text="The Lineup" offset="ml-20 md:ml-56" shadowDirection="right" scrollProgress={headingScrollProgress} animateFrom="right" textColor="text-gulf-stream" strokeColor="#80b3b4" />
             </div>
             <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
               Join us for exciting events and competitions

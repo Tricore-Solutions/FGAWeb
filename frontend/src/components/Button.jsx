@@ -2,8 +2,8 @@ import React from 'react';
 
 const Button = ({ text, onClick, variant = 'primary', disabled = false, className = '', type = 'button' }) => {
   // Base styles common to all variants
-  // Using lg spacing token (1.5rem / 24px) for padding
-  const baseStyles = 'px-6 py-6 rounded-full font-medium transition-all duration-fast';
+  // Using lg spacing token (1.5rem / 24px) for padding on desktop, smaller on mobile
+  const baseStyles = 'px-4 py-4 md:px-6 md:py-6 rounded-full text-sm md:text-base font-medium transition-all duration-fast';
   
   // Cursor and disabled styles
   const cursorStyles = disabled 
