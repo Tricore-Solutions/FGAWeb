@@ -11,9 +11,11 @@ const Navbar = ({ variant = 'white', onTransparencyChange }) => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useContext(AuthContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isTransparent, setIsTransparent] = useState(false);
-  const [showNavLinks, setShowNavLinks] = useState(false);
-  const [hasAnimated, setHasAnimated] = useState(false);
+  // Initialize transparent state correctly for home page hero variant
+  const isHomeHeroVariant = variant === 'hero' && location.pathname === '/';
+  const [isTransparent, setIsTransparent] = useState(isHomeHeroVariant && window.scrollY < 200);
+  const [showNavLinks, setShowNavLinks] = useState(!isHomeHeroVariant);
+  const [hasAnimated, setHasAnimated] = useState(!isHomeHeroVariant);
   const [mouseY, setMouseY] = useState(0);
   const [hoveredLink, setHoveredLink] = useState(null);
 
@@ -42,6 +44,14 @@ const Navbar = ({ variant = 'white', onTransparencyChange }) => {
     closeMenu();
     navigate('/');
   };
+
+  // Notify parent immediately on mount about initial transparency state
+  useEffect(() => {
+    if (onTransparencyChange && isHomeHeroVariant) {
+      const initialTransparent = window.scrollY < 200;
+      onTransparencyChange(initialTransparent);
+    }
+  }, []); // Run only once on mount
 
   // Handle transparent navbar over hero section on home page
   useEffect(() => {
@@ -83,10 +93,18 @@ const Navbar = ({ variant = 'white', onTransparencyChange }) => {
       }
     };
 
-    // Set initial state based on current scroll position
+    // Set initial state based on current scroll position immediately
+    // This ensures the navbar is transparent from the start on home page
+    const initialTransparent = window.scrollY < heroScrollThreshold;
+    setIsTransparent(initialTransparent);
+    if (onTransparencyChange) {
+      onTransparencyChange(initialTransparent);
+    }
+
+    // Also call handleScroll to ensure everything is in sync
     handleScroll();
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -111,11 +129,13 @@ const Navbar = ({ variant = 'white', onTransparencyChange }) => {
 
     // On the home hero, make the navbar fixed so it overlays the hero background
     if (isHeroOnHome) {
+      // Use immediate background on initial render to prevent flash
       const baseClasses = isTransparent 
-        ? 'fixed top-6 left-0 right-0 z-50 transition-colors duration-300'
+        ? 'fixed top-6 left-0 right-0 z-50'
         : 'fixed top-12 left-0 right-0 z-50 transition-colors duration-300';
 
       if (isTransparent) {
+        // Start transparent immediately, no transition on initial render
         return `${baseClasses} bg-transparent`;
       }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import colors from './styles/design-tokens/colors';
 import Button from './components/Button';
@@ -8,6 +8,7 @@ import Footer from './components/Footer';
 import Card from './components/Card';
 import Input from './components/Input';
 import LoadingSpinner from './components/LoadingSpinner';
+import Preloader from './components/Preloader';
 import CurvedLoop from './component/CurvedLoop';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -468,7 +469,98 @@ function Contact() {
 
 function App() {
   const location = useLocation();
-  const [isNavbarTransparent, setIsNavbarTransparent] = useState(false);
+  // Initialize navbar transparency based on current route
+  // On home page, navbar should start transparent (over hero video)
+  const isHomePage = location.pathname === '/';
+  const [isNavbarTransparent, setIsNavbarTransparent] = useState(isHomePage);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isFadingOut, setIsFadingOut] = useState(false);
+  const [isRouteLoading, setIsRouteLoading] = useState(false);
+  const [isRouteFadingOut, setIsRouteFadingOut] = useState(false);
+  const hasLoadedRef = useRef(false);
+  const prevLocationRef = useRef(location.pathname);
+
+  // Handle initial page load - only show on first load and page refresh
+  useEffect(() => {
+    // Skip if already loaded (prevents showing on route changes)
+    if (hasLoadedRef.current) return;
+
+    let fadeTimer;
+    let hideTimer;
+
+    const startFadeOut = () => {
+      // Start fade-out animation
+      setIsFadingOut(true);
+      
+      // Hide preloader after fade-out completes (500ms transition)
+      hideTimer = setTimeout(() => {
+        setIsInitialLoad(false);
+        hasLoadedRef.current = true;
+      }, 500);
+    };
+
+    // Check if page is already loaded
+    if (document.readyState === 'complete') {
+      // Give preloader more time to display (1000ms) before starting fade-out
+      fadeTimer = setTimeout(() => {
+        startFadeOut();
+      }, 1000);
+    } else {
+      // Wait for page to fully load
+      const handleLoad = () => {
+        // Give preloader more time to display (1000ms) before starting fade-out
+        fadeTimer = setTimeout(() => {
+          startFadeOut();
+        }, 1000);
+      };
+
+      window.addEventListener('load', handleLoad, { once: true });
+
+      return () => {
+        if (fadeTimer) clearTimeout(fadeTimer);
+        if (hideTimer) clearTimeout(hideTimer);
+        window.removeEventListener('load', handleLoad);
+      };
+    }
+
+    return () => {
+      if (fadeTimer) clearTimeout(fadeTimer);
+      if (hideTimer) clearTimeout(hideTimer);
+    };
+  }, []);
+
+  // Handle route transitions and redirects
+  useEffect(() => {
+    // Skip if initial load hasn't completed yet
+    if (!hasLoadedRef.current) return;
+
+    // Check if route actually changed
+    if (prevLocationRef.current !== location.pathname) {
+      // Show preloader for route transition
+      setIsRouteLoading(true);
+      setIsRouteFadingOut(false);
+      prevLocationRef.current = location.pathname;
+
+      let fadeTimer;
+      let hideTimer;
+
+      // Brief delay before starting fade-out (allows route to start loading)
+      fadeTimer = setTimeout(() => {
+        setIsRouteFadingOut(true);
+        
+        // Hide preloader after fade-out completes
+        hideTimer = setTimeout(() => {
+          setIsRouteLoading(false);
+          setIsRouteFadingOut(false);
+        }, 500); // Match fade-out duration
+      }, 300); // Short delay to show preloader
+
+      return () => {
+        if (fadeTimer) clearTimeout(fadeTimer);
+        if (hideTimer) clearTimeout(hideTimer);
+      };
+    }
+  }, [location.pathname]);
 
   // Determine if TopBar should be shown
   // TopBar should be hidden when navbar is transparent (hamburger mode on hero section)
@@ -479,6 +571,16 @@ function App() {
   const isLoginPage = location.pathname === '/login';
   const isSignupPage = location.pathname === '/signup';
   const isAuthPage = isLoginPage || isSignupPage;
+
+  // Show preloader during initial load (with fade-out animation)
+  if (isInitialLoad) {
+    return <Preloader isFadingOut={isFadingOut} />;
+  }
+
+  // Show preloader during route transitions/redirects
+  if (isRouteLoading) {
+    return <Preloader isFadingOut={isRouteFadingOut} />;
+  }
 
   return (
     <div className="min-h-screen w-full bg-white flex flex-col">
