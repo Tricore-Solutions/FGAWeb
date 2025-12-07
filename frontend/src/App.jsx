@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import colors from './styles/design-tokens/colors';
 import Button from './components/Button';
+import TopBar from './components/TopBar';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Card from './components/Card';
@@ -10,6 +11,12 @@ import LoadingSpinner from './components/LoadingSpinner';
 import Home from './pages/Home';
 import About from './pages/About';
 import Events from './pages/Events';
+import EventDetail from './pages/EventDetail';
+import Programs from './pages/Programs';
+import Signup from './pages/Signup';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 import EventDetail from './pages/EventDetail';
 import Programs from './pages/Programs';
 import Signup from './pages/Signup';
@@ -116,6 +123,133 @@ function Camps() {
   return (
     <div className="min-h-screen bg-white">
       <section className="py-16 md:py-24">
+        <div className="w-full mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Training Camps
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Join our specialized training camps designed to accelerate your development.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {camps.map((camp, index) => (
+              <Card key={index} title={camp.title} description={camp.description}>
+                <div className="space-y-2">
+                  <div className="text-sm text-oslo-gray">
+                    <span className="font-medium">📅</span> {camp.date}
+                  </div>
+                  <div className="text-sm text-oslo-gray">
+                    <span className="font-medium">⏱️</span> {camp.duration}
+                  </div>
+                  <p className="text-sm font-medium" style={{ color: colors['gulf-stream'] }}>
+                    {camp.spots}
+                  </p>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function BranchesCamps() {
+  const branches = [
+    {
+      name: 'Downtown Branch',
+      address: '123 Main Street, City Center',
+      programs: ['Basketball', 'Soccer', 'Tennis'],
+      image: colors['gulf-stream']
+    },
+    {
+      name: 'North Branch',
+      address: '456 North Avenue, North District',
+      programs: ['Swimming', 'Volleyball', 'Track & Field'],
+      image: colors['river-bed']
+    },
+    {
+      name: 'South Branch',
+      address: '789 South Boulevard, South Quarter',
+      programs: ['Basketball', 'Soccer', 'Baseball'],
+      image: colors['gulf-stream']
+    }
+  ];
+
+  const camps = [
+    {
+      title: 'Summer Intensive Camp',
+      date: 'July 15-20, 2024',
+      duration: '6 Days',
+      description: 'An intensive training camp focusing on advanced techniques and team strategies.',
+      spots: 'Limited spots available'
+    },
+    {
+      title: 'Youth Development Camp',
+      date: 'August 1-5, 2024',
+      duration: '5 Days',
+      description: 'Perfect for young athletes looking to develop fundamental skills and build confidence.',
+      spots: 'Open for registration'
+    },
+    {
+      title: 'Elite Performance Camp',
+      date: 'August 15-22, 2024',
+      duration: '8 Days',
+      description: 'Advanced camp for experienced athletes seeking to reach the next level.',
+      spots: 'By invitation only'
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Branches Section */}
+      <section className="py-16 md:py-24">
+        <div className="w-full mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+              Our Branches
+            </h1>
+            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
+              Visit one of our state-of-the-art facilities located across the region.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {branches.map((branch, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                style={{ border: `1px solid ${colors['geyser']}` }}
+              >
+                <div 
+                  className="h-48"
+                  style={{ backgroundColor: branch.image, opacity: 0.8 }}
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-heading font-semibold text-river-bed mb-2">
+                    {branch.name}
+                  </h3>
+                  <p className="text-oslo-gray mb-4">{branch.address}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {branch.programs.map((program, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 rounded-full text-sm"
+                        style={{ backgroundColor: colors['geyser'], color: colors['river-bed'] }}
+                      >
+                        {program}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Camps Section */}
+      <section className="py-16 md:py-24 bg-white">
         <div className="w-full mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
@@ -333,16 +467,31 @@ function Contact() {
 
 
 
+
+
+
+
 function App() {
+  const location = useLocation();
+  const [isNavbarTransparent, setIsNavbarTransparent] = useState(false);
+
+  // Determine if TopBar should be shown
+  // TopBar should be hidden when navbar is transparent (hamburger mode on hero section)
+  // TopBar should be shown when navbar has white background with nav links
+  const shouldShowTopBar = !isNavbarTransparent;
+
   return (
     <div className="min-h-screen w-full bg-white flex flex-col">
-      <Navbar variant="hero" />
+      <TopBar show={shouldShowTopBar} />
+      <Navbar 
+        variant="hero" 
+        onTransparencyChange={setIsNavbarTransparent}
+      />
       <main className="flex-1 w-full">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/branches" element={<Branches />} />
-          <Route path="/camps" element={<Camps />} />
+          <Route path="/branches-camps" element={<BranchesCamps />} />
           <Route path="/tournaments" element={<Tournaments />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/programs" element={<Programs />} />
@@ -350,6 +499,14 @@ function App() {
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
           <Route 
             path="/dashboard" 
             element={

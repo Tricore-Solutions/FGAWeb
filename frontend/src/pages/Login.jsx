@@ -4,11 +4,12 @@ import Button from '../components/Button';
 import Card from '../components/Card';
 import Input from '../components/Input';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { login } from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { login, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -16,6 +17,14 @@ function Login() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      const redirectTo = new URLSearchParams(location.search).get('redirect') || '/dashboard';
+      navigate(redirectTo, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location.search]);
 
   // Check for success message from signup redirect
   useEffect(() => {
@@ -100,26 +109,11 @@ function Login() {
     setSuccessMessage('');
 
     try {
-      const response = await login(
-        formData.email.trim(),
-        formData.password
-      );
-
-      // Store token in localStorage
-      if (response.token) {
-        localStorage.setItem('token', response.token);
-        
-        // Store user info if provided
-        if (response.user) {
-          localStorage.setItem('user', JSON.stringify(response.user));
-        }
-
-        // Redirect based on redirect parameter or default to dashboard
-        const redirectTo = new URLSearchParams(location.search).get('redirect') || '/dashboard';
-        navigate(redirectTo);
-      } else {
-        setErrors({ submit: 'Login successful but no token received' });
-      }
+      await login(formData.email.trim(), formData.password);
+      
+      // Redirect to dashboard (or the redirect parameter)
+      const redirectTo = new URLSearchParams(location.search).get('redirect') || '/dashboard';
+      navigate(redirectTo, { replace: true });
     } catch (error) {
       console.error('Login error:', error);
       
