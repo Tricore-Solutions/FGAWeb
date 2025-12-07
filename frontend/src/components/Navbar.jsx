@@ -4,6 +4,7 @@ import { Menu, X, User } from 'lucide-react';
 import { spacing } from '../styles/design-tokens/spacing';
 import colors from '../styles/design-tokens/colors';
 import AuthContext from '../context/AuthContext';
+import DarkVeil from '../component/DarkVeil';
 
 const Navbar = ({ variant = 'white', onTransparencyChange }) => {
   const location = useLocation();
@@ -330,12 +331,16 @@ const Navbar = ({ variant = 'white', onTransparencyChange }) => {
       
       {/* Slide-in Menu */}
       <div 
-        className={`fixed top-0 left-0 h-full w-full z-50 transition-transform duration-300 ease-out ${
+        className={`fixed top-0 left-0 z-50 transition-transform duration-300 ease-out ${
           isMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         style={{ 
           backgroundColor: '#0a0e14',
-          backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(128, 179, 180, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(128, 179, 180, 0.1) 0%, transparent 50%)'
+          width: '100vw',
+          height: '100vh',
+          overflow: 'hidden',
+          margin: 0,
+          padding: 0
         }}
         onClick={(e) => e.stopPropagation()}
         onMouseMove={(e) => {
@@ -346,7 +351,13 @@ const Navbar = ({ variant = 'white', onTransparencyChange }) => {
         }}
         onMouseLeave={() => setMouseY(0)}
       >
-        <div className="flex h-full gap-20">
+        {/* DarkVeil Background */}
+        <div style={{ width: '100vw', height: '100vh', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, overflow: 'hidden' }}>
+          <DarkVeil />
+        </div>
+        
+        {/* Content */}
+        <div className="flex h-full gap-20 relative z-10">
           {/* Left Section - Images Grid (wider) - Hidden on mobile */}
           <div className="hidden md:flex w-3/5 flex-col p-8 md:p-12">
             {/* Image Containers - Separate containers for independent positioning */}

@@ -106,7 +106,26 @@ The system is designed for performance, scalability, and future expansion, such 
    npm install
    ```
 
-2. **Start the development server:**
+2. **Install ReactBits components:**
+   After running `npm install`, you need to install ReactBits components using jsrepo:
+   ```bash
+   cd frontend
+
+   # Install CurvedLoop component
+   npx jsrepo@latest add https://reactbits.dev/r/CurvedLoop-JS-CSS
+
+   # Install DarkVeil component  
+   npx jsrepo@latest add https://reactbits.dev/r/DarkVeil-JS-CSS
+   ```
+   
+   **Note:** The TextHighlighter component is custom-built and already included in the repository - no installation needed.
+   
+   **Component Locations:**
+   - CurvedLoop: `frontend/src/component/CurvedLoop.jsx`
+   - DarkVeil: `frontend/src/component/DarkVeil.jsx`
+   - TextHighlighter: `frontend/src/component/TextHighlighter.jsx`
+
+3. **Start the development server:**
    ```bash
    npm run dev
    ```

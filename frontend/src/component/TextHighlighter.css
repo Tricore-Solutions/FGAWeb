@@ -1,0 +1,79 @@
+.text-highlighter-container {
+  position: relative;
+  display: inline;
+  overflow: hidden;
+  padding: 0.15em 0.3em;
+  margin: -0.15em -0.3em;
+}
+
+.text-highlighter-text {
+  position: relative;
+  z-index: 2;
+  display: inline;
+  background-color: transparent;
+}
+
+.text-highlighter-highlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  z-index: 1;
+  transition: width var(--highlight-duration, 1000ms) var(--highlight-easing, ease-out);
+  background-color: var(--highlight-color, #80b3b4);
+  opacity: 0.3;
+  pointer-events: none;
+  border-radius: 0.5em;
+}
+
+/* Left to right (default) */
+.text-highlighter-container.highlight-left .text-highlighter-highlight {
+  left: 0;
+  right: auto;
+}
+
+.text-highlighter-container.highlight-left.text-highlighter-active .text-highlighter-highlight,
+.text-highlighter-container.highlight-left.text-highlighter-hover:hover .text-highlighter-highlight {
+  width: 100%;
+}
+
+/* Right to left */
+.text-highlighter-container.highlight-right .text-highlighter-highlight {
+  left: auto;
+  right: 0;
+}
+
+.text-highlighter-container.highlight-right.text-highlighter-active .text-highlighter-highlight,
+.text-highlighter-container.highlight-right.text-highlighter-hover:hover .text-highlighter-highlight {
+  width: 100%;
+}
+
+/* Top to bottom */
+.text-highlighter-container.highlight-top .text-highlighter-highlight {
+  width: 100%;
+  height: 0;
+  top: 0;
+  bottom: auto;
+  transition: height var(--highlight-duration, 1000ms) var(--highlight-easing, ease-out);
+}
+
+.text-highlighter-container.highlight-top.text-highlighter-active .text-highlighter-highlight,
+.text-highlighter-container.highlight-top.text-highlighter-hover:hover .text-highlighter-highlight {
+  height: 100%;
+}
+
+/* Bottom to top */
+.text-highlighter-container.highlight-bottom .text-highlighter-highlight {
+  width: 100%;
+  height: 0;
+  top: auto;
+  bottom: 0;
+  transition: height var(--highlight-duration, 1000ms) var(--highlight-easing, ease-out);
+}
+
+.text-highlighter-container.highlight-bottom.text-highlighter-active .text-highlighter-highlight,
+.text-highlighter-container.highlight-bottom.text-highlighter-hover:hover .text-highlighter-highlight {
+  height: 100%;
+}
+

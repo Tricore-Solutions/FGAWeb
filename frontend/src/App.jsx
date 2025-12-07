@@ -8,6 +8,7 @@ import Footer from './components/Footer';
 import Card from './components/Card';
 import Input from './components/Input';
 import LoadingSpinner from './components/LoadingSpinner';
+import CurvedLoop from './component/CurvedLoop';
 import Home from './pages/Home';
 import About from './pages/About';
 import Events from './pages/Events';
@@ -511,6 +512,16 @@ function App() {
           />
         </Routes>
       </main>
+      <div className="w-full mt-8 md:mt-16">
+        <CurvedLoop 
+          marqueeText="Building Skills ⚽︎ Building Character ⚽︎ Building Futures ⚽︎"
+          speed={1}
+          curveAmount={0}
+          direction="right"
+          interactive={true}
+          className="w-full"
+        />
+      </div>
       <Footer />
     </div>
   );

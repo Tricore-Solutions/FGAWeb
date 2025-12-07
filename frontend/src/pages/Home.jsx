@@ -5,6 +5,8 @@ import Button from '../components/Button';
 import Card from '../components/Card';
 import LoadingSpinner from '../components/LoadingSpinner';
 import OutlinedHeading from '../components/OutlinedHeading';
+import TextHighlighter from '../component/TextHighlighter';
+import colors from '../styles/design-tokens/colors';
 import { fetchEvents } from '../services/eventsService';
 
 function Home() {
@@ -293,7 +295,17 @@ function Home() {
         <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="text-center pt-8 md:pt-20">
             <p className="text-lg md:text-3xl font-heading font-thin text-river-bed mb-10 leading-normal">
-              Future Generation Academy (FGA) is dedicated to fostering excellence in sports through 
+              <TextHighlighter
+                trigger="inView"
+                direction="left"
+                color={colors['gulf-stream']}
+                duration={2000}
+                threshold={0.5}
+                rootMargin="-50px"
+              >
+                Future Generation Academy (FGA)
+              </TextHighlighter>
+              {' '}is dedicated to fostering excellence in sports through 
               comprehensive training programs, state-of-the-art facilities, and a commitment to 
               developing well-rounded athletes.
             </p>
