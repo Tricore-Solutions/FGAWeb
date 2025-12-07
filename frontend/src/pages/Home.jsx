@@ -309,13 +309,13 @@ function Home() {
               comprehensive training programs, state-of-the-art facilities, and a commitment to 
               developing well-rounded athletes.
             </p>
-            <button
+            <Button
+              text="More About Us"
+              variant="slide-arrow"
+              primaryColor="#80b3b4"
               onClick={() => navigate('/about')}
-              className="px-4 py-4 md:px-6 md:py-6 rounded-full text-sm md:text-base font-bold transition-all duration-fast cursor-pointer bg-transparent border-3 border-gulf-stream hover:bg-gulf-stream text-gulf-stream hover:text-white flex items-center gap-2 mx-auto"
-            >
-              More About Us
-              <ArrowRight size={20} className="w-4 h-4 md:w-5 md:h-5" />
-            </button>
+              className="mx-auto"
+            />
           </div>
         </div>
       </section>
@@ -392,7 +392,7 @@ function Home() {
                       </div>
                       <Button
                         text="Learn More"
-                        variant="primary"
+                        variant="ripple"
                         onClick={() => navigate(`/events/${featuredEvent.id}`)}
                       />
                     </div>
@@ -459,7 +459,7 @@ function Home() {
                       </div>
                       <Button
                         text="Learn More"
-                        variant="primary"
+                        variant="ripple"
                         onClick={() => navigate(`/events/${featuredEvent.id}`)}
                       />
                     </div>
@@ -489,7 +489,7 @@ function Home() {
                           </div>
                           <Button
                             text="Learn More"
-                            variant="primary"
+                            variant="ripple"
                             onClick={() => navigate(`/events/${event.id}`)}
                           />
                         </div>
@@ -522,7 +522,7 @@ function Home() {
                           </div>
                           <Button
                             text="Learn More"
-                            variant="primary"
+                            variant="ripple"
                             onClick={() => navigate(`/events/${event.id}`)}
                           />
                         </div>

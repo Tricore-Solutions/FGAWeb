@@ -176,156 +176,176 @@ function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center py-16 md:py-24">
-      <div className="max-w-md w-full px-4 md:px-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
-            Sign Up
-          </h1>
-          <p className="text-lg text-oslo-gray">
-            Create a new account to get started
-          </p>
+    <div className="min-h-screen bg-white flex items-center">
+      <div className="w-full flex flex-col md:flex-row">
+        {/* Left Side - Football GIF */}
+        <div className="w-full md:w-1/2 flex items-center justify-center p-8 md:p-12">
+          <img 
+            src="/videos/football-gif.gif" 
+            alt="Football animation" 
+            className="max-w-full h-auto max-h-[80vh] object-contain"
+          />
         </div>
 
-        <Card>
-          {success ? (
-            <div className="text-center py-8">
-              <div className="mb-4">
-                <svg 
-                  className="w-16 h-16 mx-auto text-green-500" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-heading font-bold text-river-bed mb-2">
-                Registration Successful!
-              </h2>
-              <p className="text-oslo-gray mb-4">
-                Redirecting to login page...
+        {/* Right Side - Signup Form */}
+        <div className="w-full md:w-1/2 flex items-center justify-center p-8 md:p-12">
+          <div className="max-w-xl w-full">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
+                Sign Up
+              </h1>
+              <p className="text-lg text-oslo-gray">
+                Create a new account to get started
               </p>
-              <LoadingSpinner size="sm" message="Redirecting..." />
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* First Name */}
-              <div>
-                <label htmlFor="first_name" className="block text-sm font-medium text-river-bed mb-2">
-                  First Name <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  type="text"
-                  id="first_name"
-                  name="first_name"
-                  placeholder="Enter your first name"
-                  value={formData.first_name}
-                  onChange={handleChange}
-                  error={errors.first_name}
-                />
-              </div>
 
-              {/* Last Name */}
-              <div>
-                <label htmlFor="last_name" className="block text-sm font-medium text-river-bed mb-2">
-                  Last Name <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  type="text"
-                  id="last_name"
-                  name="last_name"
-                  placeholder="Enter your last name"
-                  value={formData.last_name}
-                  onChange={handleChange}
-                  error={errors.last_name}
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-river-bed mb-2">
-                  Email Address <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="Enter your email address"
-                  value={formData.email}
-                  onChange={handleChange}
-                  error={errors.email}
-                />
-              </div>
-
-              {/* Password */}
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-river-bed mb-2">
-                  Password <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Enter your password (min. 6 characters)"
-                  value={formData.password}
-                  onChange={handleChange}
-                  error={errors.password}
-                />
-              </div>
-
-              {/* Confirm Password */}
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-river-bed mb-2">
-                  Confirm Password <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  placeholder="Confirm your password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  error={errors.confirmPassword}
-                />
-              </div>
-
-              {/* Submit Error */}
-              {errors.submit && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <p className="text-sm text-red-600">{errors.submit}</p>
+            <Card>
+              {success ? (
+                <div className="text-center py-8">
+                  <div className="mb-4">
+                    <svg 
+                      className="w-16 h-16 mx-auto text-green-500" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
+                      />
+                    </svg>
+                  </div>
+                  <h2 className="text-2xl font-heading font-bold text-river-bed mb-2">
+                    Registration Successful!
+                  </h2>
+                  <p className="text-oslo-gray mb-4">
+                    Redirecting to login page...
+                  </p>
+                  <LoadingSpinner size="sm" message="Redirecting..." />
                 </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* First Name and Last Name */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* First Name */}
+                    <div>
+                      <label htmlFor="first_name" className="block text-sm font-medium text-river-bed mb-2">
+                        First Name <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        type="text"
+                        id="first_name"
+                        name="first_name"
+                        placeholder="Enter your first name"
+                        value={formData.first_name}
+                        onChange={handleChange}
+                        error={errors.first_name}
+                      />
+                    </div>
+
+                    {/* Last Name */}
+                    <div>
+                      <label htmlFor="last_name" className="block text-sm font-medium text-river-bed mb-2">
+                        Last Name <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        type="text"
+                        id="last_name"
+                        name="last_name"
+                        placeholder="Enter your last name"
+                        value={formData.last_name}
+                        onChange={handleChange}
+                        error={errors.last_name}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-river-bed mb-2">
+                      Email Address <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      type="email"
+                      id="email"
+                      name="email"
+                      placeholder="Enter your email address"
+                      value={formData.email}
+                      onChange={handleChange}
+                      error={errors.email}
+                    />
+                  </div>
+
+                  {/* Password and Confirm Password */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Password */}
+                    <div>
+                      <label htmlFor="password" className="block text-sm font-medium text-river-bed mb-2">
+                        Password <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password (min. 6 characters)"
+                        value={formData.password}
+                        onChange={handleChange}
+                        error={errors.password}
+                      />
+                    </div>
+
+                    {/* Confirm Password */}
+                    <div>
+                      <label htmlFor="confirmPassword" className="block text-sm font-medium text-river-bed mb-2">
+                        Confirm Password <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        placeholder="Confirm your password"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        error={errors.confirmPassword}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Submit Error */}
+                  {errors.submit && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <p className="text-sm text-red-600">{errors.submit}</p>
+                    </div>
+                  )}
+
+                  {/* Submit Button */}
+                  <Button
+                    text={loading ? 'Creating Account...' : 'Create Account'}
+                    variant="ripple"
+                    type="submit"
+                    disabled={loading}
+                    className="w-full"
+                  />
+
+                  {/* Login Link */}
+                  <div className="text-center pt-4 border-t border-geyser">
+                    <p className="text-sm text-oslo-gray">
+                      Already have an account?{' '}
+                      <Link 
+                        to="/login" 
+                        className="text-gulf-stream hover:underline font-medium"
+                      >
+                        Log in
+                      </Link>
+                    </p>
+                  </div>
+                </form>
               )}
-
-              {/* Submit Button */}
-              <Button
-                text={loading ? 'Creating Account...' : 'Create Account'}
-                variant="primary"
-                type="submit"
-                disabled={loading}
-                className="w-full"
-              />
-
-              {/* Login Link */}
-              <div className="text-center pt-4 border-t border-geyser">
-                <p className="text-sm text-oslo-gray">
-                  Already have an account?{' '}
-                  <Link 
-                    to="/login" 
-                    className="text-gulf-stream hover:underline font-medium"
-                  >
-                    Log in
-                  </Link>
-                </p>
-              </div>
-            </form>
-          )}
-        </Card>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

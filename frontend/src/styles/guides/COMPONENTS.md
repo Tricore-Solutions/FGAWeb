@@ -6,21 +6,26 @@
 Buttons are interactive elements used to trigger actions, submit forms, navigate, or confirm user decisions. They provide clear call-to-action points throughout the interface.
 
 ### Variants
-*What this means: Buttons come in 4 different styles. The Primary button (teal/green color) is your main "click me" button. Secondary (gray) is for less important actions. Danger (red) warns users about destructive actions like deleting. Outline buttons have no background, just a border with gulf-stream color.*
+*What this means: Buttons come in 5 different styles. The Primary button (teal/green color) is your main "click me" button. Secondary (gray) is for less important actions. Danger (red) warns users about destructive actions like deleting. Outline buttons have no background, just a border with gulf-stream color. Slide Arrow buttons have a white background with an animated colored background that slides in from the left on hover, revealing an arrow icon.*
 
 - **Primary**: Main action buttons with Gulf Stream background (#80b3b4), used for primary CTAs
 - **Secondary**: Secondary actions with gray background, used for less prominent actions
 - **Danger**: Destructive actions with red/warning colors, used for delete or cancel operations
 - **Outline**: Transparent background with 3px gulf-stream border, used for secondary actions
+- **Slide Arrow**: White background with animated colored slide-in effect on hover, featuring an arrow icon that appears on hover
 
 ### Props
-*What this means: When you use a Button, you can tell it what text to show (text), which style to use (variant), and what happens when clicked (onClick).*
+*What this means: When you use a Button, you can tell it what text to show (text), which style to use (variant), and what happens when clicked (onClick). For the slide-arrow variant, you can customize the primary color that slides in on hover.*
 
 ```typescript
 {
   text: string;                     // Button text content
-  variant?: 'primary' | 'secondary' | 'danger' | 'outline';
+  variant?: 'primary' | 'secondary' | 'danger' | 'outline' | 'slide-arrow';
   onClick?: () => void;             // Click handler
+  disabled?: boolean;               // Disable button interaction
+  type?: 'button' | 'submit' | 'reset'; // Button type (default: 'button')
+  className?: string;               // Additional CSS classes
+  primaryColor?: string;            // Custom color for slide-arrow variant (default: '#80b3b4' - Gulf Stream)
 }
 ```
 
@@ -57,6 +62,21 @@ import Button from '@/components/Button';
   variant="outline" 
   onClick={handleCancel}
 />
+
+// Slide arrow button
+<Button 
+  text="Get Started" 
+  variant="slide-arrow" 
+  onClick={handleGetStarted}
+/>
+
+// Slide arrow button with custom color
+<Button 
+  text="Learn More" 
+  variant="slide-arrow" 
+  primaryColor="#6f3cff"
+  onClick={handleLearnMore}
+/>
 ```
 
 ### Visual Preview
@@ -67,7 +87,7 @@ import Button from '@/components/Button';
 Primary buttons use the Gulf Stream color (#80b3b4) with white text. Secondary buttons use gray with white text. Buttons have fully rounded corners (pill-shaped), hover effects with lift and shadow, and proper spacing following the design system spacing tokens. All buttons use `lg` (24px) spacing token for both horizontal and vertical padding.
 
 **Layout and Spacing Details:**
-- **Padding**: All buttons use `lg` (24px / 1.5rem) for both horizontal and vertical padding
+- **Padding**: All buttons use `lg` (24px / 1.5rem) for both horizontal and vertical padding (except slide-arrow variant)
 - **Border Radius**: `rounded-full` (fully rounded, pill-shaped) for all buttons
 - **Hover Effects** (Primary, Secondary, Danger): 
   - Button lifts up slightly (`-translate-y-1`)
@@ -78,11 +98,22 @@ Primary buttons use the Gulf Stream color (#80b3b4) with white text. Secondary b
   - Transparent background
   - Bold text (`font-bold`)
   - On hover: Background changes to Gulf Stream, text changes to white
+- **Slide Arrow Variant**:
+  - White background with white border
+  - Black text (`text-black`) that changes to white on hover
+  - Colored background (default: Gulf Stream #80b3b4, customizable via `primaryColor` prop) slides in from the left on hover
+  - Arrow icon (ArrowRight from lucide-react) appears on the left side when hovered
+  - Text shifts left (`-left-3`) and changes to white on hover
+  - Smooth 200ms transitions for all animations
+  - Padding: `p-2` (8px) with `px-8` (32px) horizontal padding for text
+  - Font size: `text-xl` (1.25rem / 20px)
+  - Font weight: `font-semibold` (600)
 - **Font Weight**: 
   - `font-medium` (500) for primary, secondary, and danger buttons
   - `font-bold` (700) for outline buttons
+  - `font-semibold` (600) for slide-arrow buttons
 - **Text Shadow**: White text on primary/secondary/danger buttons has a subtle text shadow for better readability
-- **Transition**: `transition-all duration-fast` (150ms) for smooth hover effects
+- **Transition**: `transition-all duration-fast` (150ms) for smooth hover effects (200ms for slide-arrow variant)
 - **Gap Between Buttons**: `gap-4` (16px) when buttons are grouped
 
 ## Forms

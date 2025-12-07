@@ -475,13 +475,20 @@ function App() {
   // TopBar should be shown when navbar has white background with nav links
   const shouldShowTopBar = !isNavbarTransparent;
 
+  // Hide navbar on login and signup pages
+  const isLoginPage = location.pathname === '/login';
+  const isSignupPage = location.pathname === '/signup';
+  const isAuthPage = isLoginPage || isSignupPage;
+
   return (
     <div className="min-h-screen w-full bg-white flex flex-col">
-      <TopBar show={shouldShowTopBar} />
-      <Navbar 
-        variant="hero" 
-        onTransparencyChange={setIsNavbarTransparent}
-      />
+      {!isAuthPage && <TopBar show={shouldShowTopBar} />}
+      {!isAuthPage && (
+        <Navbar 
+          variant="hero" 
+          onTransparencyChange={setIsNavbarTransparent}
+        />
+      )}
       <main className="flex-1 w-full">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -512,17 +519,19 @@ function App() {
           />
         </Routes>
       </main>
-      <div className="w-full mt-8 md:mt-16">
-        <CurvedLoop 
-          marqueeText="Building Skills ⚽︎ Building Character ⚽︎ Building Futures ⚽︎"
-          speed={1}
-          curveAmount={0}
-          direction="right"
-          interactive={true}
-          className="w-full"
-        />
-      </div>
-      <Footer />
+      {!isAuthPage && (
+        <div className="w-full mt-8 md:mt-16">
+          <CurvedLoop 
+            marqueeText="Building Skills ⚽︎ Building Character ⚽︎ Building Futures ⚽︎"
+            speed={1}
+            curveAmount={0}
+            direction="right"
+            interactive={true}
+            className="w-full"
+          />
+        </div>
+      )}
+      {!isAuthPage && <Footer />}
     </div>
   );
 }
