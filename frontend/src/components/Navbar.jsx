@@ -4,9 +4,12 @@ import { Menu, X, User } from 'lucide-react';
 import { spacing } from '../styles/design-tokens/spacing';
 import colors from '../styles/design-tokens/colors';
 import AuthContext from '../context/AuthContext';
+import AuthContext from '../context/AuthContext';
 
 const Navbar = ({ variant = 'white', onTransparencyChange }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useContext(AuthContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,6 +37,12 @@ const Navbar = ({ variant = 'white', onTransparencyChange }) => {
 
   const closeMenu = () => {
     setIsMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    closeMenu();
+    navigate('/');
   };
 
   const handleLogout = () => {

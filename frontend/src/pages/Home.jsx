@@ -366,7 +366,107 @@ function Home() {
                   </div>
                 </div>
               )}
+          {loading ? (
+            <div className="py-12">
+              <LoadingSpinner message="Loading upcoming events..." />
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-oslo-gray mb-4">{error}</p>
+              <Button
+                text="View All Events"
+                variant="outline"
+                onClick={() => navigate('/events')}
+              />
+            </div>
+          ) : events.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-oslo-gray mb-4">No upcoming events at this time.</p>
+              <Button
+                text="View All Events"
+                variant="outline"
+                onClick={() => navigate('/events')}
+              />
+            </div>
+          ) : (
+            <>
+              {/* Featured Event (Soonest) */}
+              {featuredEvent && (
+                <div className="mb-12">
+                  <div className="flex flex-col md:flex-row gap-6 md:gap-8">
+                    {/* Large Image on Left */}
+                    <div className="w-full md:w-1/2">
+                      <img
+                        src={featuredEvent.image}
+                        alt={featuredEvent.title}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    {/* Content on Right */}
+                    <div className="w-full md:w-1/2 flex flex-col justify-center">
+                      <div className="text-sm text-oslo-gray mb-2">
+                        EVENTS - {featuredEvent.date}
+                      </div>
+                      <h3 className="text-2xl md:text-3xl font-heading font-bold text-river-bed mb-4">
+                        {featuredEvent.title}
+                      </h3>
+                      <p className="text-base text-oslo-gray mb-6 leading-relaxed">
+                        {featuredEvent.description || 'Join us for an exciting event!'}
+                      </p>
+                      <div className="text-sm text-oslo-gray mb-6">
+                        <div className="mb-2 flex items-center gap-2">
+                          <Calendar size={16} className="text-oslo-gray" />
+                          <span>{featuredEvent.date}</span>
+                          {featuredEvent.time && <span className="text-oslo-gray">• {featuredEvent.time}</span>}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin size={16} className="text-oslo-gray" />
+                          <span>{featuredEvent.location}</span>
+                        </div>
+                      </div>
+                      <Button
+                        text="Learn More"
+                        variant="primary"
+                        onClick={() => navigate(`/events/${featuredEvent.id}`)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
 
+              {/* Other Events Grid */}
+              {otherEvents.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {otherEvents.map((event) => (
+                    <Card
+                      key={event.id}
+                      title={event.title}
+                      description={event.description}
+                      image={event.image}
+                      imageAlt={event.title}
+                      footer={
+                        <div className="flex flex-col gap-2">
+                          <div className="text-sm text-oslo-gray flex items-center gap-2">
+                            <Calendar size={16} className="text-oslo-gray" />
+                            <span>{event.date}</span>
+                          </div>
+                          <div className="text-sm text-oslo-gray flex items-center gap-2">
+                            <MapPin size={16} className="text-oslo-gray" />
+                            <span>{event.location}</span>
+                          </div>
+                          <Button
+                            text="Learn More"
+                            variant="primary"
+                            onClick={() => navigate(`/events/${event.id}`)}
+                          />
+                        </div>
+                      }
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
               {/* Other Events Grid */}
               {otherEvents.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
