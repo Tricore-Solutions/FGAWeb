@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User } from 'lucide-react';
 import { spacing } from '../styles/design-tokens/spacing';
@@ -6,7 +6,7 @@ import colors from '../styles/design-tokens/colors';
 import AuthContext from '../context/AuthContext';
 import DarkVeil from '../component/DarkVeil';
 
-const Navbar = ({ variant = 'white', onTransparencyChange }) => {
+const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useContext(AuthContext);
@@ -18,6 +18,7 @@ const Navbar = ({ variant = 'white', onTransparencyChange }) => {
   const [hasAnimated, setHasAnimated] = useState(!isHomeHeroVariant);
   const [mouseY, setMouseY] = useState(0);
   const [hoveredLink, setHoveredLink] = useState(null);
+  const prevIsHiddenRef = useRef(isHidden);
 
   const navLinks = [
     { label: 'Home', path: '/' },
@@ -153,8 +154,29 @@ const Navbar = ({ variant = 'white', onTransparencyChange }) => {
     return `${baseClasses} bg-white`;
   };
 
+  // Check if navbar is becoming visible (was hidden, now visible) - synchronous check
+  const wasHidden = prevIsHiddenRef.current;
+  const isBecomingVisible = wasHidden && !isHidden;
+  const isFadingOut = !wasHidden && isHidden;
+  
+  // Update ref immediately after checking (synchronous)
+  if (prevIsHiddenRef.current !== isHidden) {
+    prevIsHiddenRef.current = isHidden;
+  }
+
   return (
-    <nav className={getNavbarClasses()} style={{ zIndex: 50 }}>
+    <nav 
+      className={getNavbarClasses()} 
+      style={{ 
+        zIndex: 50,
+        opacity: isHidden ? 0 : 1,
+        transform: isHidden ? 'translateY(-100%)' : 'translateY(0)',
+        // Instant appearance when becoming visible, smooth fade-out when hiding
+        transition: isFadingOut ? 'opacity 0.3s ease-out, transform 0.3s ease-out' : 'none',
+        pointerEvents: isHidden ? 'none' : 'auto',
+        willChange: isFadingOut ? 'opacity, transform' : 'auto'
+      }}
+    >
       <div 
         className="w-full mx-auto flex items-center justify-between h-14 min-[900px]:h-18"
         style={{ padding: spacing.xl }}

@@ -479,6 +479,10 @@ function App() {
   const [isRouteFadingOut, setIsRouteFadingOut] = useState(false);
   const hasLoadedRef = useRef(false);
   const prevLocationRef = useRef(location.pathname);
+  const [isNavbarHidden, setIsNavbarHidden] = useState(false);
+  const curvedLoopRef = useRef(null);
+  const footerRef = useRef(null);
+  const lastScrollY = useRef(0);
 
   // Handle initial page load - only show on first load and page refresh
   useEffect(() => {
@@ -572,6 +576,67 @@ function App() {
   const isSignupPage = location.pathname === '/signup';
   const isAuthPage = isLoginPage || isSignupPage;
 
+  // Handle navbar visibility when scrolling through CurvedLoop section
+  useEffect(() => {
+    if (isAuthPage) {
+      setIsNavbarHidden(false);
+      return;
+    }
+
+    // Initialize scroll position
+    lastScrollY.current = window.scrollY;
+
+    let rafId = null;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const isScrollingUp = currentScrollY < lastScrollY.current;
+      lastScrollY.current = currentScrollY;
+
+      // Cancel any pending animation frame
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+
+      rafId = requestAnimationFrame(() => {
+        if (!curvedLoopRef.current || !footerRef.current) {
+          setIsNavbarHidden(false);
+          return;
+        }
+
+        const curvedLoopRect = curvedLoopRef.current.getBoundingClientRect();
+        const footerRect = footerRef.current.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+
+        // Hide navbar when:
+        // 1. CurvedLoop has entered the viewport (top is at or above viewport bottom)
+        // 2. Footer hasn't entered the viewport yet (top is below viewport top)
+        // This ensures navbar only hides between CurvedLoop and Footer sections
+        const curvedLoopHasStarted = curvedLoopRect.top <= windowHeight;
+        
+        // When scrolling up, show navbar earlier (more lenient threshold)
+        // When scrolling down, use stricter threshold
+        const footerThreshold = isScrollingUp ? -400 : 0;
+        const footerHasNotStarted = footerRect.top > footerThreshold;
+
+        setIsNavbarHidden(curvedLoopHasStarted && footerHasNotStarted);
+      });
+    };
+
+    // Initial check
+    handleScroll();
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+
+    return () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [isAuthPage, location.pathname]);
+
   // Show preloader during initial load (with fade-out animation)
   if (isInitialLoad) {
     return <Preloader isFadingOut={isFadingOut} />;
@@ -589,6 +654,7 @@ function App() {
         <Navbar 
           variant="hero" 
           onTransparencyChange={setIsNavbarTransparent}
+          isHidden={isNavbarHidden}
         />
       )}
       <main className="flex-1 w-full">
@@ -622,10 +688,10 @@ function App() {
         </Routes>
       </main>
       {!isAuthPage && (
-        <div className="w-full mt-8 md:mt-16">
+        <div ref={curvedLoopRef} className="w-full mt-8 md:mt-16">
           <CurvedLoop 
             marqueeText="Building Skills ⚽︎ Building Character ⚽︎ Building Futures ⚽︎"
-            speed={1}
+            speed={0.5}
             curveAmount={0}
             direction="right"
             interactive={true}
@@ -633,7 +699,7 @@ function App() {
           />
         </div>
       )}
-      {!isAuthPage && <Footer />}
+      {!isAuthPage && <Footer ref={footerRef} />}
     </div>
   );
 }
