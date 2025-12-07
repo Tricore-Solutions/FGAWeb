@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Input from '../components/Input';
-import LoadingSpinner from '../components/LoadingSpinner';
 import { useAuth } from '../context/AuthContext';
 
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login, isAuthenticated } = useAuth();
+  const isLoggingInRef = useRef(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -18,13 +18,13 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated (but not during login process)
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !loading && !isLoggingInRef.current) {
       const redirectTo = new URLSearchParams(location.search).get('redirect') || '/dashboard';
       navigate(redirectTo, { replace: true });
     }
-  }, [isAuthenticated, navigate, location.search]);
+  }, [isAuthenticated, navigate, location.search, loading]);
 
   // Check for success message from signup redirect
   useEffect(() => {
@@ -105,11 +105,15 @@ function Login() {
     }
 
     setLoading(true);
+    isLoggingInRef.current = true;
     setErrors({});
     setSuccessMessage('');
 
     try {
       await login(formData.email.trim(), formData.password);
+      
+      // Wait for some time to show the loading.gif in the button before redirecting
+      await new Promise(resolve => setTimeout(resolve, 5000));
       
       // Redirect to dashboard (or the redirect parameter)
       const redirectTo = new URLSearchParams(location.search).get('redirect') || '/dashboard';
@@ -136,6 +140,10 @@ function Login() {
       }
     } finally {
       setLoading(false);
+      // Reset the ref after a short delay to allow navigation to complete
+      setTimeout(() => {
+        isLoggingInRef.current = false;
+      }, 100);
     }
   };
 
@@ -213,11 +221,12 @@ function Login() {
 
                 {/* Submit Button */}
                 <Button
-                  text={loading ? 'Logging in...' : 'Sign In'}
-                  variant="ripple"
+                  text="Sign In"
+                  variant="primary"
                   type="submit"
                   disabled={loading}
-                  className="w-full"
+                  loading={loading}
+                  className="w-full text-lg md:text-xl"
                 />
 
                 {/* Signup Link */}

@@ -540,24 +540,32 @@ function App() {
 
     // Check if route actually changed
     if (prevLocationRef.current !== location.pathname) {
-      // Show preloader for route transition
-      setIsRouteLoading(true);
-      setIsRouteFadingOut(false);
+      // Don't show preloader when navigating FROM login or signup pages
+      const isNavigatingFromAuth = prevLocationRef.current === '/login' || prevLocationRef.current === '/signup';
+      
+      if (!isNavigatingFromAuth) {
+        // Show preloader for route transition
+        setIsRouteLoading(true);
+        setIsRouteFadingOut(false);
+      }
+      
       prevLocationRef.current = location.pathname;
 
       let fadeTimer;
       let hideTimer;
 
-      // Brief delay before starting fade-out (allows route to start loading)
-      fadeTimer = setTimeout(() => {
-        setIsRouteFadingOut(true);
-        
-        // Hide preloader after fade-out completes
-        hideTimer = setTimeout(() => {
-          setIsRouteLoading(false);
-          setIsRouteFadingOut(false);
-        }, 500); // Match fade-out duration
-      }, 300); // Short delay to show preloader
+      if (!isNavigatingFromAuth) {
+        // Brief delay before starting fade-out (allows route to start loading)
+        fadeTimer = setTimeout(() => {
+          setIsRouteFadingOut(true);
+          
+          // Hide preloader after fade-out completes
+          hideTimer = setTimeout(() => {
+            setIsRouteLoading(false);
+            setIsRouteFadingOut(false);
+          }, 500); // Match fade-out duration
+        }, 300); // Short delay to show preloader
+      }
 
       return () => {
         if (fadeTimer) clearTimeout(fadeTimer);

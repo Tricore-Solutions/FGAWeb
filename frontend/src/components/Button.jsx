@@ -2,14 +2,14 @@ import React, { useCallback, useRef, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 
 // Ripple Button Component
-const RippleButton = ({ text, onClick, disabled = false, className = '', type = 'button' }) => {
+const RippleButton = ({ text, onClick, disabled = false, className = '', type = 'button', loading = false, loadingImage = '/videos/loading-1.gif' }) => {
   const buttonRef = useRef(null);
   const rippleRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
 
   const createRipple = useCallback(
     (event) => {
-      if (isHovered || !buttonRef.current || !rippleRef.current || disabled) return;
+      if (isHovered || !buttonRef.current || !rippleRef.current || disabled || loading) return;
       setIsHovered(true);
       const button = buttonRef.current;
       const ripple = rippleRef.current;
@@ -24,7 +24,7 @@ const RippleButton = ({ text, onClick, disabled = false, className = '', type = 
       ripple.classList.remove("ripple-leave");
       ripple.classList.add("ripple-enter");
     },
-    [isHovered, disabled],
+    [isHovered, disabled, loading],
   );
 
   const removeRipple = useCallback((event) => {
@@ -50,7 +50,7 @@ const RippleButton = ({ text, onClick, disabled = false, className = '', type = 
 
   const handleMouseMove = useCallback(
     (event) => {
-      if (!buttonRef.current || !rippleRef.current || !isHovered || disabled) return;
+      if (!buttonRef.current || !rippleRef.current || !isHovered || disabled || loading) return;
       const ripple = rippleRef.current;
       const rect = buttonRef.current.getBoundingClientRect();
       const size = Math.max(rect.width, rect.height) * 2;
@@ -59,7 +59,7 @@ const RippleButton = ({ text, onClick, disabled = false, className = '', type = 
       ripple.style.left = `${x}px`;
       ripple.style.top = `${y}px`;
     },
-    [isHovered, disabled],
+    [isHovered, disabled, loading],
   );
 
   return (
@@ -69,21 +69,29 @@ const RippleButton = ({ text, onClick, disabled = false, className = '', type = 
         type={type}
         onClick={disabled ? undefined : onClick}
         disabled={disabled}
-        className={`relative flex items-center justify-center overflow-hidden rounded-full bg-gulf-stream px-4 py-2 md:px-6 md:py-3 text-base font-medium uppercase text-white transition-colors duration-[600ms] ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:text-white'} ${className}`}
+        className={`relative flex items-center justify-center overflow-hidden rounded-full bg-gulf-stream ${loading ? 'p-0 h-auto' : 'px-2 py-1 md:px-3 md:py-1.5'} text-base font-medium uppercase text-white transition-colors duration-[600ms] ${disabled || loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:text-white'} ${className}`}
         onMouseEnter={(e) => {
-          if (e.target === e.currentTarget && !disabled) {
+          if (e.target === e.currentTarget && !disabled && !loading) {
             createRipple(e);
           }
         }}
         onMouseLeave={(e) => {
-          if (e.target === e.currentTarget && !disabled) {
+          if (e.target === e.currentTarget && !disabled && !loading) {
             removeRipple(e);
           }
         }}
         onMouseMove={handleMouseMove}
       >
-        <span className="relative z-[2]">{text}</span>
-        <span ref={rippleRef} className="ripple" />
+        {loading ? (
+          <img 
+            src={loadingImage} 
+            alt="Loading" 
+            className="relative z-[2] h-20 w-20 md:h-24 md:w-24 object-contain"
+          />
+        ) : (
+          <span className="relative z-[2]">{text}</span>
+        )}
+        <span ref={rippleRef} className={`ripple ${loading ? 'hidden' : ''}`} />
       </button>
       <style>{`
         .ripple {
@@ -114,7 +122,7 @@ const RippleButton = ({ text, onClick, disabled = false, className = '', type = 
   );
 };
 
-const Button = ({ text, onClick, variant = 'primary', disabled = false, className = '', type = 'button', primaryColor = '#80b3b4' }) => {
+const Button = ({ text, onClick, variant = 'primary', disabled = false, className = '', type = 'button', primaryColor = '#80b3b4', loading = false, loadingImage = '/videos/loading-1.gif' }) => {
   // Ripple variant uses separate component
   if (variant === 'ripple') {
     return (
@@ -124,6 +132,8 @@ const Button = ({ text, onClick, variant = 'primary', disabled = false, classNam
         disabled={disabled}
         className={className}
         type={type}
+        loading={loading}
+        loadingImage={loadingImage}
       />
     );
   }
@@ -154,7 +164,9 @@ const Button = ({ text, onClick, variant = 'primary', disabled = false, classNam
 
   // Base styles common to all other variants
   // Using lg spacing token (1.5rem / 24px) for padding on desktop, smaller on mobile
-  const baseStyles = 'px-4 py-4 md:px-6 md:py-6 rounded-full text-sm md:text-base font-medium transition-all duration-fast';
+  const baseStyles = loading 
+    ? 'px-4 py-0 md:px-6 md:py-0 rounded-full text-sm md:text-base font-medium transition-all duration-fast flex items-center justify-center'
+    : 'px-4 py-4 md:px-6 md:py-6 rounded-full text-sm md:text-base font-medium transition-all duration-fast flex items-center justify-center';
   
   // Cursor and disabled styles
   const cursorStyles = disabled 
@@ -192,7 +204,15 @@ const Button = ({ text, onClick, variant = 'primary', disabled = false, classNam
       disabled={disabled}
       className={combinedClassName}
     >
-      {text}
+      {loading ? (
+        <img 
+          src={loadingImage} 
+          alt="Loading" 
+          className="h-20 w-20 md:h-24 md:w-24 object-contain"
+        />
+      ) : (
+        text
+      )}
     </button>
   );
 };

@@ -322,10 +322,11 @@ function Signup() {
 
                   {/* Submit Button */}
                   <Button
-                    text={loading ? 'Creating Account...' : 'Create Account'}
+                    text="Create Account"
                     variant="ripple"
                     type="submit"
                     disabled={loading}
+                    loading={loading}
                     className="w-full"
                   />
 
