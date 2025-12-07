@@ -31,11 +31,11 @@ const OutlinedHeading = ({
   
   return (
     <div className="relative" style={{ transform: `translateX(${currentTranslate}px)` }}>
-      <h2 className={`text-7xl md:text-8xl font-heading font-bold ${textColor} uppercase tracking-sm leading-tight ${offset} relative z-10`}>
+      <h2 className={`text-5xl md:text-8xl font-heading font-bold ${textColor} uppercase tracking-sm leading-tight ${offset} relative z-10`}>
         {text}
       </h2>
       <h2 
-        className={`text-7xl md:text-8xl font-heading font-bold uppercase tracking-sm leading-tight ${offset} absolute top-0 left-0 z-0`}
+        className={`text-5xl md:text-8xl font-heading font-bold uppercase tracking-sm leading-tight ${offset} absolute top-0 left-0 z-0`}
         style={{
           color: 'transparent',
           WebkitTextStroke: `2px ${strokeColor}`,

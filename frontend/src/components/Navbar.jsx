@@ -143,7 +143,7 @@ const Navbar = ({ variant = 'white', onTransparencyChange }) => {
           <img
             src="/FGA-Logo.png"
             alt="FGA Logo"
-            className="h-16 min-[900px]:h-22"
+            className="h-[72px] min-[900px]:h-22"
             style={{ width: 'auto' }}
           />
         </Link>

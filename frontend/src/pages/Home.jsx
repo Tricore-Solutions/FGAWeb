@@ -292,8 +292,8 @@ function Home() {
         <div className="w-full mx-auto px-12 md:px-16 lg:px-24">
           <div className="text-center mb-12">
             <div className="flex flex-col items-center mb-4">
-              <OutlinedHeading text="Next On" offset="-ml-48 md:-ml-56" shadowDirection="left" scrollProgress={headingScrollProgress} animateFrom="left" />
-              <OutlinedHeading text="The Lineup" offset="ml-48 md:ml-56" shadowDirection="right" scrollProgress={headingScrollProgress} animateFrom="right" textColor="text-gulf-stream" strokeColor="#80b3b4" />
+              <OutlinedHeading text="Next On" offset="-ml-20 md:-ml-24" shadowDirection="left" scrollProgress={headingScrollProgress} animateFrom="left" />
+              <OutlinedHeading text="The Lineup" offset="ml-20 md:ml-24" shadowDirection="right" scrollProgress={headingScrollProgress} animateFrom="right" textColor="text-gulf-stream" strokeColor="#80b3b4" />
             </div>
             <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
               Join us for exciting events and competitions
