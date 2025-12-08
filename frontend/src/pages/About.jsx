@@ -1,10 +1,21 @@
 import { useNavigate } from 'react-router-dom';
+import { useRef, useEffect } from 'react';
+import { Dumbbell, Building2, Users, Trophy, Star, Handshake, Lightbulb } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
+import ChromaGrid from '../component/ChromaGrid';
+import PixelTransition from '../component/PixelTransition';
 import colors from '../styles/design-tokens/colors';
 
 function About() {
   const navigate = useNavigate();
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 1.5; // Play at 1.5x speed (50% faster)
+    }
+  }, []);
 
   return (
     <>
@@ -40,12 +51,19 @@ function About() {
               Our History
             </h2>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-center mb-6 sm:mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
             <div className="order-2 lg:order-1">
-              <img
-                src="https://via.placeholder.com/800x600"
-                alt="FGA Academy Facility"
-                className="w-full h-auto rounded-lg shadow-lg object-cover"
+              <video
+                ref={videoRef}
+                src="/videos/football-drawing.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                disablePictureInPicture
+                controlsList="nodownload noplaybackrate"
+                className="w-full h-auto transition-all duration-300 hover:brightness-110"
+                style={{ background: 'transparent' }}
               />
             </div>
             <div className="order-1 lg:order-2 prose prose-sm sm:prose-base md:prose-lg max-w-none">
@@ -67,32 +85,6 @@ function About() {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mt-6 sm:mt-8">
-            <div>
-              <img
-                src="https://via.placeholder.com/400x300"
-                alt="Early Days"
-                className="w-full h-auto rounded-lg shadow-md object-cover"
-              />
-              <p className="text-center text-xs sm:text-sm text-oslo-gray mt-2">Early Days (2015)</p>
-            </div>
-            <div>
-              <img
-                src="https://via.placeholder.com/400x300"
-                alt="Expansion"
-                className="w-full h-auto rounded-lg shadow-md object-cover"
-              />
-              <p className="text-center text-xs sm:text-sm text-oslo-gray mt-2">Expansion (2018)</p>
-            </div>
-            <div className="sm:col-span-2 md:col-span-1">
-              <img
-                src="https://via.placeholder.com/400x300"
-                alt="Today"
-                className="w-full h-auto rounded-lg shadow-md object-cover"
-              />
-              <p className="text-center text-xs sm:text-sm text-oslo-gray mt-2">Today (2025)</p>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -102,13 +94,6 @@ function About() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
             {/* Mission */}
             <div>
-              <div className="mb-4 sm:mb-6">
-                <img
-                  src="https://via.placeholder.com/600x400"
-                  alt="Our Mission"
-                  className="w-full h-auto rounded-lg shadow-md object-cover"
-                />
-              </div>
               <div className="text-center mb-6 sm:mb-8">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
                   Our Mission
@@ -130,13 +115,6 @@ function About() {
 
             {/* Vision */}
             <div>
-              <div className="mb-4 sm:mb-6">
-                <img
-                  src="https://via.placeholder.com/600x400"
-                  alt="Our Vision"
-                  className="w-full h-auto rounded-lg shadow-md object-cover"
-                />
-              </div>
               <div className="text-center mb-6 sm:mb-8">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
                   Our Vision
@@ -170,80 +148,63 @@ function About() {
               Meet the experienced professionals dedicated to your success
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {[
-              {
-                name: 'Michael Johnson',
-                role: 'Head Coach',
-                experience: '15+ years',
-                specialization: 'Elite Training & Performance',
-                bio: 'Former professional athlete with extensive coaching experience. Specializes in developing elite-level athletes.',
-                image: 'https://via.placeholder.com/300x300'
-              },
-              {
-                name: 'Sarah Williams',
-                role: 'Youth Development Coach',
-                experience: '12+ years',
-                specialization: 'Youth Programs & Fundamentals',
-                bio: 'Passionate about developing young athletes. Focuses on building strong fundamentals and character.',
-                image: 'https://via.placeholder.com/300x300'
-              },
-              {
-                name: 'David Chen',
-                role: 'Strength & Conditioning Coach',
-                experience: '10+ years',
-                specialization: 'Athletic Performance',
-                bio: 'Certified strength and conditioning specialist. Designs comprehensive training programs.',
-                image: 'https://via.placeholder.com/300x300'
-              },
-              {
-                name: 'Emily Rodriguez',
-                role: 'Technical Skills Coach',
-                experience: '8+ years',
-                specialization: 'Technical Development',
-                bio: 'Expert in technical skill refinement. Helps athletes perfect their technique and form.',
-                image: 'https://via.placeholder.com/300x300'
-              },
-              {
-                name: 'James Thompson',
-                role: 'Mental Performance Coach',
-                experience: '7+ years',
-                specialization: 'Sports Psychology',
-                bio: 'Licensed sports psychologist. Focuses on mental toughness and performance under pressure.',
-                image: 'https://via.placeholder.com/300x300'
-              },
-              {
-                name: 'Lisa Anderson',
-                role: 'Rehabilitation Specialist',
-                experience: '9+ years',
-                specialization: 'Injury Prevention & Recovery',
-                bio: 'Physical therapist specializing in sports injuries. Ensures athletes stay healthy and recover quickly.',
-                image: 'https://via.placeholder.com/300x300'
-              }
-            ].map((coach, index) => (
-              <Card
-                key={index}
-                variant="elevated"
-              >
-                <div className="text-center">
-                  <div className="mb-3 sm:mb-4">
-                    <img
-                      src={coach.image}
-                      alt={coach.name}
-                      className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full mx-auto object-cover border-4"
-                      style={{ borderColor: colors['geyser'] }}
-                    />
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-heading font-semibold text-river-bed mb-2">
-                    {coach.name}
-                  </h3>
-                  <p className="text-sm sm:text-base text-gulf-stream font-medium mb-2">{coach.role}</p>
-                  <p className="text-xs sm:text-sm text-oslo-gray mb-2 sm:mb-3">{coach.experience} Experience</p>
-                  <p className="text-xs sm:text-sm font-medium text-river-bed mb-2 sm:mb-3">{coach.specialization}</p>
-                  <p className="text-xs sm:text-sm text-oslo-gray leading-relaxed">{coach.bio}</p>
-                </div>
-              </Card>
-            ))}
+          <div style={{ height: '1200px', minHeight: '1000px', position: 'relative' }}>
+            <ChromaGrid 
+              items={[
+                {
+                  image: 'https://i.pravatar.cc/300?img=1',
+                  title: 'Michael Johnson',
+                  subtitle: 'Head Coach',
+                  handle: '@michaeljohnson',
+                  gradient: 'linear-gradient(90deg, #8B5CF6, #3B82F6)',
+                  url: '#'
+                },
+                {
+                  image: 'https://i.pravatar.cc/300?img=2',
+                  title: 'Sarah Williams',
+                  subtitle: 'Youth Development Coach',
+                  handle: '@sarahwilliams',
+                  gradient: 'linear-gradient(90deg, #22C55E, #16A34A)',
+                  url: '#'
+                },
+                {
+                  image: 'https://i.pravatar.cc/300?img=3',
+                  title: 'David Chen',
+                  subtitle: 'Strength & Conditioning Coach',
+                  handle: '@davidchen',
+                  gradient: 'linear-gradient(90deg, #9CA3AF, #6B7280)',
+                  url: '#'
+                },
+                {
+                  image: 'https://i.pravatar.cc/300?img=4',
+                  title: 'Emily Rodriguez',
+                  subtitle: 'Technical Skills Coach',
+                  handle: '@emilyrodriguez',
+                  gradient: 'linear-gradient(90deg, #8B5CF6, #3B82F6)',
+                  url: '#'
+                },
+                {
+                  image: 'https://i.pravatar.cc/300?img=5',
+                  title: 'James Thompson',
+                  subtitle: 'Mental Performance Coach',
+                  handle: '@jamesthompson',
+                  gradient: 'linear-gradient(90deg, #22C55E, #16A34A)',
+                  url: '#'
+                },
+                {
+                  image: 'https://i.pravatar.cc/300?img=6',
+                  title: 'Lisa Anderson',
+                  subtitle: 'Rehabilitation Specialist',
+                  handle: '@lisanderson',
+                  gradient: 'linear-gradient(90deg, #9CA3AF, #6B7280)',
+                  url: '#'
+                }
+              ]}
+              radius={300}
+              damping={0.45}
+              fadeOut={0.6}
+              ease="power3.out"
+            />
           </div>
         </div>
       </section>
@@ -264,33 +225,33 @@ function About() {
               {
                 title: 'Excellence',
                 description: 'We strive for the highest standards in training, facilities, and athlete development, constantly pushing boundaries to achieve outstanding results.',
-                icon: '⭐',
-                image: 'https://via.placeholder.com/400x250'
+                icon: Star
               },
               {
                 title: 'Integrity',
                 description: 'We conduct ourselves with honesty, respect, and ethical behavior, building trust with athletes, families, and the community.',
-                icon: '🤝',
-                image: 'https://via.placeholder.com/400x250'
+                icon: Handshake
               },
               {
                 title: 'Innovation',
                 description: 'We embrace new training methods, technologies, and approaches to stay at the forefront of athletic development and performance.',
-                icon: '💡',
-                image: 'https://via.placeholder.com/400x250'
+                icon: Lightbulb
               }
-            ].map((value, index) => (
+            ].map((value, index) => {
+              const IconComponent = value.icon;
+              return (
               <Card
                 key={index}
                 title={value.title}
                 description={value.description}
-                image={value.image}
-                imageAlt={value.title}
                 variant="elevated"
               >
-                <div className="text-4xl mb-2 text-center">{value.icon}</div>
+                <div className="mb-2 text-center flex justify-center">
+                  <IconComponent size={48} color={colors['gulf-stream']} strokeWidth={1.5} />
+                </div>
               </Card>
-            ))}
+            );
+            })}
           </div>
         </div>
       </section>
@@ -311,38 +272,72 @@ function About() {
               {
                 title: 'Training Programs',
                 description: 'Comprehensive programs for all skill levels, from beginners to elite athletes.',
-                icon: '🏋️',
-                image: 'https://via.placeholder.com/400x250'
+                icon: Dumbbell,
+                image: '/images/fga-2.jpeg'
               },
               {
                 title: 'State-of-the-Art Facilities',
                 description: 'Modern equipment and facilities designed to enhance performance and safety.',
-                icon: '🏟️',
-                image: 'https://via.placeholder.com/400x250'
+                icon: Building2,
+                image: '/images/fga-5.jpg'
               },
               {
                 title: 'Expert Coaching',
                 description: 'Experienced coaches dedicated to developing each athlete\'s unique potential.',
-                icon: '👨‍🏫',
-                image: 'https://via.placeholder.com/400x250'
+                icon: Users,
+                image: '/images/fga-3.jpg'
               },
               {
                 title: 'Competitive Events',
                 description: 'Regular tournaments and competitions to test skills and build experience.',
-                icon: '🏆',
-                image: 'https://via.placeholder.com/400x250'
+                icon: Trophy,
+                image: '/images/fga-4.jpg'
               }
-            ].map((feature, index) => (
-              <Card
+            ].map((feature, index) => {
+              const IconComponent = feature.icon;
+              return (
+              <PixelTransition
                 key={index}
-                title={feature.title}
-                description={feature.description}
-                image={feature.image}
-                imageAlt={feature.title}
-              >
-                <div className="text-4xl mb-2 text-center">{feature.icon}</div>
-              </Card>
-            ))}
+                firstContent={
+                  <img
+                    src={feature.image}
+                    alt={feature.title}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                }
+                secondContent={
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      display: "grid",
+                      placeItems: "center",
+                      backgroundColor: colors['gulf-stream'],
+                      padding: "2rem"
+                    }}
+                  >
+                    <div className="text-center">
+                      <div className="mb-4 flex justify-center">
+                        <IconComponent size={48} color="#ffffff" strokeWidth={1.5} />
+                      </div>
+                      <h3 style={{ fontWeight: 900, fontSize: "1.5rem", color: "#ffffff", marginBottom: "0.5rem" }}>
+                        {feature.title}
+                      </h3>
+                      <p style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.9)", lineHeight: "1.5" }}>
+                        {feature.description}
+                      </p>
+                    </div>
+                  </div>
+                }
+                gridSize={12}
+                pixelColor={colors['gulf-stream']}
+                once={false}
+                animationStepDuration={0.3}
+                className="custom-pixel-card"
+                style={{ height: '400px', borderRadius: '1rem', overflow: 'hidden' }}
+              />
+            );
+            })}
           </div>
         </div>
       </section>

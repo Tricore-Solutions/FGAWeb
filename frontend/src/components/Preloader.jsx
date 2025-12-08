@@ -14,11 +14,11 @@ const Preloader = memo(({
     lg: 'w-96 h-96'       // 384px × 384px
   };
 
-  // Preloader content with loading.gif - optimized for performance
+  // Preloader content with loader.gif - optimized for performance
   const preloaderContent = (
     <div className={`flex flex-col items-center justify-center ${containerClassName}`.trim()}>
       <img
-        src="/videos/loading.gif"
+        src="/videos/loader.gif"
         alt="Loading..."
         className={`${sizeClasses[size]} ${className}`.trim()}
         role="status"
