@@ -1,15 +1,20 @@
 import { useNavigate } from 'react-router-dom';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Dumbbell, Building2, Users, Trophy, Star, Handshake, Lightbulb } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import ChromaGrid from '../component/ChromaGrid';
 import PixelTransition from '../component/PixelTransition';
+import OutlinedHeading from '../components/OutlinedHeading';
 import colors from '../styles/design-tokens/colors';
 
 function About() {
   const navigate = useNavigate();
   const videoRef = useRef(null);
+  const imageSectionRef = useRef(null);
+  const heroSectionRef = useRef(null);
+  const [imageScale, setImageScale] = useState(1);
+  const [headingScrollProgress, setHeadingScrollProgress] = useState(0);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -17,10 +22,83 @@ function About() {
     }
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!imageSectionRef.current) return;
+      
+      const rect = imageSectionRef.current.getBoundingClientRect();
+      const sectionHeight = rect.height;
+      const scrollProgress = Math.max(0, Math.min(1, -rect.top / sectionHeight));
+      
+      // Zoom from 1 to 1.3 as user scrolls
+      const scale = 1 + (scrollProgress * 0.3);
+      setImageScale(scale);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial call
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Scroll-linked animation for heading (same as Home page)
+  useEffect(() => {
+    let ticking = false;
+    
+    const handleScroll = () => {
+      if (!heroSectionRef.current) return;
+      
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const section = heroSectionRef.current;
+          if (!section) return;
+          
+          const rect = section.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          
+          // Calculate progress: 0 when section top enters viewport bottom, 1 when section top reaches viewport center
+          const startPoint = windowHeight * 0.85;
+          const endPoint = windowHeight * 0.3;
+          
+          // Progress calculation
+          const progress = Math.max(0, Math.min(1, (startPoint - rect.top) / (startPoint - endPoint)));
+          
+          setHeadingScrollProgress(progress);
+          ticking = false;
+        });
+        
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial calculation
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <>
+      {/* Top Image Section */}
+      <section ref={imageSectionRef} className="w-full overflow-hidden" style={{ height: '100vh' }}>
+        <img 
+          src="/images/fga-6.jpg" 
+          alt="Future Generation Academy" 
+          className="w-full h-full object-cover"
+          style={{ 
+            display: 'block',
+            transform: `scale(${imageScale})`,
+            transition: 'transform 0.1s ease-out',
+            willChange: 'transform'
+          }}
+        />
+      </section>
+
       {/* Hero Section */}
       <section 
+        ref={heroSectionRef}
         className="relative w-full py-20 md:py-32 flex items-center justify-center min-h-[400px] md:min-h-[500px]"
         style={{
           backgroundImage: 'url(https://via.placeholder.com/1920x1080)',
@@ -29,17 +107,42 @@ function About() {
           backgroundRepeat: 'no-repeat'
         }}
       >
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-        
         {/* Content */}
         <div className="relative z-10 text-center px-4 md:px-8">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4">
-            About Future Generation Academy
-          </h1>
-          <p className="text-base sm:text-lg md:text-xl text-white opacity-90 max-w-3xl mx-auto px-4">
-            Empowering athletes to reach their full potential through excellence, dedication, and innovation
-          </p>
+          <div className="flex flex-col items-center gap-2" style={{ transform: 'scale(0.92)' }}>
+            <div className="flex flex-row items-center justify-center gap-4 md:gap-8" style={{ marginLeft: '-30rem' }}>
+              <OutlinedHeading 
+                text="About" 
+                offset="" 
+                shadowDirection="left" 
+                scrollProgress={headingScrollProgress}
+                animateFrom="left"
+                textColor="text-river-bed"
+                strokeColor="#454f59"
+                strokeWidth={3}
+              />
+              <OutlinedHeading 
+                text="Future" 
+                offset="" 
+                shadowDirection="left" 
+                scrollProgress={headingScrollProgress}
+                animateFrom="left"
+                textColor="text-gulf-stream"
+                strokeColor="#80b3b4"
+                strokeWidth={3}
+              />
+            </div>
+            <OutlinedHeading 
+              text="Generation Academy" 
+              offset="ml-20 md:ml-56" 
+              shadowDirection="right" 
+              scrollProgress={headingScrollProgress}
+              animateFrom="right"
+              textColor="text-gulf-stream"
+              strokeColor="#80b3b4"
+              strokeWidth={3}
+            />
+          </div>
         </div>
       </section>
 
@@ -138,7 +241,7 @@ function About() {
       </section>
 
       {/* Coaching Staff Section */}
-      <section className="w-full py-12 sm:py-16 md:py-24 bg-white">
+      <section className="w-full py-12 sm:py-16 md:py-24">
         <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
@@ -148,7 +251,7 @@ function About() {
               Meet the experienced professionals dedicated to your success
             </p>
           </div>
-          <div style={{ height: '1200px', minHeight: '1000px', position: 'relative' }}>
+          <div style={{ position: 'relative' }}>
             <ChromaGrid 
               items={[
                 {
@@ -156,7 +259,7 @@ function About() {
                   title: 'Michael Johnson',
                   subtitle: 'Head Coach',
                   handle: '@michaeljohnson',
-                  gradient: 'linear-gradient(90deg, #8B5CF6, #3B82F6)',
+                  gradient: 'linear-gradient(90deg, #7db8b9, #7db8b9)',
                   url: '#'
                 },
                 {
@@ -164,7 +267,7 @@ function About() {
                   title: 'Sarah Williams',
                   subtitle: 'Youth Development Coach',
                   handle: '@sarahwilliams',
-                  gradient: 'linear-gradient(90deg, #22C55E, #16A34A)',
+                  gradient: 'linear-gradient(90deg, #7db8b9, #7db8b9)',
                   url: '#'
                 },
                 {
@@ -172,7 +275,7 @@ function About() {
                   title: 'David Chen',
                   subtitle: 'Strength & Conditioning Coach',
                   handle: '@davidchen',
-                  gradient: 'linear-gradient(90deg, #9CA3AF, #6B7280)',
+                  gradient: 'linear-gradient(90deg, #7db8b9, #7db8b9)',
                   url: '#'
                 },
                 {
@@ -180,7 +283,7 @@ function About() {
                   title: 'Emily Rodriguez',
                   subtitle: 'Technical Skills Coach',
                   handle: '@emilyrodriguez',
-                  gradient: 'linear-gradient(90deg, #8B5CF6, #3B82F6)',
+                  gradient: 'linear-gradient(90deg, #7db8b9, #7db8b9)',
                   url: '#'
                 },
                 {
@@ -188,7 +291,7 @@ function About() {
                   title: 'James Thompson',
                   subtitle: 'Mental Performance Coach',
                   handle: '@jamesthompson',
-                  gradient: 'linear-gradient(90deg, #22C55E, #16A34A)',
+                  gradient: 'linear-gradient(90deg, #7db8b9, #7db8b9)',
                   url: '#'
                 },
                 {
@@ -196,11 +299,11 @@ function About() {
                   title: 'Lisa Anderson',
                   subtitle: 'Rehabilitation Specialist',
                   handle: '@lisanderson',
-                  gradient: 'linear-gradient(90deg, #9CA3AF, #6B7280)',
+                  gradient: 'linear-gradient(90deg, #7db8b9, #7db8b9)',
                   url: '#'
                 }
               ]}
-              radius={300}
+              radius={230}
               damping={0.45}
               fadeOut={0.6}
               ease="power3.out"
@@ -378,4 +481,7 @@ function About() {
 }
 
 export default About;
+
+
+
 

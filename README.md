@@ -116,6 +116,12 @@ The system is designed for performance, scalability, and future expansion, such 
 
    # Install DarkVeil component  
    npx jsrepo@latest add https://reactbits.dev/r/DarkVeil-JS-CSS
+
+   # Install ChromaGrid component  
+   npx jsrepo@latest add https://reactbits.dev/r/ChromaGrid-JS-CSS
+
+   # Install PixelTransition component  
+   npx jsrepo@latest add https://reactbits.dev/r/PixelTransition-JS-CSS
    ```
    
    **Note:** The TextHighlighter component is custom-built and already included in the repository - no installation needed.

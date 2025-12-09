@@ -20,7 +20,8 @@ const OutlinedHeading = ({
   scrollProgress = 1, 
   animateFrom = 'left', 
   textColor = 'text-river-bed', 
-  strokeColor = '#454f59' 
+  strokeColor = '#454f59',
+  strokeWidth = 2
 }) => {
   // Base shadow transform - desktop
   const baseShadowTransform = shadowDirection === 'left' ? 'translate(-4px, 4px)' : 'translate(4px, 4px)';
@@ -56,8 +57,8 @@ const OutlinedHeading = ({
           className={`text-5xl md:text-8xl font-heading font-bold uppercase tracking-sm leading-tight ${offset} absolute top-0 left-0 z-0`}
           style={{
             color: 'transparent',
-            WebkitTextStroke: `2px ${strokeColor}`,
-            textStroke: `2px ${strokeColor}`,
+            WebkitTextStroke: `${strokeWidth}px ${strokeColor}`,
+            textStroke: `${strokeWidth}px ${strokeColor}`,
             willChange: 'transform',
           }}
         >
