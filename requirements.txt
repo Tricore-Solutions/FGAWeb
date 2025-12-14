@@ -1,0 +1,279 @@
+# Future Generation Academy Website - Project Dependencies
+# 
+# ⚠️ IMPORTANT: This is a Node.js/Express + React project, NOT a Python project.
+# This requirements.txt file is provided for reference and future Python tooling.
+# 
+# For actual dependency management, use npm with the package.json files:
+# - backend/package.json (Backend dependencies)
+# - frontend/package.json (Frontend dependencies)
+#
+# ============================================================================
+# 🚀 QUICK START - If npm is not recognized in Cursor terminal
+# ============================================================================
+# 
+# QUICK FIX (for current terminal session):
+#   Run this command: $env:PATH += ";C:\Program Files\nodejs"
+#   Or run the script: .\fix-npm-path.ps1
+#
+# PERMANENT FIX:
+#   See "CURSOR IDE SPECIFIC" section below, or restart Cursor completely
+#
+# ============================================================================
+# ⚙️ PREREQUISITES - INSTALL THESE FIRST!
+# ============================================================================
+#
+# If you see "'npm' is not recognized" error, you need to install Node.js first!
+#
+# 1. INSTALL NODE.JS (Required - includes npm)
+#    Download: https://nodejs.org/
+#    - Choose LTS version (recommended, e.g., v20.x or v18.x)
+#    - Windows: Download .msi installer and run it
+#    - Mac: Download .pkg installer or use Homebrew: brew install node
+#    - Linux: Use package manager (apt, yum, etc.)
+#
+#    Verify installation:
+#    Open a NEW terminal/PowerShell window and run:
+#    node --version    (should show v16.x or higher)
+#    npm --version     (should show version number)
+#
+#    ⚠️ IMPORTANT: After installing Node.js, CLOSE and REOPEN your terminal!
+#    This ensures the PATH environment variable is updated.
+#
+#    🔧 CURSOR IDE SPECIFIC:
+#    If npm works in regular PowerShell but NOT in Cursor's terminal:
+#    1. COMPLETELY QUIT Cursor (File > Exit, don't just close window)
+#    2. Reopen Cursor
+#    3. Open a new terminal in Cursor
+#    4. If still not working, manually add to PATH for this session:
+#       PowerShell: $env:PATH += ";C:\Program Files\nodejs"
+#       Then verify: node --version
+#
+#    To PERMANENTLY fix PATH in Windows:
+#    1. Press Win + X, select "System"
+#    2. Click "Advanced system settings"
+#    3. Click "Environment Variables"
+#    4. Under "System variables", find "Path", click "Edit"
+#    5. Click "New" and add: C:\Program Files\nodejs
+#    6. Click OK on all dialogs
+#    7. RESTART Cursor completely
+#
+# 2. INSTALL MYSQL (Required for backend database)
+#    
+#    WINDOWS INSTALLATION STEPS:
+#    1. Download MySQL Installer: https://dev.mysql.com/downloads/installer/
+#       - Choose "MySQL Installer for Windows" (the larger file, ~400MB)
+#       - Select "mysql-installer-community" (free version)
+#    
+#    2. Run the installer:
+#       - Choose "Developer Default" or "Server only" setup type
+#       - Click "Execute" to install required components
+#       - Click "Next" through the installation
+#    
+#    3. Configuration:
+#       - Choose "Standalone MySQL Server"
+#       - Select "Development Computer" (uses less resources)
+#       - Choose "Use Strong Password Encryption"
+#       - Set a root password (REMEMBER THIS PASSWORD - you'll need it for .env file!)
+#       - Add MySQL to Windows PATH (check the box)
+#       - Click "Execute" to finish setup
+#    
+#    4. Verify installation:
+#       - Open a NEW terminal/PowerShell
+#       - Run: mysql --version
+#       - Should show MySQL version number
+#    
+#    5. Start MySQL service:
+#       - Press Win+R, type "services.msc"
+#       - Find "MySQL80" or "MySQL" service
+#       - Right-click → Start (if not already running)
+#       - Set Startup type to "Automatic" (so it starts on boot)
+#    
+#    ALTERNATIVE: Use XAMPP (Easier for beginners)
+#    - Download: https://www.apachefriends.org/
+#    - Install XAMPP (includes MySQL)
+#    - Start MySQL from XAMPP Control Panel
+#    - MySQL will be available on localhost:3306
+#    
+#    MAC INSTALLATION:
+#    - Download .dmg from: https://dev.mysql.com/downloads/mysql/
+#    - Or use Homebrew: brew install mysql
+#    - Start MySQL: brew services start mysql
+#    
+#    LINUX INSTALLATION:
+#    - Ubuntu/Debian: sudo apt-get install mysql-server
+#    - Fedora/RHEL: sudo dnf install mysql-server
+#    - Start MySQL: sudo systemctl start mysql
+#
+# 3. INSTALL GIT (Optional but recommended)
+#    Download: https://git-scm.com/downloads
+#    Verify: git --version
+#
+# ============================================================================
+# 📦 INSTALLATION INSTRUCTIONS (After prerequisites are installed)
+# ============================================================================
+#
+# 1. BACKEND DEPENDENCIES
+#    Location: Navigate to backend/ directory
+#    Command: npm install
+#    
+#    This installs:
+#    - express ^5.1.0 (Web framework)
+#    - mysql2 ^3.15.3 (MySQL database driver)
+#    - jsonwebtoken ^9.0.2 (JWT authentication)
+#    - bcryptjs ^3.0.3 (Password hashing)
+#    - cors ^2.8.5 (Cross-origin resource sharing)
+#    - dotenv ^17.2.3 (Environment variables)
+#    - nodemon ^3.1.11 (Dev dependency - auto-restart server)
+#
+#    Example:
+#    cd backend
+#    npm install
+#
+# 2. FRONTEND DEPENDENCIES
+#    Location: Navigate to frontend/ directory
+#    Command: npm install
+#    
+#    This installs:
+#    - react ^19.2.0 (UI library)
+#    - react-dom ^19.2.0 (React DOM renderer)
+#    - react-router-dom ^6.30.2 (Routing)
+#    - axios ^1.7.9 (HTTP client)
+#    - gsap ^3.14.0 (Animation library)
+#    - lucide-react ^0.554.0 (Icons)
+#    - ogl ^1.0.11 (WebGL library)
+#    - react-icons ^5.5.0 (Icon library)
+#    - @fortawesome/react-fontawesome ^3.1.1 (FontAwesome React)
+#    - @fortawesome/fontawesome-svg-core ^7.1.0 (FontAwesome core)
+#    - @fortawesome/free-solid-svg-icons ^7.1.0 (FontAwesome icons)
+#    - vite ^7.2.4 (Build tool - dev dependency)
+#    - tailwindcss ^4.1.17 (CSS framework - dev dependency)
+#    - eslint ^9.39.1 (Linter - dev dependency)
+#    - And other dev dependencies...
+#
+#    Example:
+#    cd frontend
+#    npm install
+#
+# 3. ADDITIONAL FRONTEND COMPONENTS (ReactBits)
+#    Location: Navigate to frontend/ directory
+#    Commands:
+#    npx jsrepo@latest add https://reactbits.dev/r/CurvedLoop-JS-CSS
+#    npx jsrepo@latest add https://reactbits.dev/r/DarkVeil-JS-CSS
+#    npx jsrepo@latest add https://reactbits.dev/r/ChromaGrid-JS-CSS
+#    npx jsrepo@latest add https://reactbits.dev/r/PixelTransition-JS-CSS
+#
+#    Example:
+#    cd frontend
+#    npx jsrepo@latest add https://reactbits.dev/r/CurvedLoop-JS-CSS
+#    npx jsrepo@latest add https://reactbits.dev/r/DarkVeil-JS-CSS
+#    npx jsrepo@latest add https://reactbits.dev/r/ChromaGrid-JS-CSS
+#    npx jsrepo@latest add https://reactbits.dev/r/PixelTransition-JS-CSS
+#
+# ============================================================================
+# 🚀 RUNNING THE PROJECT
+# ============================================================================
+#
+# Backend Server:
+#   Location: backend/ directory
+#   Command: npm run dev
+#   Runs on: http://localhost:5000 (default)
+#
+# Frontend Development Server:
+#   Location: frontend/ directory
+#   Command: npm run dev
+#   Runs on: http://localhost:5173 (default Vite port)
+#
+# ============================================================================
+# 🔧 TROUBLESHOOTING
+# ============================================================================
+#
+# ERROR: 'npm' is not recognized as an internal or external command
+# SOLUTION:
+#   Option 1 (Quick fix for current session):
+#   In PowerShell, run: $env:PATH += ";C:\Program Files\nodejs"
+#   Then verify: node --version
+#
+#   Option 2 (Permanent fix):
+#   1. Install Node.js from https://nodejs.org/ (see Prerequisites above)
+#   2. COMPLETELY QUIT Cursor (File > Exit)
+#   3. Reopen Cursor
+#   4. Open a new terminal in Cursor
+#   5. Try again: npm --version
+#
+#   Option 3 (If Options 1 & 2 don't work):
+#   Manually add Node.js to Windows PATH (see Prerequisites section above)
+#   Then restart Cursor completely
+#
+# ERROR: 'node' is not recognized
+# SOLUTION: Same as above - install Node.js and restart terminal
+#
+# ERROR: npm install fails with permission errors
+# SOLUTION (Windows):
+#   - Run PowerShell/Command Prompt as Administrator
+#   - Or use: npm install --global --production windows-build-tools
+#
+# ERROR: Port already in use (EADDRINUSE)
+# SOLUTION:
+#   - Backend: Change PORT in backend/.env file
+#   - Frontend: Vite will auto-use next available port
+#   - Or kill process using the port
+#
+# ERROR: ❌ Database connection error (or empty error message)
+# SOLUTION:
+#   This means MySQL is not running, database doesn't exist, or wrong credentials.
+#
+#   Step 1: Check if MySQL is installed and running
+#   - Windows: Open Services (Win+R, type "services.msc")
+#   - Look for "MySQL" or "MySQL80" service
+#   - Right-click and select "Start" if it's stopped
+#   - Or install MySQL from: https://dev.mysql.com/downloads/mysql/
+#
+#   Step 2: Verify MySQL is accessible
+#   - Try opening MySQL Command Line Client or MySQL Workbench
+#   - Or test connection: mysql -u root -p
+#   - If MySQL is not in PATH, find it in: C:\Program Files\MySQL\MySQL Server 8.0\bin\
+#
+#   Step 3: Create the database
+#   - Open MySQL Command Line Client or MySQL Workbench
+#   - Run: CREATE DATABASE fgaweb;
+#   - Verify: SHOW DATABASES; (should see fgaweb in the list)
+#
+#   Step 4: Import the schema
+#   - Navigate to backend/database/ folder
+#   - Run: mysql -u root -p fgaweb < schema.sql
+#   - Or open schema.sql in MySQL Workbench and execute it
+#
+#   Step 5: Check backend/.env file
+#   - Make sure backend/.env exists (copy from .env.example if needed)
+#   - Verify these values are correct:
+#     DB_HOST=localhost
+#     DB_USER=root
+#     DB_PASS=your_actual_mysql_password
+#     DB_NAME=fgaweb
+#   - Make sure DB_PASS matches your MySQL root password
+#
+#   Step 6: Restart the backend server
+#   - Stop the server (Ctrl+C)
+#   - Run: npm run dev
+#   - Should see: "Database Connected" instead of error
+#
+#   ALTERNATIVE: Use a cloud MySQL database (Railway, PlanetScale, etc.)
+#   - Sign up for free tier
+#   - Get connection string
+#   - Update backend/.env with cloud database credentials
+#
+# ============================================================================
+# 🐍 FUTURE PYTHON DEPENDENCIES
+# ============================================================================
+# If Python tooling/scripts are added to this project, list them below:
+#
+# Example (if adding Python testing tools):
+# pytest==7.4.0
+# black==23.7.0
+# flake8==6.1.0
+#
+# To install Python dependencies (if added):
+#   pip install -r requirements.txt
+#   OR
+#   pip3 install -r requirements.txt
+
