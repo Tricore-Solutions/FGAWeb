@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Get API URL from environment variable or use default
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // Log API URL in development for debugging
 if (import.meta.env.DEV) {
