@@ -464,68 +464,19 @@ function Contact() {
 
 // Placeholder components for new routes
 
-
-function Login() {
-  return (
-    <div className="min-h-screen bg-white flex items-center justify-center py-16 md:py-24">
-      <div className="max-w-md w-full px-4 md:px-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
-            Login
-          </h1>
-          <p className="text-lg text-oslo-gray">
-            Sign in to your account
-          </p>
-        </div>
-        <Card>
-          <LoadingSpinner message="Login form coming soon..." />
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-function Signup() {
-  return (
-    <div className="min-h-screen bg-white flex items-center justify-center py-16 md:py-24">
-      <div className="max-w-md w-full px-4 md:px-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
-            Sign Up
-          </h1>
-          <p className="text-lg text-oslo-gray">
-            Create a new account
-          </p>
-        </div>
-        <Card>
-          <LoadingSpinner message="Signup form coming soon..." />
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-function Dashboard() {
-  return (
-    <div className="min-h-screen bg-white">
-      <section className="py-16 md:py-24">
-        <div className="w-full mx-auto px-4 md:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
-              Dashboard
-            </h1>
-            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
-              Welcome to your personalized dashboard.
-            </p>
-          </div>
-          <LoadingSpinner message="Loading dashboard data..." />
-        </div>
-      </section>
-    </div>
-  );
-}
-
 function App() {
+  const location = useLocation();
+  const [isNavbarTransparent, setIsNavbarTransparent] = useState(false);
+  const [isNavbarHidden, setIsNavbarHidden] = useState(false);
+  const curvedLoopRef = useRef(null);
+  const footerRef = useRef(null);
+
+  // Check if current page is an auth page
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
+  
+  // Determine if TopBar should show (you can customize this logic)
+  const shouldShowTopBar = !isAuthPage;
+
   return (
     <div className="min-h-screen w-full bg-white flex flex-col">
       {!isAuthPage && <TopBar show={shouldShowTopBar} />}
