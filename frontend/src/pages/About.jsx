@@ -14,7 +14,8 @@ function About() {
   const videoRef = useRef(null);
   const imageSectionRef = useRef(null);
   const heroSectionRef = useRef(null);
-  const [imageScale, setImageScale] = useState(1);
+  const [imagePadding, setImagePadding] = useState(100);
+  const [imageBorderRadius, setImageBorderRadius] = useState(40);
   const [headingScrollProgress, setHeadingScrollProgress] = useState(0);
 
   useEffect(() => {
@@ -24,19 +25,38 @@ function About() {
   }, []);
 
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
       if (!imageSectionRef.current) return;
       
-      const rect = imageSectionRef.current.getBoundingClientRect();
-      const sectionHeight = rect.height;
-      const scrollProgress = Math.max(0, Math.min(1, -rect.top / sectionHeight));
-      
-      // Zoom from 1 to 1.3 as user scrolls
-      const scale = 1 + (scrollProgress * 0.3);
-      setImageScale(scale);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const rect = imageSectionRef.current.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          
+          // Calculate scroll progress: 
+          // When section top is at viewport top (rect.top = 0): progress = 0 (small image)
+          // As user scrolls down, rect.top becomes negative
+          // When section is scrolled past viewport: progress = 1 (full size)
+          // Use windowHeight as the scroll distance for smooth transition
+          const scrollProgress = Math.max(0, Math.min(1, -rect.top / windowHeight));
+          
+          // Start with padding and border-radius, reduce to 0 as user scrolls
+          const initialPadding = 100;
+          const initialBorderRadius = 40;
+          const padding = initialPadding * (1 - scrollProgress); // From 100px to 0px
+          const borderRadius = initialBorderRadius * (1 - scrollProgress); // From 40px to 0px
+          
+          setImagePadding(Math.max(0, padding));
+          setImageBorderRadius(Math.max(0, borderRadius));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // Initial call
     
     return () => window.removeEventListener('scroll', handleScroll);
@@ -112,24 +132,38 @@ function About() {
   return (
     <>
       {/* Top Image Section */}
-      <section id="image-section" ref={imageSectionRef} className="w-full overflow-hidden" style={{ height: '100vh' }}>
-        <img 
-          src="/images/fga-6.jpg" 
-          alt="Future Generation Academy" 
-          className="w-full h-full object-cover"
-          style={{ 
-            display: 'block',
-            transform: `scale(${imageScale})`,
-            transition: 'transform 0.1s ease-out',
-            willChange: 'transform'
+      <section id="image-section" ref={imageSectionRef} className="w-full overflow-hidden" style={{ height: '100vh', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            padding: `${imagePadding}px`,
+            borderRadius: `${imageBorderRadius}px`,
+            transition: 'padding 0.15s ease-out, border-radius 0.15s ease-out',
+            willChange: 'padding, border-radius',
+            boxSizing: 'border-box',
+            overflow: 'hidden'
           }}
-        />
+        >
+          <img 
+            src="/images/fga-6.jpg" 
+            alt="Future Generation Academy" 
+            className="w-full h-full object-cover"
+            style={{ 
+              display: 'block',
+              width: '100%',
+              height: '100%',
+              borderRadius: `${imageBorderRadius}px`,
+              transition: 'border-radius 0.15s ease-out'
+            }}
+          />
+        </div>
       </section>
 
       {/* Hero Section */}
       <section 
         ref={heroSectionRef}
-        className="relative w-full py-20 md:py-32 flex items-center justify-center min-h-[400px] md:min-h-[500px]"
+        className="relative w-full pt-20 md:pt-32 pb-8 md:pb-12 flex items-center justify-center min-h-[400px] md:min-h-[500px]"
         style={{
           backgroundImage: 'url(https://via.placeholder.com/1920x1080)',
           backgroundSize: 'cover',
@@ -176,16 +210,40 @@ function About() {
         </div>
       </section>
 
-      {/* History Section */}
-      <section className="w-full py-12 sm:py-16 md:py-24 bg-white">
+      {/* Mission/Vision Section */}
+      <section className="w-full pt-10 sm:pt-12 md:pt-16 pb-12 sm:pb-16 md:pb-24 bg-white relative overflow-visible">
         <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
-              Our History
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
-            <div className="order-2 lg:order-1">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12 relative" style={{ overflow: 'visible', alignItems: 'stretch', minHeight: '600px' }}>
+            {/* Mission */}
+            <div className="relative z-20 flex flex-col justify-start" style={{ paddingTop: '0', marginLeft: '3rem' }}>
+              <div className="text-right mb-4 sm:mb-6">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-river-bed mb-3">
+                  Our <span style={{ color: colors['gulf-stream'] }}>Mission</span>
+                </h2>
+              </div>
+              <div className="prose prose-sm max-w-none text-right">
+                <p className="text-sm sm:text-base text-oslo-gray leading-relaxed">
+                  Future Generation Academy holds a commendable mission of promoting sports, particularly football, among the youth of society. By focusing on discovering and nurturing sporting talents, the academy provides a conducive environment for future generations to explore and express their athletic potential.
+                </p>
+              </div>
+            </div>
+
+            {/* Video */}
+            <div 
+              className="order-2 lg:order-2 relative z-10 self-center"
+              style={{
+                transform: 'scale(2)',
+                marginTop: '-20%',
+                marginBottom: '-20%',
+                marginLeft: '3rem',
+                width: '100%',
+                overflow: 'visible',
+                position: 'relative',
+                border: 'none',
+                outline: 'none',
+                boxShadow: 'none'
+              }}
+            >
               <video
                 ref={videoRef}
                 src="/videos/football-drawing.mp4"
@@ -196,73 +254,26 @@ function About() {
                 disablePictureInPicture
                 controlsList="nodownload noplaybackrate"
                 className="w-full h-auto transition-all duration-300 hover:brightness-110"
-                style={{ background: 'transparent' }}
+                style={{ 
+                  background: 'transparent',
+                  border: 'none',
+                  outline: 'none',
+                  boxShadow: 'none',
+                  borderRadius: '0'
+                }}
               />
-            </div>
-            <div className="order-1 lg:order-2 prose prose-sm sm:prose-base md:prose-lg max-w-none">
-              <p className="text-base sm:text-lg text-oslo-gray mb-4 sm:mb-6 leading-relaxed">
-                Founded in 2015, Future Generation Academy began with a simple yet powerful vision: 
-                to create a place where athletes of all backgrounds could come together to pursue excellence 
-                in sports while developing essential life skills.
-              </p>
-              <p className="text-base sm:text-lg text-oslo-gray mb-4 sm:mb-6 leading-relaxed">
-                What started as a small training facility with just a handful of athletes has grown into 
-                a comprehensive academy serving hundreds of athletes across multiple sports disciplines. 
-                Over the years, we've expanded our facilities, developed innovative training programs, 
-                and built a community of dedicated coaches, athletes, and families.
-              </p>
-              <p className="text-base sm:text-lg text-oslo-gray leading-relaxed">
-                Today, FGA stands as a testament to what can be achieved when passion meets purpose. 
-                We continue to evolve, embracing new technologies and training methodologies while staying 
-                true to our core values of excellence, integrity, and community.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Mission/Vision Section */}
-      <section className="w-full py-12 sm:py-16 md:py-24" style={{ backgroundColor: colors['geyser'] }}>
-        <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
-            {/* Mission */}
-            <div>
-              <div className="text-center mb-6 sm:mb-8">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
-                  Our Mission
-                </h2>
-              </div>
-              <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none text-center">
-                <p className="text-base sm:text-lg text-oslo-gray mb-4 sm:mb-6 leading-relaxed">
-                  Future Generation Academy (FGA) is dedicated to fostering excellence in sports through 
-                  comprehensive training programs, state-of-the-art facilities, and a commitment to 
-                  developing well-rounded athletes.
-                </p>
-                <p className="text-base sm:text-lg text-oslo-gray leading-relaxed">
-                  Our mission is to provide athletes of all levels with the resources, guidance, and 
-                  opportunities they need to reach their full potential. We believe in the power of 
-                  sports to build character, discipline, and lifelong friendships.
-                </p>
-              </div>
             </div>
 
             {/* Vision */}
-            <div>
-              <div className="text-center mb-6 sm:mb-8">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
-                  Our Vision
+            <div className="order-3 lg:order-3 relative z-20 flex flex-col justify-end" style={{ paddingBottom: '0', marginTop: 'auto', marginBottom: '6rem', marginLeft: '-4rem', marginRight: '3rem' }}>
+              <div className="text-left mb-4 sm:mb-6">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-river-bed mb-3">
+                  Our <span style={{ color: colors['gulf-stream'] }}>Vision</span>
                 </h2>
               </div>
-              <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none text-center">
-                <p className="text-base sm:text-lg text-oslo-gray mb-4 sm:mb-6 leading-relaxed">
-                  To become the leading academy for athletic development, recognized nationally for 
-                  producing not only exceptional athletes but also outstanding individuals who contribute 
-                  positively to their communities.
-                </p>
-                <p className="text-base sm:text-lg text-oslo-gray leading-relaxed">
-                  We envision a future where every athlete who walks through our doors leaves with 
-                  enhanced skills, strengthened character, and the confidence to pursue their dreams, 
-                  both on and off the field.
+              <div className="prose prose-sm max-w-none text-left">
+                <p className="text-sm sm:text-base text-oslo-gray leading-relaxed">
+                  Established in January 2021 with our main branch in Muscat, the academy has achieved significant success, boasting over 1000 registered participants across four different age categories ranging from 5 to 16 years old. We envision fostering a culture of athleticism and providing opportunities for young individuals to pursue their passion for sports while promoting physical fitness and overall well-being.
                 </p>
               </div>
             </div>
@@ -275,7 +286,7 @@ function About() {
         <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
-              Our Coaching Staff
+              Our Founders
             </h2>
             <p className="text-base sm:text-lg text-oslo-gray max-w-2xl mx-auto px-4">
               Meet the experienced professionals dedicated to your success
@@ -285,50 +296,23 @@ function About() {
             <ChromaGrid 
               items={[
                 {
-                  image: 'https://i.pravatar.cc/300?img=1',
-                  title: 'Michael Johnson',
-                  subtitle: 'Head Coach',
-                  handle: '@michaeljohnson',
+                  image: '/images/fga-saif.jpg',
+                  title: 'Saif Al-Harthi',
+                  subtitle: 'Sport & Training Manager',
                   gradient: 'linear-gradient(90deg, #7db8b9, #7db8b9)',
                   url: '#'
                 },
                 {
-                  image: 'https://i.pravatar.cc/300?img=2',
-                  title: 'Sarah Williams',
-                  subtitle: 'Youth Development Coach',
-                  handle: '@sarahwilliams',
+                  image: '/images/fga-ali.jpg',
+                  title: 'Ali Al-Maani',
+                  subtitle: 'General Manager',
                   gradient: 'linear-gradient(90deg, #7db8b9, #7db8b9)',
                   url: '#'
                 },
                 {
-                  image: 'https://i.pravatar.cc/300?img=3',
-                  title: 'David Chen',
-                  subtitle: 'Strength & Conditioning Coach',
-                  handle: '@davidchen',
-                  gradient: 'linear-gradient(90deg, #7db8b9, #7db8b9)',
-                  url: '#'
-                },
-                {
-                  image: 'https://i.pravatar.cc/300?img=4',
-                  title: 'Emily Rodriguez',
-                  subtitle: 'Technical Skills Coach',
-                  handle: '@emilyrodriguez',
-                  gradient: 'linear-gradient(90deg, #7db8b9, #7db8b9)',
-                  url: '#'
-                },
-                {
-                  image: 'https://i.pravatar.cc/300?img=5',
-                  title: 'James Thompson',
-                  subtitle: 'Mental Performance Coach',
-                  handle: '@jamesthompson',
-                  gradient: 'linear-gradient(90deg, #7db8b9, #7db8b9)',
-                  url: '#'
-                },
-                {
-                  image: 'https://i.pravatar.cc/300?img=6',
-                  title: 'Lisa Anderson',
-                  subtitle: 'Rehabilitation Specialist',
-                  handle: '@lisanderson',
+                  image: '/images/fga-khalid.jpg',
+                  title: 'Khalid Al-Maani',
+                  subtitle: 'Finance & HR Manager',
                   gradient: 'linear-gradient(90deg, #7db8b9, #7db8b9)',
                   url: '#'
                 }

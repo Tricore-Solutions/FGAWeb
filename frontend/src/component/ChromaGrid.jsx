@@ -168,12 +168,16 @@ export const ChromaGrid = ({
               minHeight: 'auto',
               maxHeight: 'fit-content',
               height: 'auto',
-              verticalAlign: 'top'
+              verticalAlign: 'top',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center'
             }}
           >
             <h3 className="name" style={{ margin: 0, padding: 0, lineHeight: 1 }}>{c.title}</h3>
+            {c.subtitle && <p className="role" style={{ margin: 0, padding: 0, lineHeight: 1, marginTop: '0.3rem' }}>{c.subtitle}</p>}
             {c.handle && <span className="handle" style={{ margin: 0, padding: 0, lineHeight: 1 }}>{c.handle}</span>}
-            <p className="role" style={{ margin: 0, padding: 0, lineHeight: 1 }}>{c.subtitle}</p>
             {c.location && <span className="location" style={{ margin: 0, padding: 0, lineHeight: 1 }}>{c.location}</span>}
           </footer>
         </article>
