@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User } from 'lucide-react';
 import { spacing } from '../styles/design-tokens/spacing';
@@ -30,6 +31,31 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
 
   const isActive = (path) => {
     return location.pathname === path;
+  };
+
+  // Get the image index for a hovered link (loops through 4 images)
+  const getImageIndexForLink = (linkPath) => {
+    if (!linkPath) return null;
+    // Check if it's a nav link
+    const linkIndex = navLinks.findIndex(link => link.path === linkPath);
+    if (linkIndex !== -1) {
+      return linkIndex % 4; // Loop through 4 images (0-3)
+    }
+    // Handle Dashboard and Logout links - continue the loop after navLinks
+    if (linkPath === '/dashboard') {
+      return navLinks.length % 4; // 5th link (index 5) -> Image 1 (5 % 4 = 1)
+    }
+    if (linkPath === '/logout') {
+      return (navLinks.length + 1) % 4; // 6th link (index 6) -> Image 2 (6 % 4 = 2)
+    }
+    return null;
+  };
+
+  // Get the image index for the current page (for initial state)
+  const getImageIndexForCurrentPage = () => {
+    const linkIndex = navLinks.findIndex(link => link.path === location.pathname);
+    if (linkIndex === -1) return null;
+    return linkIndex % 4;
   };
 
   const toggleMenu = () => {
@@ -165,16 +191,18 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
   }
 
   return (
+    <>
     <nav 
       className={getNavbarClasses()} 
       style={{ 
         zIndex: 50,
-        opacity: isHidden ? 0 : 1,
+        opacity: (isHidden || isMenuOpen) ? 0 : 1,
         transform: isHidden ? 'translateY(-100%)' : 'translateY(0)',
         // Instant appearance when becoming visible, smooth fade-out when hiding
         transition: isFadingOut ? 'opacity 0.3s ease-out, transform 0.3s ease-out' : 'none',
-        pointerEvents: isHidden ? 'none' : 'auto',
-        willChange: isFadingOut ? 'opacity, transform' : 'auto'
+        pointerEvents: (isHidden || isMenuOpen) ? 'none' : 'auto',
+        willChange: isFadingOut ? 'opacity, transform' : 'auto',
+        visibility: isMenuOpen ? 'hidden' : 'visible'
       }}
     >
       <div 
@@ -362,40 +390,60 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
         />
       )}
 
-      {/* Slide-in Menu Overlay */}
-      <div
-        className={`fixed inset-0 z-40 transition-opacity duration-300 ${
-          isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
-        style={{ backgroundColor: '#0a0e14' }}
-        onClick={closeMenu}
-      />
-      
-      {/* Slide-in Menu */}
-      <div 
-        className={`fixed top-0 left-0 z-50 transition-transform duration-300 ease-out ${
-          isMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-        style={{ 
-          backgroundColor: '#0a0e14',
-          width: '100vw',
-          height: '100vh',
-          overflow: 'hidden',
-          margin: 0,
-          padding: 0
-        }}
-        onClick={(e) => e.stopPropagation()}
-        onMouseMove={(e) => {
-          const rect = e.currentTarget.getBoundingClientRect();
-          const y = e.clientY - rect.top;
-          const normalizedY = (y / rect.height) * 2 - 1; // -1 to 1 range
-          setMouseY(normalizedY * 50); // Scale to -50px to 50px
-        }}
-        onMouseLeave={() => setMouseY(0)}
-      >
+      {/* Slide-in Menu Overlay - Rendered via Portal to ensure it's on top */}
+      {createPortal(
+        <>
+          <div
+            className={`fixed transition-opacity duration-500 ease-in-out ${
+              isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+            }`}
+            style={{ 
+              backgroundColor: '#0a0e14',
+              zIndex: 99998,
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              width: '100vw',
+              height: '100vh',
+              margin: 0,
+              padding: 0
+            }}
+            onClick={closeMenu}
+          />
+          
+          {/* Slide-in Menu - Slides down from top */}
+          <div 
+            className={`fixed transition-all duration-500 ease-in-out ${
+              isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+            }`}
+            style={{ 
+              backgroundColor: '#0a0e14',
+              position: 'fixed',
+              width: '100vw',
+              height: '100vh',
+              top: 0,
+              left: 0,
+              overflow: 'hidden',
+              margin: 0,
+              padding: 0,
+              zIndex: 99999,
+              pointerEvents: isMenuOpen ? 'auto' : 'none'
+            }}
+            onClick={(e) => e.stopPropagation()}
+            onMouseMove={(e) => {
+              if (!isMenuOpen) return;
+              const rect = e.currentTarget.getBoundingClientRect();
+              const y = e.clientY - rect.top;
+              const normalizedY = (y / rect.height) * 2 - 1; // -1 to 1 range
+              setMouseY(normalizedY * 50); // Scale to -50px to 50px
+            }}
+            onMouseLeave={() => setMouseY(0)}
+          >
         {/* DarkVeil Background */}
         <div style={{ width: '100vw', height: '100vh', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, overflow: 'hidden' }}>
-          <DarkVeil />
+          <DarkVeil hueShift={40} warpAmount={4} />
         </div>
         
         {/* Content */}
@@ -404,66 +452,66 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
           <div className="hidden md:flex w-3/5 flex-col p-8 md:p-12">
             {/* Image Containers - Separate containers for independent positioning */}
             <div className="relative flex-1">
-              {/* Image Container 1 - Top Left (Home) */}
+              {/* Image Container 1 - Top Left */}
               <div 
                 className="absolute left-0 w-[calc(48%-1rem)] h-[calc(50%-0.5rem)] overflow-hidden transition-all duration-300 ease-out" 
                 style={{ 
-                  filter: (hoveredLink === '/' || (!hoveredLink && location.pathname === '/')) ? 'none' : 'grayscale(100%) brightness(0.9)', 
+                  filter: (getImageIndexForLink(hoveredLink) === 0 || (!hoveredLink && getImageIndexForCurrentPage() === 0)) ? 'none' : 'grayscale(100%) brightness(0.9)', 
                   top: '2rem',
                   transform: `translateY(${-mouseY}px)`
                 }}
               >
                 <img 
-                  src="/images/fga-3.jpg" 
-                  alt="FGA Image 3" 
+                  src="/images/fga-menu-1.jpg" 
+                  alt="FGA Menu 1" 
                   className="w-full h-full object-cover"
                 />
               </div>
               
-              {/* Image Container 2 - Top Right (About) */}
+              {/* Image Container 2 - Top Right */}
               <div 
                 className="absolute right-0 w-[calc(48%-1rem)] h-[calc(55%-0.5rem)] overflow-hidden transition-all duration-300 ease-out" 
                 style={{ 
-                  filter: (hoveredLink === '/about' || (!hoveredLink && location.pathname === '/about')) ? 'none' : 'grayscale(100%) brightness(0.9)', 
+                  filter: (getImageIndexForLink(hoveredLink) === 1 || (!hoveredLink && getImageIndexForCurrentPage() === 1)) ? 'none' : 'grayscale(100%) brightness(0.9)', 
                   top: '-5rem',
                   transform: `translateY(${mouseY}px)`
                 }}
               >
                 <img 
-                  src="/images/fga-4.jpg" 
-                  alt="FGA Image 4" 
+                  src="/images/fga-menu-2.jpg" 
+                  alt="FGA Menu 2" 
                   className="w-full h-full object-cover"
                 />
               </div>
               
-              {/* Image Container 3 - Bottom Left (Camps) */}
+              {/* Image Container 3 - Bottom Left */}
               <div 
                 className="absolute left-0 w-[calc(48%-1rem)] h-[calc(55%-0.5rem)] overflow-hidden transition-all duration-300 ease-out" 
                 style={{ 
-                  filter: (hoveredLink === '/branches-camps' || (!hoveredLink && location.pathname === '/branches-camps')) ? 'none' : 'grayscale(100%) brightness(0.9)', 
+                  filter: (getImageIndexForLink(hoveredLink) === 2 || (!hoveredLink && getImageIndexForCurrentPage() === 2)) ? 'none' : 'grayscale(100%) brightness(0.9)', 
                   top: 'calc(2rem + 50% - 0.5rem + 3rem)',
                   transform: `translateY(${-mouseY}px)`
                 }}
               >
                 <img 
-                  src="/images/fga-1.jpg" 
-                  alt="FGA Image 1" 
+                  src="/images/fga-menu-3.jpg" 
+                  alt="FGA Menu 3" 
                   className="w-full h-full object-cover"
                 />
               </div>
               
-              {/* Image Container 4 - Bottom Right (Tournaments) */}
+              {/* Image Container 4 - Bottom Right */}
               <div 
                 className="absolute right-0 w-[calc(48%-1rem)] h-[calc(50%-0.5rem)] overflow-hidden transition-all duration-300 ease-out" 
                 style={{ 
-                  filter: (hoveredLink === '/tournaments' || (!hoveredLink && location.pathname === '/tournaments')) ? 'none' : 'grayscale(100%) brightness(0.9)', 
+                  filter: (getImageIndexForLink(hoveredLink) === 3 || (!hoveredLink && getImageIndexForCurrentPage() === 3)) ? 'none' : 'grayscale(100%) brightness(0.9)', 
                   top: 'calc(-5rem + 55% + 2.5rem)',
                   transform: `translateY(${mouseY}px)`
                 }}
               >
                 <img 
-                  src="/images/fga-2.jpeg" 
-                  alt="FGA Image 2" 
+                  src="/images/fga-menu-4.JPG" 
+                  alt="FGA Menu 4" 
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -525,15 +573,6 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
                       }}
                     >
                       {link.label}
-                      {active && (
-                        <span 
-                          className="absolute bottom-0 left-0 w-full h-0.5"
-                          style={{ 
-                            backgroundColor: colors['gulf-stream'],
-                            transform: 'skewY(-2deg)'
-                          }}
-                        />
-                      )}
                     </Link>
                   );
                 })}
@@ -557,9 +596,11 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.setProperty('--fill-progress', '100%');
+                        setHoveredLink('/dashboard');
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.setProperty('--fill-progress', '0%');
+                        setHoveredLink(null);
                       }}
                     >
                       Dashboard
@@ -580,9 +621,11 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.setProperty('--fill-progress', '100%');
+                        setHoveredLink('/logout'); // Use a special path for logout
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.setProperty('--fill-progress', '0%');
+                        setHoveredLink(null);
                       }}
                     >
                       Logout
@@ -608,14 +651,15 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
                   <a href="#" className="hover:opacity-80">TIKTOK</a>
                   <a href="#" className="hover:opacity-80">INSTAGRAM</a>
                   <a href="#" className="hover:opacity-80">YOUTUBE</a>
-                  <a href="#" className="hover:opacity-80">TWITTER</a>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
+          </>,
+          document.body
+        )}
       {/* Add CSS for fade-in animation */}
       <style>{`
         @keyframes fadeInUp {
@@ -630,6 +674,7 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
         }
       `}</style>
     </nav>
+    </>
   );
 };
 
