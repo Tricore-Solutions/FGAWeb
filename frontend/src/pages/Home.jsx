@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Calendar, MapPin, Clock } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Calendar, MapPin, Clock } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -23,6 +23,7 @@ function Home() {
   const [totalPlayersTrained, setTotalPlayersTrained] = useState(4000);
   const [hasAnimated, setHasAnimated] = useState(false);
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [eventsCarouselIndex, setEventsCarouselIndex] = useState(0);
 
   // Detect mobile device
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
@@ -111,6 +112,8 @@ function Home() {
         });
         
         setEvents(formattedEvents);
+        // Reset carousel index when events change
+        setEventsCarouselIndex(0);
       } catch (err) {
         console.error('Failed to fetch events:', err);
         setError('Failed to load events');
@@ -239,10 +242,46 @@ function Home() {
     }
   };
 
-  // Get featured event (first/soonest event)
+  // Carousel logic: featured event always stays the same (first event), only small events change
+  // Featured event is always events[0]
   const featuredEvent = events.length > 0 ? events[0] : null;
-  // Get next 2 events for the grid
-  const otherEvents = events.slice(1, 3);
+  
+  // Small events: start from index 1, show 3 events per page
+  const smallEventsPerPage = 3;
+  const totalSmallEvents = Math.max(0, events.length - 1); // All events except the first one
+  const maxCarouselIndex = Math.max(0, Math.ceil(totalSmallEvents / smallEventsPerPage) - 1);
+  
+  // Calculate which small events to show based on carousel index
+  const getSmallEvents = () => {
+    if (events.length <= 1) return []; // No small events if only 1 or 0 events
+    
+    const startIndex = 1 + (eventsCarouselIndex * smallEventsPerPage); // Start from index 1 (skip featured event)
+    return events.slice(startIndex, startIndex + smallEventsPerPage);
+  };
+  
+  const smallEvents = getSmallEvents();
+  
+  const handleNextEvents = () => {
+    if (eventsCarouselIndex < maxCarouselIndex) {
+      setEventsCarouselIndex(eventsCarouselIndex + 1);
+    }
+  };
+  
+  const handlePrevEvents = () => {
+    if (eventsCarouselIndex > 0) {
+      setEventsCarouselIndex(eventsCarouselIndex - 1);
+    }
+  };
+  
+  const handleGoToPage = (pageIndex) => {
+    if (pageIndex >= 0 && pageIndex <= maxCarouselIndex) {
+      setEventsCarouselIndex(pageIndex);
+    }
+  };
+  
+  const canNavigateNext = eventsCarouselIndex < maxCarouselIndex;
+  const canNavigatePrev = eventsCarouselIndex > 0;
+  const totalPages = maxCarouselIndex + 1; // Total number of pages for small events
 
   return (
     <>
@@ -313,7 +352,15 @@ function Home() {
               text="More About Us"
               variant="slide-arrow"
               primaryColor="#80b3b4"
-              onClick={() => navigate('/about')}
+              onClick={() => {
+                // Prevent scroll restoration and ensure we scroll to top
+                if ('scrollRestoration' in window.history) {
+                  window.history.scrollRestoration = 'manual';
+                }
+                // Immediately scroll to top before navigation
+                window.scrollTo(0, 0);
+                navigate('/about', { state: { scrollToImage: true }, replace: false });
+              }}
               className="mx-auto"
             />
           </div>
@@ -355,183 +402,170 @@ function Home() {
               />
             </div>
           ) : (
-            <>
-              {/* Featured Event (Soonest) */}
+            <div className="relative">
+              {/* Featured Event - Large Card */}
               {featuredEvent && (
-                <div className="mb-12">
-                  <div className="flex flex-col md:flex-row gap-6 md:gap-8">
-                    {/* Large Image on Left */}
-                    <div className="w-full md:w-1/2">
+                <div 
+                  className="mb-8 cursor-pointer hover:opacity-95 transition-opacity"
+                  onClick={() => navigate(`/events/${featuredEvent.id}`)}
+                >
+                  <div 
+                    className="flex flex-col md:flex-row overflow-hidden rounded-lg bg-white"
+                    style={{ minHeight: '400px' }}
+                  >
+                    {/* Image on the left */}
+                    <div className="w-full md:w-1/2 flex-shrink-0">
                       <img
                         src={featuredEvent.image}
                         alt={featuredEvent.title}
-                        className="w-full h-full object-cover rounded-lg"
+                        className="w-full h-full min-h-[400px] object-cover"
                       />
                     </div>
-                    {/* Content on Right */}
-                    <div className="w-full md:w-1/2 flex flex-col justify-center">
-                      <div className="text-sm text-oslo-gray mb-2">
+                    
+                    {/* Content on the right */}
+                    <div className="w-full md:w-1/2 flex flex-col justify-center p-6 md:p-8 bg-white">
+                      <div className="text-xs md:text-sm text-oslo-gray mb-2 uppercase tracking-wider">
                         EVENTS - {featuredEvent.date}
                       </div>
-                      <h3 className="text-2xl md:text-3xl font-heading font-bold text-river-bed mb-4">
+                      <h3 
+                        className="text-xl md:text-3xl font-heading font-bold mb-3 md:mb-4"
+                        style={{ color: colors['gulf-stream'] }}
+                      >
                         {featuredEvent.title}
                       </h3>
-                      <p className="text-base text-oslo-gray mb-6 leading-relaxed">
+                      <p className="text-sm md:text-base text-river-bed mb-4">
                         {featuredEvent.description || 'Join us for an exciting event!'}
                       </p>
-                      <div className="text-sm text-oslo-gray mb-6">
-                        <div className="mb-2 flex items-center gap-2">
-                          <Calendar size={16} className="text-oslo-gray" />
-                          <span>{featuredEvent.date}</span>
-                          {featuredEvent.time && <span className="text-oslo-gray">• {featuredEvent.time}</span>}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <MapPin size={16} className="text-oslo-gray" />
-                          <span>{featuredEvent.location}</span>
-                        </div>
-                      </div>
-                      <Button
-                        text="Learn More"
-                        variant="ripple"
-                        onClick={() => navigate(`/events/${featuredEvent.id}`)}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-          {loading ? (
-            <div className="py-12">
-              <LoadingSpinner message="Loading upcoming events..." />
-            </div>
-          ) : error ? (
-            <div className="text-center py-12">
-              <p className="text-oslo-gray mb-4">{error}</p>
-              <Button
-                text="View All Events"
-                variant="outline"
-                onClick={() => navigate('/events')}
-              />
-            </div>
-          ) : events.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-oslo-gray mb-4">No upcoming events at this time.</p>
-              <Button
-                text="View All Events"
-                variant="outline"
-                onClick={() => navigate('/events')}
-              />
-            </div>
-          ) : (
-            <>
-              {/* Featured Event (Soonest) */}
-              {featuredEvent && (
-                <div className="mb-12">
-                  <div className="flex flex-col md:flex-row gap-6 md:gap-8">
-                    {/* Large Image on Left */}
-                    <div className="w-full md:w-1/2">
-                      <img
-                        src={featuredEvent.image}
-                        alt={featuredEvent.title}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    </div>
-                    {/* Content on Right */}
-                    <div className="w-full md:w-1/2 flex flex-col justify-center">
-                      <div className="text-sm text-oslo-gray mb-2">
-                        EVENTS - {featuredEvent.date}
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-heading font-bold text-river-bed mb-4">
-                        {featuredEvent.title}
-                      </h3>
-                      <p className="text-base text-oslo-gray mb-6 leading-relaxed">
-                        {featuredEvent.description || 'Join us for an exciting event!'}
-                      </p>
-                      <div className="text-sm text-oslo-gray mb-6">
-                        <div className="mb-2 flex items-center gap-2">
-                          <Calendar size={16} className="text-oslo-gray" />
-                          <span>{featuredEvent.date}</span>
-                          {featuredEvent.time && <span className="text-oslo-gray">• {featuredEvent.time}</span>}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <MapPin size={16} className="text-oslo-gray" />
-                          <span>{featuredEvent.location}</span>
-                        </div>
-                      </div>
-                      <Button
-                        text="Learn More"
-                        variant="ripple"
-                        onClick={() => navigate(`/events/${featuredEvent.id}`)}
-                      />
+                      <button
+                        className="text-sm md:text-base font-heading font-bold uppercase transition-colors self-start"
+                        style={{ color: colors['gulf-stream'] }}
+                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/events/${featuredEvent.id}`);
+                        }}
+                      >
+                        SHOW MORE
+                      </button>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Other Events Grid */}
-              {otherEvents.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {otherEvents.map((event) => (
-                    <Card
-                      key={event.id}
-                      title={event.title}
-                      description={event.description}
-                      image={event.image}
-                      imageAlt={event.title}
-                      footer={
-                        <div className="flex flex-col gap-2">
-                          <div className="text-sm text-oslo-gray flex items-center gap-2">
-                            <Calendar size={16} className="text-oslo-gray" />
-                            <span>{event.date}</span>
+              {/* Small Events Grid - Side by Side */}
+              {smallEvents.length > 0 && (
+                <>
+                  <div className="relative flex items-center gap-4">
+                    {/* Left Arrow - Show when not on first page */}
+                    {canNavigatePrev && (
+                      <button
+                        onClick={handlePrevEvents}
+                        className="flex-shrink-0 w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity bg-white"
+                        style={{ color: colors['gulf-stream'] }}
+                        aria-label="Previous events"
+                      >
+                        <ArrowLeft 
+                          size={28} 
+                          style={{ color: colors['gulf-stream'] }}
+                        />
+                      </button>
+                    )}
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 flex-1">
+                      {smallEvents.map((event) => (
+                        <div
+                          key={event.id}
+                          className="cursor-pointer hover:opacity-95 transition-opacity"
+                          onClick={() => navigate(`/events/${event.id}`)}
+                        >
+                          <div 
+                            className="relative overflow-hidden rounded-lg bg-white"
+                            style={{ minHeight: '350px' }}
+                          >
+                            <img
+                              src={event.image}
+                              alt={event.title}
+                              className="w-full h-[200px] md:h-[220px] object-cover"
+                            />
+                            <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 bg-white">
+                              <div className="text-xs text-oslo-gray mb-2 uppercase tracking-wider">
+                                EVENTS - {event.date}
+                              </div>
+                              <h4 
+                                className="text-base md:text-lg font-heading font-bold mb-2 line-clamp-2"
+                                style={{ color: colors['gulf-stream'] }}
+                              >
+                                {event.title}
+                              </h4>
+                              <p className="text-xs md:text-sm text-river-bed mb-3 line-clamp-2">
+                                {event.description || 'Join us for an exciting event!'}
+                              </p>
+                              <button
+                                className="text-xs md:text-sm font-heading font-bold uppercase transition-colors"
+                                style={{ color: colors['gulf-stream'] }}
+                                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/events/${event.id}`);
+                                }}
+                              >
+                                SHOW MORE
+                              </button>
+                            </div>
                           </div>
-                          <div className="text-sm text-oslo-gray flex items-center gap-2">
-                            <MapPin size={16} className="text-oslo-gray" />
-                            <span>{event.location}</span>
-                          </div>
-                          <Button
-                            text="Learn More"
-                            variant="ripple"
-                            onClick={() => navigate(`/events/${event.id}`)}
-                          />
                         </div>
-                      }
-                    />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-              {/* Other Events Grid */}
-              {otherEvents.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {otherEvents.map((event) => (
-                    <Card
-                      key={event.id}
-                      title={event.title}
-                      description={event.description}
-                      image={event.image}
-                      imageAlt={event.title}
-                      footer={
-                        <div className="flex flex-col gap-2">
-                          <div className="text-sm text-oslo-gray flex items-center gap-2">
-                            <Calendar size={16} className="text-oslo-gray" />
-                            <span>{event.date}</span>
-                          </div>
-                          <div className="text-sm text-oslo-gray flex items-center gap-2">
-                            <MapPin size={16} className="text-oslo-gray" />
-                            <span>{event.location}</span>
-                          </div>
-                          <Button
-                            text="Learn More"
-                            variant="ripple"
-                            onClick={() => navigate(`/events/${event.id}`)}
+                      ))}
+                    </div>
+
+                    {/* Right Arrow - Only show if there are more small events to navigate */}
+                    {totalSmallEvents > smallEventsPerPage && canNavigateNext && (
+                      <button
+                        onClick={handleNextEvents}
+                        className="flex-shrink-0 w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity bg-white"
+                        style={{ color: colors['gulf-stream'] }}
+                        aria-label="Next events"
+                      >
+                        <ArrowRight 
+                          size={28} 
+                          style={{ color: colors['gulf-stream'] }}
+                        />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {/* Pagination Dots - Below the small events */}
+                  {totalPages > 1 && (
+                    <div className="w-full flex justify-center items-center gap-2 mt-6">
+                      {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleGoToPage(index)}
+                          className="transition-all duration-200 hover:scale-110"
+                          aria-label={`Go to page ${index + 1}`}
+                        >
+                          <div
+                            className={`rounded-full transition-all duration-200 ${
+                              eventsCarouselIndex === index
+                                ? 'w-3 h-3' // Active: filled circle
+                                : 'w-2.5 h-2.5' // Inactive: smaller outline
+                            }`}
+                            style={{
+                              backgroundColor: eventsCarouselIndex === index 
+                                ? colors['gulf-stream'] 
+                                : 'transparent',
+                              border: `2px solid ${colors['gulf-stream']}`,
+                              borderWidth: eventsCarouselIndex === index ? '0' : '2px'
+                            }}
                           />
-                        </div>
-                      }
-                    />
-                  ))}
-                </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
-            </>
+            </div>
           )}
         </div>
       </section>
@@ -684,3 +718,4 @@ function Home() {
 }
 
 export default Home;
+

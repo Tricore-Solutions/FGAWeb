@@ -10,6 +10,7 @@ import Input from './components/Input';
 import LoadingSpinner from './components/LoadingSpinner';
 import Preloader from './components/Preloader';
 import CurvedLoop from './component/CurvedLoop';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import About from './pages/About';
 import Events from './pages/Events';
@@ -471,14 +472,22 @@ function App() {
   const curvedLoopRef = useRef(null);
   const footerRef = useRef(null);
 
+  // Disable browser scroll restoration to prevent scroll position from being preserved
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+  }, []);
+
   // Check if current page is an auth page
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
   
-  // Determine if TopBar should show (you can customize this logic)
-  const shouldShowTopBar = !isAuthPage;
+  // Determine if TopBar should show - only when navbar has white background (not transparent)
+  const shouldShowTopBar = !isAuthPage && !isNavbarTransparent;
 
   return (
     <div className="min-h-screen w-full bg-white flex flex-col">
+      <ScrollToTop />
       {!isAuthPage && <TopBar show={shouldShowTopBar} />}
       {!isAuthPage && (
         <Navbar 
@@ -553,7 +562,7 @@ function App() {
         <div ref={curvedLoopRef} className="w-full mt-8 md:mt-16">
           <CurvedLoop 
             marqueeText="Building Skills ⚽︎ Building Character ⚽︎ Building Futures ⚽︎"
-            speed={0.5}
+            speed={1}
             curveAmount={0}
             direction="right"
             interactive={true}

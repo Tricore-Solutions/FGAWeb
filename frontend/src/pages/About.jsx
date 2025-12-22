@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useRef, useEffect, useState } from 'react';
 import { Dumbbell, Building2, Users, Trophy, Star, Handshake, Lightbulb } from 'lucide-react';
 import Button from '../components/Button';
@@ -10,6 +10,7 @@ import colors from '../styles/design-tokens/colors';
 
 function About() {
   const navigate = useNavigate();
+  const location = useLocation();
   const videoRef = useRef(null);
   const imageSectionRef = useRef(null);
   const heroSectionRef = useRef(null);
@@ -79,10 +80,39 @@ function About() {
     };
   }, []);
 
+  // Scroll to absolute top (image section) if hash is present or coming from home page button
+  useEffect(() => {
+    if (location.hash === '#image-section' || location.state?.scrollToImage) {
+      // Force scroll to absolute top - use instant scroll to ensure it goes to the very top
+      const scrollToAbsoluteTop = () => {
+        // Try all methods to ensure we scroll to absolute top
+        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        if (document.documentElement) {
+          document.documentElement.scrollTop = 0;
+        }
+        if (document.body) {
+          document.body.scrollTop = 0;
+        }
+      };
+      
+      // Immediate scroll on mount
+      scrollToAbsoluteTop();
+      
+      // Additional attempts after render
+      requestAnimationFrame(scrollToAbsoluteTop);
+      setTimeout(scrollToAbsoluteTop, 0);
+      setTimeout(scrollToAbsoluteTop, 10);
+      setTimeout(scrollToAbsoluteTop, 50);
+    }
+  }, [location.hash, location.state]);
+
   return (
     <>
       {/* Top Image Section */}
-      <section ref={imageSectionRef} className="w-full overflow-hidden" style={{ height: '100vh' }}>
+      <section id="image-section" ref={imageSectionRef} className="w-full overflow-hidden" style={{ height: '100vh' }}>
         <img 
           src="/images/fga-6.jpg" 
           alt="Future Generation Academy" 
