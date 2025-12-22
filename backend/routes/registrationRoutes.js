@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
-const { registerForEvent, registerForProgram, getMyRegistrations } = require('../controllers/registrationController');
+const adminMiddleware = require('../middleware/adminMiddleware');
+const { registerForEvent, registerForProgram, getMyRegistrations, getAllRegistrations } = require('../controllers/registrationController');
+
+// Get all registrations (admin only)
+router.get('/all', authMiddleware, adminMiddleware, getAllRegistrations);
 
 // Get all registrations for logged-in user (protected - requires authentication)
 router.get('/my', authMiddleware, getMyRegistrations);
