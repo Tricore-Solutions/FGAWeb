@@ -7,8 +7,6 @@ const Input = ({
   onChange,
   error,
   className = ''
-  error,
-  className = ''
 }) => {
   // Base styles common to all input states
   // Using px-4 py-2 (16px horizontal, 8px vertical) from design system
@@ -31,8 +29,6 @@ const Input = ({
     : 'focus:outline-none focus:[box-shadow:0_0_0_2px_#80b3b4]';
   
   // Combine all styles
-  const inputClasses = `${baseStyles} ${textStyles} ${borderStyles} ${focusStyles} ${className}`.trim();
-  const inputClasses = `${baseStyles} ${textStyles} ${borderStyles} ${focusStyles} ${className}`.trim();
   const inputClasses = `${baseStyles} ${textStyles} ${borderStyles} ${focusStyles} ${className}`.trim();
   
   return (

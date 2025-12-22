@@ -11,15 +11,18 @@ import {
   Trash2,
   BarChart3,
   Activity,
-  LayoutDashboard
+  LayoutDashboard,
+  X
 } from 'lucide-react';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
+import Input from '../../components/Input';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import AuthContext from '../../context/AuthContext';
 import { fetchEvents } from '../../services/eventsService';
 import { fetchPrograms } from '../../services/programsService';
 import { getMyRegistrations } from '../../services/registrationService';
+import api from '../../services/api';
 import colors from '../../styles/design-tokens/colors';
 
 function AdminDashboard() {
@@ -46,6 +49,32 @@ function AdminDashboard() {
   const [recentEvents, setRecentEvents] = useState([]);
   const [recentPrograms, setRecentPrograms] = useState([]);
   const [recentRegistrations, setRecentRegistrations] = useState([]);
+
+  // Create Event Modal State
+  const [showCreateEventModal, setShowCreateEventModal] = useState(false);
+  const [eventFormData, setEventFormData] = useState({
+    title: '',
+    description: '',
+    date: '',
+    location: '',
+    image_url: '',
+    max_participants: ''
+  });
+  const [eventFormErrors, setEventFormErrors] = useState({});
+  const [createEventLoading, setCreateEventLoading] = useState(false);
+
+  // Create Program Modal State
+  const [showCreateProgramModal, setShowCreateProgramModal] = useState(false);
+  const [programFormData, setProgramFormData] = useState({
+    name: '',
+    description: '',
+    age_group: '',
+    schedule: '',
+    price: '',
+    is_active: true
+  });
+  const [programFormErrors, setProgramFormErrors] = useState({});
+  const [createProgramLoading, setCreateProgramLoading] = useState(false);
 
   // Fetch dashboard data
   useEffect(() => {
@@ -91,6 +120,145 @@ function AdminDashboard() {
 
     loadDashboardData();
   }, []);
+
+  // Event Form Handlers
+  const handleEventInputChange = (e) => {
+    const { name, value } = e.target;
+    setEventFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    if (eventFormErrors[name]) {
+      setEventFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const validateEventForm = () => {
+    const errors = {};
+    if (!eventFormData.title.trim()) {
+      errors.title = 'Title is required';
+    }
+    if (!eventFormData.date) {
+      errors.date = 'Date is required';
+    }
+    if (eventFormData.max_participants && isNaN(eventFormData.max_participants)) {
+      errors.max_participants = 'Must be a valid number';
+    }
+    if (eventFormData.max_participants && parseInt(eventFormData.max_participants) < 1) {
+      errors.max_participants = 'Must be at least 1';
+    }
+    setEventFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleCreateEvent = async (e) => {
+    e.preventDefault();
+    if (!validateEventForm()) return;
+
+    try {
+      setCreateEventLoading(true);
+      setEventFormErrors({});
+      const payload = {
+        title: eventFormData.title.trim(),
+        description: eventFormData.description.trim() || null,
+        date: eventFormData.date,
+        location: eventFormData.location.trim() || null,
+        image_url: eventFormData.image_url.trim() || null,
+        max_participants: eventFormData.max_participants ? parseInt(eventFormData.max_participants) : null
+      };
+      await api.post('/api/events', payload);
+      setEventFormData({
+        title: '',
+        description: '',
+        date: '',
+        location: '',
+        image_url: '',
+        max_participants: ''
+      });
+      setShowCreateEventModal(false);
+      // Refresh dashboard data
+      const eventsData = await fetchEvents();
+      const events = Array.isArray(eventsData) ? eventsData : [];
+      setRecentEvents(events.slice(0, 5));
+      setStats(prev => ({ ...prev, totalEvents: events.length }));
+    } catch (err) {
+      console.error('Failed to create event:', err);
+      setEventFormErrors({ submit: err.response?.data?.error || 'Failed to create event. Please try again.' });
+    } finally {
+      setCreateEventLoading(false);
+    }
+  };
+
+  // Program Form Handlers
+  const handleProgramInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setProgramFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+    if (programFormErrors[name]) {
+      setProgramFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const validateProgramForm = () => {
+    const errors = {};
+    if (!programFormData.name.trim()) {
+      errors.name = 'Name is required';
+    }
+    if (programFormData.price && isNaN(programFormData.price)) {
+      errors.price = 'Must be a valid number';
+    }
+    if (programFormData.price && parseFloat(programFormData.price) < 0) {
+      errors.price = 'Price cannot be negative';
+    }
+    setProgramFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleCreateProgram = async (e) => {
+    e.preventDefault();
+    if (!validateProgramForm()) return;
+
+    try {
+      setCreateProgramLoading(true);
+      setProgramFormErrors({});
+      const payload = {
+        name: programFormData.name.trim(),
+        description: programFormData.description.trim() || null,
+        age_group: programFormData.age_group.trim() || null,
+        schedule: programFormData.schedule.trim() || null,
+        price: programFormData.price ? parseFloat(programFormData.price) : null,
+        is_active: programFormData.is_active
+      };
+      await api.post('/api/programs', payload);
+      setProgramFormData({
+        name: '',
+        description: '',
+        age_group: '',
+        schedule: '',
+        price: '',
+        is_active: true
+      });
+      setShowCreateProgramModal(false);
+      // Refresh dashboard data
+      const programsData = await fetchPrograms();
+      const programs = Array.isArray(programsData) ? programsData : [];
+      setRecentPrograms(programs.slice(0, 5));
+      setStats(prev => ({ ...prev, totalPrograms: programs.length }));
+    } catch (err) {
+      console.error('Failed to create program:', err);
+      setProgramFormErrors({ submit: err.response?.data?.error || 'Failed to create program. Please try again.' });
+    } finally {
+      setCreateProgramLoading(false);
+    }
+  };
 
   // Helper function to format date
   const formatDate = (dateString) => {
@@ -219,7 +387,7 @@ function AdminDashboard() {
               <Button
                 text="Create Event"
                 variant="primary"
-                onClick={() => navigate('/admin/events/create')}
+                onClick={() => setShowCreateEventModal(true)}
                 className="flex items-center justify-center gap-2"
               >
                 <Plus className="w-4 h-4" />
@@ -227,7 +395,7 @@ function AdminDashboard() {
               <Button
                 text="Create Program"
                 variant="primary"
-                onClick={() => navigate('/admin/programs/create')}
+                onClick={() => setShowCreateProgramModal(true)}
                 className="flex items-center justify-center gap-2"
               >
                 <Plus className="w-4 h-4" />
@@ -380,7 +548,7 @@ function AdminDashboard() {
                       <Button
                         text="Create Event"
                         variant="primary"
-                        onClick={() => navigate('/admin/events/create')}
+                        onClick={() => setShowCreateEventModal(true)}
                         className="mt-4"
                       />
                     </div>
@@ -437,7 +605,7 @@ function AdminDashboard() {
                       <Button
                         text="Create Program"
                         variant="primary"
-                        onClick={() => navigate('/admin/programs/create')}
+                        onClick={() => setShowCreateProgramModal(true)}
                         className="mt-4"
                       />
                     </div>
@@ -472,6 +640,330 @@ function AdminDashboard() {
         </div>
       </section>
       </div>
+
+      {/* Create Event Modal */}
+      {showCreateEventModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
+            <div className="sticky top-0 bg-white border-b border-geyser px-6 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-heading font-bold text-river-bed">
+                Create New Event
+              </h2>
+              <button
+                onClick={() => {
+                  setShowCreateEventModal(false);
+                  setEventFormData({
+                    title: '',
+                    description: '',
+                    date: '',
+                    location: '',
+                    image_url: '',
+                    max_participants: ''
+                  });
+                  setEventFormErrors({});
+                }}
+                className="text-oslo-gray hover:text-river-bed transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateEvent} className="p-6">
+              <div className="mb-4">
+                <label htmlFor="event_title" className="block text-sm font-medium text-river-bed mb-2">
+                  Title <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="text"
+                  id="event_title"
+                  name="title"
+                  placeholder="Enter event title"
+                  value={eventFormData.title}
+                  onChange={handleEventInputChange}
+                  error={eventFormErrors.title}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="event_description" className="block text-sm font-medium text-river-bed mb-2">
+                  Description
+                </label>
+                <textarea
+                  id="event_description"
+                  name="description"
+                  placeholder="Enter event description"
+                  value={eventFormData.description}
+                  onChange={handleEventInputChange}
+                  rows={4}
+                  className={`w-full px-4 py-2 rounded-lg border transition-all duration-fast ${
+                    eventFormErrors.description ? 'border-red-500' : 'border-geyser'
+                  } focus:outline-none focus:[box-shadow:0_0_0_2px_#80b3b4]`}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="event_date" className="block text-sm font-medium text-river-bed mb-2">
+                  Date & Time <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="datetime-local"
+                  id="event_date"
+                  name="date"
+                  value={eventFormData.date}
+                  onChange={handleEventInputChange}
+                  error={eventFormErrors.date}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="event_location" className="block text-sm font-medium text-river-bed mb-2">
+                  Location
+                </label>
+                <Input
+                  type="text"
+                  id="event_location"
+                  name="location"
+                  placeholder="Enter event location"
+                  value={eventFormData.location}
+                  onChange={handleEventInputChange}
+                  error={eventFormErrors.location}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="event_image_url" className="block text-sm font-medium text-river-bed mb-2">
+                  Image URL
+                </label>
+                <Input
+                  type="url"
+                  id="event_image_url"
+                  name="image_url"
+                  placeholder="https://example.com/image.jpg"
+                  value={eventFormData.image_url}
+                  onChange={handleEventInputChange}
+                  error={eventFormErrors.image_url}
+                />
+              </div>
+
+              <div className="mb-6">
+                <label htmlFor="event_max_participants" className="block text-sm font-medium text-river-bed mb-2">
+                  Max Participants
+                </label>
+                <Input
+                  type="number"
+                  id="event_max_participants"
+                  name="max_participants"
+                  placeholder="Leave empty for unlimited"
+                  value={eventFormData.max_participants}
+                  onChange={handleEventInputChange}
+                  error={eventFormErrors.max_participants}
+                  min="1"
+                />
+                <p className="mt-1 text-sm text-oslo-gray">
+                  Leave empty for unlimited participants
+                </p>
+              </div>
+
+              {eventFormErrors.submit && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{eventFormErrors.submit}</p>
+                </div>
+              )}
+
+              <div className="flex gap-4 justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateEventModal(false);
+                    setEventFormData({
+                      title: '',
+                      description: '',
+                      date: '',
+                      location: '',
+                      image_url: '',
+                      max_participants: ''
+                    });
+                    setEventFormErrors({});
+                  }}
+                  className="px-6 py-2 border border-geyser text-river-bed rounded-lg hover:bg-geyser transition-colors duration-fast font-heading font-medium"
+                  disabled={createEventLoading}
+                >
+                  Cancel
+                </button>
+                <Button
+                  text={createEventLoading ? 'Creating...' : 'Create Event'}
+                  variant="primary"
+                  type="submit"
+                  disabled={createEventLoading}
+                />
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create Program Modal */}
+      {showCreateProgramModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
+            <div className="sticky top-0 bg-white border-b border-geyser px-6 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-heading font-bold text-river-bed">
+                Create New Program
+              </h2>
+              <button
+                onClick={() => {
+                  setShowCreateProgramModal(false);
+                  setProgramFormData({
+                    name: '',
+                    description: '',
+                    age_group: '',
+                    schedule: '',
+                    price: '',
+                    is_active: true
+                  });
+                  setProgramFormErrors({});
+                }}
+                className="text-oslo-gray hover:text-river-bed transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateProgram} className="p-6">
+              <div className="mb-4">
+                <label htmlFor="program_name" className="block text-sm font-medium text-river-bed mb-2">
+                  Name <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="text"
+                  id="program_name"
+                  name="name"
+                  placeholder="Enter program name"
+                  value={programFormData.name}
+                  onChange={handleProgramInputChange}
+                  error={programFormErrors.name}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="program_description" className="block text-sm font-medium text-river-bed mb-2">
+                  Description
+                </label>
+                <textarea
+                  id="program_description"
+                  name="description"
+                  placeholder="Enter program description"
+                  value={programFormData.description}
+                  onChange={handleProgramInputChange}
+                  rows={4}
+                  className={`w-full px-4 py-2 rounded-lg border transition-all duration-fast ${
+                    programFormErrors.description ? 'border-red-500' : 'border-geyser'
+                  } focus:outline-none focus:[box-shadow:0_0_0_2px_#80b3b4]`}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="program_age_group" className="block text-sm font-medium text-river-bed mb-2">
+                  Age Group
+                </label>
+                <Input
+                  type="text"
+                  id="program_age_group"
+                  name="age_group"
+                  placeholder="e.g., 8-12 years, Teens, Adults"
+                  value={programFormData.age_group}
+                  onChange={handleProgramInputChange}
+                  error={programFormErrors.age_group}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="program_schedule" className="block text-sm font-medium text-river-bed mb-2">
+                  Schedule
+                </label>
+                <Input
+                  type="text"
+                  id="program_schedule"
+                  name="schedule"
+                  placeholder="e.g., Monday, Wednesday, Friday 4:00 PM - 6:00 PM"
+                  value={programFormData.schedule}
+                  onChange={handleProgramInputChange}
+                  error={programFormErrors.schedule}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="program_price" className="block text-sm font-medium text-river-bed mb-2">
+                  Price
+                </label>
+                <Input
+                  type="number"
+                  id="program_price"
+                  name="price"
+                  placeholder="Leave empty for free"
+                  value={programFormData.price}
+                  onChange={handleProgramInputChange}
+                  error={programFormErrors.price}
+                  min="0"
+                  step="0.01"
+                />
+                <p className="mt-1 text-sm text-oslo-gray">
+                  Leave empty for free programs
+                </p>
+              </div>
+
+              <div className="mb-6">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="is_active"
+                    checked={programFormData.is_active}
+                    onChange={handleProgramInputChange}
+                    className="w-4 h-4 text-gulf-stream border-geyser rounded focus:ring-gulf-stream"
+                  />
+                  <span className="text-sm font-medium text-river-bed">
+                    Program is active
+                  </span>
+                </label>
+              </div>
+
+              {programFormErrors.submit && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{programFormErrors.submit}</p>
+                </div>
+              )}
+
+              <div className="flex gap-4 justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateProgramModal(false);
+                    setProgramFormData({
+                      name: '',
+                      description: '',
+                      age_group: '',
+                      schedule: '',
+                      price: '',
+                      is_active: true
+                    });
+                    setProgramFormErrors({});
+                  }}
+                  className="px-6 py-2 border border-geyser text-river-bed rounded-lg hover:bg-geyser transition-colors duration-fast font-heading font-medium"
+                  disabled={createProgramLoading}
+                >
+                  Cancel
+                </button>
+                <Button
+                  text={createProgramLoading ? 'Creating...' : 'Create Program'}
+                  variant="primary"
+                  type="submit"
+                  disabled={createProgramLoading}
+                />
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
