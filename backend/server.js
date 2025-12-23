@@ -14,8 +14,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   exposedHeaders: ['Authorization']
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Increase payload size limit for file uploads
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Routes
 app.get('/', (req, res) => {
@@ -41,6 +42,14 @@ app.use('/api/registrations', registrationRoutes);
 // User routes
 const userRoutes = require('./routes/userRoutes');
 app.use('/api/users', userRoutes);
+
+// Upload routes
+const uploadRoutes = require('./routes/uploadRoutes');
+app.use('/api/upload', uploadRoutes);
+
+// Serve uploaded files statically
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Start server
 app.listen(PORT, () => {

@@ -44,9 +44,12 @@ const createEvent = async (req, res) => {
       return res.status(400).json({ error: 'Title and date are required' });
     }
 
+    // If image_url is provided, use it; otherwise use null
+    const finalImageUrl = image_url || null;
+
     const [result] = await pool.query(
       'INSERT INTO events (title, description, date, location, image_url, max_participants, registration_open, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [title, description, date, location, image_url, max_participants, true, userId]
+      [title, description, date, location, finalImageUrl, max_participants, true, userId]
     );
 
     res.status(201).json({
@@ -57,7 +60,7 @@ const createEvent = async (req, res) => {
         description,
         date,
         location,
-        image_url,
+        image_url: finalImageUrl,
         max_participants
       }
     });

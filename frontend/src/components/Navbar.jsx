@@ -10,7 +10,7 @@ import DarkVeil from '../component/DarkVeil';
 const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const { isAuthenticated, logout, isAdmin } = useContext(AuthContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // Initialize transparent state correctly for home page hero variant
   const isHomeHeroVariant = variant === 'hero' && location.pathname === '/';
@@ -41,12 +41,15 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
     if (linkIndex !== -1) {
       return linkIndex % 4; // Loop through 4 images (0-3)
     }
-    // Handle Dashboard and Logout links - continue the loop after navLinks
+    // Handle Dashboard, Admin Dashboard, and Logout links - continue the loop after navLinks
     if (linkPath === '/dashboard') {
       return navLinks.length % 4; // 5th link (index 5) -> Image 1 (5 % 4 = 1)
     }
-    if (linkPath === '/logout') {
+    if (linkPath === '/admin/dashboard') {
       return (navLinks.length + 1) % 4; // 6th link (index 6) -> Image 2 (6 % 4 = 2)
+    }
+    if (linkPath === '/logout') {
+      return (navLinks.length + 2) % 4; // 7th link (index 7) -> Image 3 (7 % 4 = 3)
     }
     return null;
   };
@@ -281,7 +284,7 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
             }`}>
               {navLinks.map((link, index) => {
                 const active = isActive(link.path);
-                const totalLinks = navLinks.length + (isAuthenticated ? 2 : 2); // +2 for auth links
+                const totalLinks = navLinks.length + (isAuthenticated ? (isAdmin() ? 3 : 2) : 2); // +2 or +3 for auth links (Dashboard, Admin Dashboard if admin, Logout)
                 const reverseIndex = totalLinks - 1 - index; // Reverse for right-to-left animation
                 return (
                   <Link
@@ -324,6 +327,25 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
                   >
                     Dashboard
                   </Link>
+                  {isAdmin() && (
+                    <Link
+                      to="/admin/dashboard"
+                      className={`
+                        font-heading font-bold text-sm uppercase transition-colors duration-fast px-3 py-1.5 rounded-lg
+                        ${isActive('/admin/dashboard')
+                          ? 'bg-gulf-stream text-white'
+                          : 'text-river-bed hover:text-gulf-stream'
+                        }
+                      `}
+                      style={{
+                        opacity: showNavLinks ? 1 : 0,
+                        transform: showNavLinks ? 'translateX(0)' : 'translateX(20px)',
+                        transition: `opacity 0.15s ease-out 0.04s, transform 0.15s ease-out 0.04s`
+                      }}
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
                   <button
                     onClick={handleLogout}
                     className="font-heading font-bold text-sm uppercase transition-colors duration-fast px-3 py-1.5 rounded-lg text-river-bed hover:text-gulf-stream"
@@ -605,11 +627,39 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
                     >
                       Dashboard
                     </Link>
+                    {isAdmin() && (
+                      <Link
+                        to="/admin/dashboard"
+                        onClick={closeMenu}
+                        className="font-heading font-bold text-4xl md:text-5xl uppercase text-center leading-tight inline-block"
+                        style={{
+                          animationDelay: `${(navLinks.length + 1) * 100}ms`,
+                          animation: isMenuOpen ? 'fadeInUp 0.5s ease-out forwards' : 'none',
+                          opacity: 0,
+                          color: 'white',
+                          background: `linear-gradient(to right, ${colors['gulf-stream']} 0%, ${colors['gulf-stream']} var(--fill-progress, 0%), white var(--fill-progress, 0%), white 100%)`,
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                          transition: '--fill-progress 0.4s ease-out'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.setProperty('--fill-progress', '100%');
+                          setHoveredLink('/admin/dashboard');
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.setProperty('--fill-progress', '0%');
+                          setHoveredLink(null);
+                        }}
+                      >
+                        Admin Dashboard
+                      </Link>
+                    )}
                     <button
                       onClick={handleLogout}
                       className="font-heading font-bold text-4xl md:text-5xl uppercase text-center leading-tight inline-block"
                       style={{
-                        animationDelay: `${(navLinks.length + 1) * 100}ms`,
+                        animationDelay: `${(navLinks.length + (isAdmin() ? 2 : 1)) * 100}ms`,
                         animation: isMenuOpen ? 'fadeInUp 0.5s ease-out forwards' : 'none',
                         opacity: 0,
                         color: 'white',

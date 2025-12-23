@@ -41,6 +41,9 @@ function EventsManager() {
     image_url: '',
     max_participants: ''
   });
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [createLoading, setCreateLoading] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -53,6 +56,9 @@ function EventsManager() {
     image_url: '',
     max_participants: ''
   });
+  const [selectedEditImage, setSelectedEditImage] = useState(null);
+  const [editImagePreview, setEditImagePreview] = useState(null);
+  const [uploadingEditImage, setUploadingEditImage] = useState(false);
   const [editFormErrors, setEditFormErrors] = useState({});
   const [editLoading, setEditLoading] = useState(false);
 
@@ -117,6 +123,66 @@ function EventsManager() {
     }
   };
 
+  // Handle image file selection
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setFormErrors(prev => ({
+          ...prev,
+          image: 'Please select an image file'
+        }));
+        return;
+      }
+      
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setFormErrors(prev => ({
+          ...prev,
+          image: 'Image size must be less than 5MB'
+        }));
+        return;
+      }
+
+      setSelectedImage(file);
+      setFormErrors(prev => ({
+        ...prev,
+        image: ''
+      }));
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Upload image to server
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await api.post('/api/upload/image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      // Get the full URL by prepending the API base URL
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const imageUrl = response.data.imageUrl.startsWith('http') 
+        ? response.data.imageUrl 
+        : `${API_URL}${response.data.imageUrl}`;
+      return imageUrl;
+    } catch (error) {
+      console.error('Image upload error:', error);
+      throw new Error(error.response?.data?.error || 'Failed to upload image');
+    }
+  };
+
   // Validate form
   const validateForm = () => {
     const errors = {};
@@ -152,13 +218,29 @@ function EventsManager() {
     try {
       setCreateLoading(true);
       setFormErrors({});
+      setUploadingImage(true);
+
+      // Upload image if one is selected
+      let imageUrl = formData.image_url.trim() || null;
+      if (selectedImage) {
+        try {
+          imageUrl = await uploadImage(selectedImage);
+        } catch (error) {
+          setFormErrors({ submit: error.message });
+          setUploadingImage(false);
+          setCreateLoading(false);
+          return;
+        }
+      }
+
+      setUploadingImage(false);
 
       const payload = {
         title: formData.title.trim(),
         description: formData.description.trim() || null,
         date: formData.date,
         location: formData.location.trim() || null,
-        image_url: formData.image_url.trim() || null,
+        image_url: imageUrl,
         max_participants: formData.max_participants ? parseInt(formData.max_participants) : null
       };
 
@@ -173,6 +255,8 @@ function EventsManager() {
         image_url: '',
         max_participants: ''
       });
+      setSelectedImage(null);
+      setImagePreview(null);
       setShowCreateModal(false);
 
       // Refresh events list
@@ -201,6 +285,8 @@ function EventsManager() {
       image_url: '',
       max_participants: ''
     });
+    setSelectedImage(null);
+    setImagePreview(null);
     setFormErrors({});
   };
 
@@ -232,6 +318,8 @@ function EventsManager() {
       image_url: event.image_url || '',
       max_participants: event.max_participants !== null ? String(event.max_participants) : ''
     });
+    setSelectedEditImage(null);
+    setEditImagePreview(event.image_url || null);
     setEditFormErrors({});
     setShowEditModal(true);
   };
@@ -250,6 +338,43 @@ function EventsManager() {
         ...prev,
         [name]: ''
       }));
+    }
+  };
+
+  // Handle edit image file selection
+  const handleEditImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setEditFormErrors(prev => ({
+          ...prev,
+          image: 'Please select an image file'
+        }));
+        return;
+      }
+      
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setEditFormErrors(prev => ({
+          ...prev,
+          image: 'Image size must be less than 5MB'
+        }));
+        return;
+      }
+
+      setSelectedEditImage(file);
+      setEditFormErrors(prev => ({
+        ...prev,
+        image: ''
+      }));
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -288,13 +413,29 @@ function EventsManager() {
     try {
       setEditLoading(true);
       setEditFormErrors({});
+      setUploadingEditImage(true);
+
+      // Upload image if a new one is selected
+      let imageUrl = editFormData.image_url.trim() || null;
+      if (selectedEditImage) {
+        try {
+          imageUrl = await uploadImage(selectedEditImage);
+        } catch (error) {
+          setEditFormErrors({ submit: error.message });
+          setUploadingEditImage(false);
+          setEditLoading(false);
+          return;
+        }
+      }
+
+      setUploadingEditImage(false);
 
       const payload = {
         title: editFormData.title.trim(),
         description: editFormData.description.trim() || null,
         date: editFormData.date,
         location: editFormData.location.trim() || null,
-        image_url: editFormData.image_url.trim() || null,
+        image_url: imageUrl,
         max_participants: editFormData.max_participants ? parseInt(editFormData.max_participants) : null
       };
 
@@ -311,6 +452,8 @@ function EventsManager() {
         image_url: '',
         max_participants: ''
       });
+      setSelectedEditImage(null);
+      setEditImagePreview(null);
 
       // Refresh events list
       const data = await fetchEvents();
@@ -341,6 +484,8 @@ function EventsManager() {
       image_url: '',
       max_participants: ''
     });
+    setSelectedEditImage(null);
+    setEditImagePreview(null);
     setEditFormErrors({});
   };
 
@@ -735,20 +880,35 @@ function EventsManager() {
                 />
               </div>
 
-              {/* Image URL */}
+              {/* Image Upload */}
               <div className="mb-4">
-                <label htmlFor="image_url" className="block text-sm font-medium text-river-bed mb-2">
-                  Image URL
+                <label htmlFor="image" className="block text-sm font-medium text-river-bed mb-2">
+                  Event Image
                 </label>
-                <Input
-                  type="url"
-                  id="image_url"
-                  name="image_url"
-                  placeholder="https://example.com/image.jpg"
-                  value={formData.image_url}
-                  onChange={handleInputChange}
-                  error={formErrors.image_url}
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="w-full px-4 py-2 rounded-lg border border-geyser focus:outline-none focus:[box-shadow:0_0_0_2px_#80b3b4]"
                 />
+                {formErrors.image && (
+                  <p className="mt-1 text-sm text-red-500">{formErrors.image}</p>
+                )}
+                {imagePreview && (
+                  <div className="mt-4">
+                    <p className="text-sm text-oslo-gray mb-2">Preview:</p>
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-full max-w-xs h-48 object-cover rounded-lg border border-geyser"
+                    />
+                  </div>
+                )}
+                {uploadingImage && (
+                  <p className="mt-2 text-sm text-oslo-gray">Uploading image...</p>
+                )}
               </div>
 
               {/* Max Participants */}
@@ -887,20 +1047,37 @@ function EventsManager() {
                 />
               </div>
 
-              {/* Image URL */}
+              {/* Image Upload */}
               <div className="mb-4">
-                <label htmlFor="edit_image_url" className="block text-sm font-medium text-river-bed mb-2">
-                  Image URL
+                <label htmlFor="edit_image" className="block text-sm font-medium text-river-bed mb-2">
+                  Event Image
                 </label>
-                <Input
-                  type="url"
-                  id="edit_image_url"
-                  name="image_url"
-                  placeholder="https://example.com/image.jpg"
-                  value={editFormData.image_url}
-                  onChange={handleEditInputChange}
-                  error={editFormErrors.image_url}
+                <input
+                  type="file"
+                  id="edit_image"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleEditImageChange}
+                  className="w-full px-4 py-2 rounded-lg border border-geyser focus:outline-none focus:[box-shadow:0_0_0_2px_#80b3b4]"
                 />
+                {editFormErrors.image && (
+                  <p className="mt-1 text-sm text-red-500">{editFormErrors.image}</p>
+                )}
+                {editImagePreview && (
+                  <div className="mt-4">
+                    <p className="text-sm text-oslo-gray mb-2">
+                      {selectedEditImage ? 'New Preview:' : 'Current Image:'}
+                    </p>
+                    <img
+                      src={editImagePreview}
+                      alt="Preview"
+                      className="w-full max-w-xs h-48 object-cover rounded-lg border border-geyser"
+                    />
+                  </div>
+                )}
+                {uploadingEditImage && (
+                  <p className="mt-2 text-sm text-oslo-gray">Uploading image...</p>
+                )}
               </div>
 
               {/* Max Participants */}

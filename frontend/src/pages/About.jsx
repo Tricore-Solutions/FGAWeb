@@ -32,7 +32,7 @@ function About() {
       
       if (!ticking) {
         requestAnimationFrame(() => {
-          const rect = imageSectionRef.current.getBoundingClientRect();
+      const rect = imageSectionRef.current.getBoundingClientRect();
           const windowHeight = window.innerHeight;
           
           // Calculate scroll progress: 
@@ -41,7 +41,7 @@ function About() {
           // When section is scrolled past viewport: progress = 1 (full size)
           // Use windowHeight as the scroll distance for smooth transition
           const scrollProgress = Math.max(0, Math.min(1, -rect.top / windowHeight));
-          
+      
           // Start with padding and border-radius, reduce to 0 as user scrolls
           const initialPadding = 100;
           const initialBorderRadius = 40;
@@ -145,18 +145,18 @@ function About() {
             overflow: 'hidden'
           }}
         >
-          <img 
-            src="/images/fga-6.jpg" 
-            alt="Future Generation Academy" 
-            className="w-full h-full object-cover"
-            style={{ 
-              display: 'block',
+        <img 
+          src="/images/fga-6.jpg" 
+          alt="Future Generation Academy" 
+          className="w-full h-full object-cover"
+          style={{ 
+            display: 'block',
               width: '100%',
               height: '100%',
               borderRadius: `${imageBorderRadius}px`,
               transition: 'border-radius 0.15s ease-out'
-            }}
-          />
+          }}
+        />
         </div>
       </section>
 
@@ -219,8 +219,8 @@ function About() {
               <div className="text-right mb-4 sm:mb-6">
                 <h2 className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-river-bed mb-3">
                   Our <span style={{ color: colors['gulf-stream'] }}>Mission</span>
-                </h2>
-              </div>
+            </h2>
+          </div>
               <div className="prose prose-sm max-w-none text-right">
                 <p className="text-sm sm:text-base text-oslo-gray leading-relaxed">
                   Future Generation Academy holds a commendable mission of promoting sports, particularly football, among the youth of society. By focusing on discovering and nurturing sporting talents, the academy provides a conducive environment for future generations to explore and express their athletic potential.

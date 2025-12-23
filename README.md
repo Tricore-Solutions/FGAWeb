@@ -65,6 +65,8 @@ The system is designed for performance, scalability, and future expansion, such 
    cd backend
    npm install
    ```
+   
+   **Note:** The backend uses `multer` for handling file uploads (image uploads for events). This package is automatically installed when you run `npm install`.
 
 2. **Set up MySQL database:**
    - Make sure MySQL server is running
