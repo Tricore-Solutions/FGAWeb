@@ -481,9 +481,12 @@ function App() {
 
   // Check if current page is an auth page
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
+  // Check if current page is an admin page
+  const isAdminPage = location.pathname.startsWith('/admin');
   
   // Determine if TopBar should show - only when navbar has white background (not transparent)
-  const shouldShowTopBar = !isAuthPage && !isNavbarTransparent;
+  // and NOT on admin pages (admin layout should hide the gulf stream top bar)
+  const shouldShowTopBar = !isAuthPage && !isNavbarTransparent && !isAdminPage;
 
   return (
     <div className="min-h-screen w-full bg-white flex flex-col">
@@ -491,7 +494,7 @@ function App() {
       {!isAuthPage && <TopBar show={shouldShowTopBar} />}
       {!isAuthPage && (
         <Navbar 
-          variant="hero" 
+          variant={isAdminPage ? 'menu' : 'hero'}
           onTransparencyChange={setIsNavbarTransparent}
           isHidden={isNavbarHidden}
         />

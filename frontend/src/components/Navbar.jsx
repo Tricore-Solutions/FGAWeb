@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, User } from 'lucide-react';
+import { Menu, X, User, LogOut } from 'lucide-react';
 import { spacing } from '../styles/design-tokens/spacing';
 import colors from '../styles/design-tokens/colors';
 import AuthContext from '../context/AuthContext';
@@ -156,24 +156,38 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
   // Determine navbar classes based on variant (desktop only)
   const getNavbarClasses = () => {
     const isHeroOnHome = variant === 'hero' && location.pathname === '/';
+    const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
+    const isAdminPage = location.pathname.startsWith('/admin');
+
+    // TopBar is visible when not on auth, not admin, and navbar is NOT transparent
+    const topBarVisible = !isAuthPage && !isAdminPage && !isTransparent;
+
+    // Helper to choose top offset:
+    // - If on home hero and navbar is transparent, move navbar lower so it sits further down the hero
+    // - If navbar is transparent elsewhere, keep it near the top so it overlays hero
+    // - If the TopBar is visible, push navbar down below TopBar (top-12)
+    // - Otherwise keep a small offset (top-1)
+    let topOffset;
+    // Make transparent navbar higher (closer to top) across the site
+    if (isTransparent) {
+      topOffset = 'top-4'; // move further down when transparent
+    } else {
+      topOffset = topBarVisible ? 'top-10' : 'top-1';
+    }
 
     // On the home hero, make the navbar fixed so it overlays the hero background
     if (isHeroOnHome) {
-      // Use immediate background on initial render to prevent flash
-      const baseClasses = isTransparent 
-        ? 'fixed top-6 left-0 right-0 z-50'
-        : 'fixed top-12 left-0 right-0 z-50 transition-colors duration-300';
+      const baseClasses = `fixed ${topOffset} left-0 right-0 z-50 ${isTransparent ? '' : 'transition-colors duration-300'}`;
 
       if (isTransparent) {
-        // Start transparent immediately, no transition on initial render
         return `${baseClasses} bg-transparent`;
       }
 
       return `${baseClasses} bg-white`;
     }
 
-    // For all other cases, use sticky behavior
-    const baseClasses = 'sticky top-12 z-50 transition-colors duration-300';
+    // For all other cases, use sticky behavior with calculated top offset
+    const baseClasses = `sticky ${topOffset} z-50 transition-colors duration-300`;
 
     if (variant === 'menu') {
       return `${baseClasses} min-[900px]:bg-white bg-white`;
@@ -195,6 +209,13 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
 
   return (
     <>
+      {/* Thin Gulf Stream Bar Above Navbar - Only show when navbar has white background */}
+      {((variant === 'hero' && location.pathname === '/' && !isTransparent) || (variant !== 'hero' || location.pathname !== '/')) && (
+        <div
+          className="fixed top-0 left-0 right-0 h-1"
+          style={{ backgroundColor: colors['gulf-stream'], zIndex: 49 }}
+        />
+      )}
     <nav 
       className={getNavbarClasses()} 
       style={{ 
@@ -310,23 +331,25 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
               {/* Dashboard and Logout links when logged in */}
               {isAuthenticated && (
                 <>
-                  <Link
-                    to="/dashboard"
-                    className={`
-                      font-heading font-bold text-sm uppercase transition-colors duration-fast px-3 py-1.5 rounded-lg
-                      ${isActive('/dashboard')
-                        ? 'bg-gulf-stream text-white'
-                        : 'text-river-bed hover:text-gulf-stream'
-                      }
-                    `}
-                    style={{
-                      opacity: showNavLinks ? 1 : 0,
-                      transform: showNavLinks ? 'translateX(0)' : 'translateX(20px)',
-                      transition: `opacity 0.15s ease-out 0.04s, transform 0.15s ease-out 0.04s`
-                    }}
-                  >
-                    Dashboard
-                  </Link>
+                  {!isAdmin() && (
+                    <Link
+                      to="/dashboard"
+                      className={`
+                        font-heading font-bold text-sm uppercase transition-colors duration-fast px-3 py-1.5 rounded-lg
+                        ${isActive('/dashboard')
+                          ? 'bg-gulf-stream text-white'
+                          : 'text-river-bed hover:text-gulf-stream'
+                        }
+                      `}
+                      style={{
+                        opacity: showNavLinks ? 1 : 0,
+                        transform: showNavLinks ? 'translateX(0)' : 'translateX(20px)',
+                        transition: `opacity 0.15s ease-out 0.04s, transform 0.15s ease-out 0.04s`
+                      }}
+                    >
+                      Dashboard
+                    </Link>
+                  )}
                   {isAdmin() && (
                     <Link
                       to="/admin/dashboard"
@@ -346,17 +369,7 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
                       Admin Dashboard
                     </Link>
                   )}
-                  <button
-                    onClick={handleLogout}
-                    className="font-heading font-bold text-sm uppercase transition-colors duration-fast px-3 py-1.5 rounded-lg text-river-bed hover:text-gulf-stream"
-                    style={{
-                      opacity: showNavLinks ? 1 : 0,
-                      transform: showNavLinks ? 'translateX(0)' : 'translateX(20px)',
-                      transition: `opacity 0.15s ease-out 0s, transform 0.15s ease-out 0s`
-                    }}
-                  >
-                    Logout
-                  </button>
+                  {/* Logout is rendered to the right of the menu icon (see below) to avoid duplication */}
                 </>
               )}
               {/* Login and Signup links when logged out - Only show when TopBar is not visible (navbar is transparent) */}
@@ -401,6 +414,22 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
             </div>
           </>
         )}
+
+          {/* Logout button to the right of hamburger/menu icon (outside slide-in) */}
+          {isAuthenticated && !location.pathname.startsWith('/admin') && (
+            <button
+              onClick={handleLogout}
+              className={`flex items-center gap-2 font-heading font-bold text-sm uppercase transition-colors duration-fast ${
+                variant === 'hero' && location.pathname === '/' && isTransparent
+                  ? 'text-white hover:text-gulf-stream'
+                  : 'text-river-bed hover:text-gulf-stream'
+              }`}
+              style={{ padding: '0.25rem 0.5rem' }}
+            >
+              <LogOut size={16} />
+              <span className="hidden min-[480px]:inline">Logout</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -601,85 +630,73 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
                 {/* Dashboard and Logout links when logged in */}
                 {isAuthenticated && (
                   <>
-                    <Link
-                      to="/dashboard"
-                      onClick={closeMenu}
-                      className="font-heading font-bold text-4xl md:text-5xl uppercase text-center leading-tight inline-block"
-                      style={{
-                        animationDelay: `${navLinks.length * 100}ms`,
-                        animation: isMenuOpen ? 'fadeInUp 0.5s ease-out forwards' : 'none',
-                        opacity: 0,
-                        color: 'white',
-                        background: `linear-gradient(to right, ${colors['gulf-stream']} 0%, ${colors['gulf-stream']} var(--fill-progress, 0%), white var(--fill-progress, 0%), white 100%)`,
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                        transition: '--fill-progress 0.4s ease-out'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.setProperty('--fill-progress', '100%');
-                        setHoveredLink('/dashboard');
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.setProperty('--fill-progress', '0%');
-                        setHoveredLink(null);
-                      }}
-                    >
-                      Dashboard
-                    </Link>
-                    {isAdmin() && (
-                      <Link
-                        to="/admin/dashboard"
-                        onClick={closeMenu}
-                        className="font-heading font-bold text-4xl md:text-5xl uppercase text-center leading-tight inline-block"
-                        style={{
-                          animationDelay: `${(navLinks.length + 1) * 100}ms`,
-                          animation: isMenuOpen ? 'fadeInUp 0.5s ease-out forwards' : 'none',
-                          opacity: 0,
-                          color: 'white',
-                          background: `linear-gradient(to right, ${colors['gulf-stream']} 0%, ${colors['gulf-stream']} var(--fill-progress, 0%), white var(--fill-progress, 0%), white 100%)`,
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          backgroundClip: 'text',
-                          transition: '--fill-progress 0.4s ease-out'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.setProperty('--fill-progress', '100%');
-                          setHoveredLink('/admin/dashboard');
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.setProperty('--fill-progress', '0%');
-                          setHoveredLink(null);
-                        }}
-                      >
-                        Admin Dashboard
-                      </Link>
-                    )}
-                    <button
-                      onClick={handleLogout}
-                      className="font-heading font-bold text-4xl md:text-5xl uppercase text-center leading-tight inline-block"
-                      style={{
-                        animationDelay: `${(navLinks.length + (isAdmin() ? 2 : 1)) * 100}ms`,
-                        animation: isMenuOpen ? 'fadeInUp 0.5s ease-out forwards' : 'none',
-                        opacity: 0,
-                        color: 'white',
-                        background: `linear-gradient(to right, ${colors['gulf-stream']} 0%, ${colors['gulf-stream']} var(--fill-progress, 0%), white var(--fill-progress, 0%), white 100%)`,
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                        transition: '--fill-progress 0.4s ease-out'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.setProperty('--fill-progress', '100%');
-                        setHoveredLink('/logout'); // Use a special path for logout
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.setProperty('--fill-progress', '0%');
-                        setHoveredLink(null);
-                      }}
-                    >
-                      Logout
-                    </button>
+                    {!isAdmin() && (() => {
+                      const active = isActive('/dashboard');
+                      return (
+                        <Link
+                          to="/dashboard"
+                          onClick={closeMenu}
+                          className="relative font-heading font-bold text-3xl md:text-5xl uppercase text-center leading-tight inline-block"
+                          style={{
+                            animationDelay: `${navLinks.length * 100}ms`,
+                            animation: isMenuOpen ? 'fadeInUp 0.5s ease-out forwards' : 'none',
+                            opacity: 0,
+                            color: active ? colors['gulf-stream'] : 'white',
+                            background: active
+                              ? 'none'
+                              : `linear-gradient(to right, ${colors['gulf-stream']} 0%, ${colors['gulf-stream']} var(--fill-progress, 0%), white var(--fill-progress, 0%), white 100%)`,
+                            WebkitBackgroundClip: active ? 'unset' : 'text',
+                            WebkitTextFillColor: active ? 'unset' : 'transparent',
+                            backgroundClip: active ? 'unset' : 'text',
+                            transition: '--fill-progress 0.4s ease-out, color 0.3s ease-out'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!active) e.currentTarget.style.setProperty('--fill-progress', '100%');
+                            setHoveredLink('/dashboard');
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!active) e.currentTarget.style.setProperty('--fill-progress', '0%');
+                            setHoveredLink(null);
+                          }}
+                        >
+                          Dashboard
+                        </Link>
+                      );
+                    })()}
+                    {isAdmin() && (() => {
+                      const active = isActive('/admin/dashboard');
+                      return (
+                        <Link
+                          to="/admin/dashboard"
+                          onClick={closeMenu}
+                          className="relative font-heading font-bold text-3xl md:text-5xl uppercase text-center leading-tight inline-block"
+                          style={{
+                            animationDelay: `${(navLinks.length + 1) * 100}ms`,
+                            animation: isMenuOpen ? 'fadeInUp 0.5s ease-out forwards' : 'none',
+                            opacity: 0,
+                            color: active ? colors['gulf-stream'] : 'white',
+                            background: active
+                              ? 'none'
+                              : `linear-gradient(to right, ${colors['gulf-stream']} 0%, ${colors['gulf-stream']} var(--fill-progress, 0%), white var(--fill-progress, 0%), white 100%)`,
+                            WebkitBackgroundClip: active ? 'unset' : 'text',
+                            WebkitTextFillColor: active ? 'unset' : 'transparent',
+                            backgroundClip: active ? 'unset' : 'text',
+                            transition: '--fill-progress 0.4s ease-out, color 0.3s ease-out'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!active) e.currentTarget.style.setProperty('--fill-progress', '100%');
+                            setHoveredLink('/admin/dashboard');
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!active) e.currentTarget.style.setProperty('--fill-progress', '0%');
+                            setHoveredLink(null);
+                          }}
+                        >
+                          Admin Dashboard
+                        </Link>
+                      );
+                    })()}
+                    {/* Logout moved out of slide-in menu into navbar right side */}
                   </>
               )}
               </nav>

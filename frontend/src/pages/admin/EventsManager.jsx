@@ -12,8 +12,11 @@ import {
   Package,
   FileText,
   User,
+  ChevronLeft,
+  ChevronRight,
   X
 } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
 import Input from '../../components/Input';
@@ -26,7 +29,8 @@ import colors from '../../styles/design-tokens/colors';
 function EventsManager() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, isAdmin } = useContext(AuthContext);
+  const { user, isAdmin, logout } = useContext(AuthContext);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -64,7 +68,9 @@ function EventsManager() {
 
   // Check if a route is active
   const isActive = (path) => {
-    return location.pathname === path || location.pathname.startsWith(path + '/');
+    const current = location.pathname.split('?')[0].replace(/\/+$/,'');
+    const target = path.replace(/\/+$/,'');
+    return current === target;
   };
 
   // Fetch events
@@ -539,70 +545,89 @@ function EventsManager() {
   return (
     <div className="min-h-screen bg-white flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-river-bed text-white min-h-screen fixed left-0 top-0 pt-20">
+      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-river-bed text-white min-h-screen fixed left-0 top-0 pt-20`}>
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="absolute top-28 -right-5 w-8 h-8 rounded-full bg-gulf-stream flex items-center justify-center shadow"
+          aria-label="Toggle sidebar"
+        >
+          {sidebarOpen ? <ChevronLeft className="w-4 h-4 text-white" /> : <ChevronRight className="w-4 h-4 text-white" />}
+        </button>
         <div className="p-4 pt-12">
           <nav className="space-y-2">
             <Link
               to="/admin/dashboard"
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-fast ${
+              className={`flex items-center gap-3 ${sidebarOpen ? 'px-4 py-3' : 'px-0 py-3 justify-center'} rounded-lg transition-colors duration-fast ${
                 isActive('/admin/dashboard')
                   ? 'bg-gulf-stream text-white'
                   : 'text-white/80 hover:bg-gulf-stream/20 hover:text-white'
               }`}
             >
               <LayoutDashboard className="w-5 h-5" />
-              <span className="font-heading font-medium">Dashboard</span>
+              {sidebarOpen && <span className="font-heading font-medium">Dashboard</span>}
             </Link>
             <Link
               to="/admin/events"
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-fast ${
+              className={`flex items-center gap-3 ${sidebarOpen ? 'px-4 py-3' : 'px-0 py-3 justify-center'} rounded-lg transition-colors duration-fast ${
                 isActive('/admin/events')
                   ? 'bg-gulf-stream text-white'
                   : 'text-white/80 hover:bg-gulf-stream/20 hover:text-white'
               }`}
             >
               <Calendar className="w-5 h-5" />
-              <span className="font-heading font-medium">Events</span>
+              {sidebarOpen && <span className="font-heading font-medium">Events</span>}
             </Link>
             <Link
               to="/admin/programs"
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-fast ${
+              className={`flex items-center gap-3 ${sidebarOpen ? 'px-4 py-3' : 'px-0 py-3 justify-center'} rounded-lg transition-colors duration-fast ${
                 isActive('/admin/programs')
                   ? 'bg-gulf-stream text-white'
                   : 'text-white/80 hover:bg-gulf-stream/20 hover:text-white'
               }`}
             >
               <Package className="w-5 h-5" />
-              <span className="font-heading font-medium">Programs</span>
+              {sidebarOpen && <span className="font-heading font-medium">Programs</span>}
             </Link>
             <Link
               to="/admin/registrations"
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-fast ${
+              className={`flex items-center gap-3 ${sidebarOpen ? 'px-4 py-3' : 'px-0 py-3 justify-center'} rounded-lg transition-colors duration-fast ${
                 isActive('/admin/registrations')
                   ? 'bg-gulf-stream text-white'
                   : 'text-white/80 hover:bg-gulf-stream/20 hover:text-white'
               }`}
             >
               <FileText className="w-5 h-5" />
-              <span className="font-heading font-medium">Registrations</span>
+              {sidebarOpen && <span className="font-heading font-medium">Registrations</span>}
             </Link>
             <Link
               to="/admin/users"
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-fast ${
+              className={`flex items-center gap-3 ${sidebarOpen ? 'px-4 py-3' : 'px-0 py-3 justify-center'} rounded-lg transition-colors duration-fast ${
                 isActive('/admin/users')
                   ? 'bg-gulf-stream text-white'
                   : 'text-white/80 hover:bg-gulf-stream/20 hover:text-white'
               }`}
             >
               <User className="w-5 h-5" />
-              <span className="font-heading font-medium">Users</span>
+              {sidebarOpen && <span className="font-heading font-medium">Users</span>}
             </Link>
           </nav>
+        </div>
+        <div className="absolute bottom-6 left-0 w-full p-4">
+          <button
+            onClick={() => { logout(); navigate('/'); }}
+            className={`flex items-center gap-3 w-full px-4 py-3 rounded-lg transition-colors duration-fast text-white/80 hover:bg-gulf-stream/20 hover:text-white ${!sidebarOpen ? 'justify-center' : ''}`}
+          >
+            <LogOut className="w-5 h-5" />
+            {sidebarOpen && <span className="font-heading font-medium">Logout</span>}
+          </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 ml-64">
+      <style>{`
+        .admin-content button { padding: 0.75rem !important; }
+      `}</style>
+      <div className={`flex-1 admin-content ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
         {/* Header */}
         <section className="w-full py-8 bg-gradient-to-r from-river-bed to-gulf-stream">
           <div className="w-full mx-auto px-4 md:px-8">
