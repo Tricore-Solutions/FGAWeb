@@ -237,19 +237,25 @@ function EventDetail() {
           backgroundImage: `url(${event.image})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: event.image ? 'transparent' : '#000'
         }}
       >
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        {/* Gradient overlay for better text readability - lighter to show more of the image */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%)'
+          }}
+        ></div>
         
         {/* Content */}
         <div className="relative z-10 text-center px-4 md:px-8 max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4 drop-shadow-lg">
             {event.title}
           </h1>
           {event.location && (
-            <p className="text-base sm:text-lg md:text-xl text-white opacity-90 flex items-center justify-center gap-2">
+            <p className="text-base sm:text-lg md:text-xl text-white opacity-95 flex items-center justify-center gap-2 drop-shadow-md">
               <MapPin size={20} />
               {event.location}
             </p>
