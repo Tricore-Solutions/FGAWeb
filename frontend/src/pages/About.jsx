@@ -4,7 +4,7 @@ import { Dumbbell, Building2, Users, Trophy, Star, Handshake, Lightbulb } from '
 import Button from '../components/Button';
 import Card from '../components/Card';
 import ChromaGrid from '../component/ChromaGrid';
-import PixelTransition from '../component/PixelTransition';
+import TiltedCover from '../components/animata/image/TiltedCover';
 import OutlinedHeading from '../components/OutlinedHeading';
 import colors from '../styles/design-tokens/colors';
 
@@ -412,23 +412,25 @@ function About() {
               }
             ].map((feature, index) => {
               const IconComponent = feature.icon;
+              const directions = ['left', 'right', 'left', 'right']; // Alternate directions
               return (
-              <PixelTransition
-                key={index}
-                firstContent={
-                  <img
-                    src={feature.image}
-                    alt={feature.title}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                }
-                secondContent={
+              <div key={index} className="flex justify-center">
+                <TiltedCover
+                  direction={directions[index]}
+                  image={{
+                    src: feature.image,
+                    alt: feature.title
+                  }}
+                  className="w-full max-w-sm"
+                >
                   <div
                     style={{
                       width: "100%",
                       height: "100%",
-                      display: "grid",
-                      placeItems: "center",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
                       backgroundColor: colors['gulf-stream'],
                       padding: "2rem"
                     }}
@@ -445,14 +447,8 @@ function About() {
                       </p>
                     </div>
                   </div>
-                }
-                gridSize={12}
-                pixelColor={colors['gulf-stream']}
-                once={false}
-                animationStepDuration={0.3}
-                className="custom-pixel-card"
-                style={{ height: '400px', borderRadius: '1rem', overflow: 'hidden' }}
-              />
+                </TiltedCover>
+              </div>
             );
             })}
           </div>

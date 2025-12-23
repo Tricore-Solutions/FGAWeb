@@ -38,6 +38,10 @@ export default {
           'base': '200ms',
           'slow': '300ms',
         },
+        transitionTimingFunction: {
+          'slow': 'cubic-bezier(.405, 0, .025, 1)',
+          'minor-spring': 'cubic-bezier(0.18,0.89,0.82,1.04)',
+        },
         spacing: {
           'xs': '0.25rem',   // 4px
           'sm': '0.5rem',    // 8px
