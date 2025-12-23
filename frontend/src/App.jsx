@@ -670,7 +670,7 @@ function App() {
           />
         </Routes>
       </main>
-      {!isAuthPage && (
+      {!isAuthPage && location.pathname !== '/dashboard' && !isAdminPage && (
         <div ref={curvedLoopRef} className="w-full mt-8 md:mt-16">
           <CurvedLoop 
             marqueeText="Building Skills ⚽︎ Building Character ⚽︎ Building Futures ⚽︎"
@@ -682,7 +682,7 @@ function App() {
           />
         </div>
       )}
-      {!isAuthPage && <Footer ref={footerRef} />}
+      {!isAuthPage && location.pathname !== '/dashboard' && !isAdminPage && <Footer ref={footerRef} />}
     </div>
   );
 }

@@ -444,8 +444,16 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
       {/* Slide-in Menu Overlay - Rendered via Portal to ensure it's on top */}
       {createPortal(
         <>
+          <style>{`
+            .hamburger-menu-overlay {
+              background-color: #0a0e14 !important;
+            }
+            .hamburger-menu-container {
+              background-color: #0a0e14 !important;
+            }
+          `}</style>
           <div
-            className={`fixed transition-opacity duration-500 ease-in-out ${
+            className={`hamburger-menu-overlay fixed transition-opacity duration-500 ease-in-out ${
               isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
             }`}
             style={{ 
@@ -466,7 +474,7 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
           
           {/* Slide-in Menu - Slides down from top */}
           <div 
-            className={`fixed transition-all duration-500 ease-in-out ${
+            className={`hamburger-menu-container fixed transition-all duration-500 ease-in-out ${
               isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
             }`}
             style={{ 
@@ -493,12 +501,12 @@ const Navbar = ({ variant = 'white', onTransparencyChange, isHidden = false }) =
             onMouseLeave={() => setMouseY(0)}
           >
         {/* DarkVeil Background */}
-        <div style={{ width: '100vw', height: '100vh', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, overflow: 'hidden' }}>
+        <div style={{ width: '100vw', height: '100vh', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, overflow: 'hidden', backgroundColor: '#0a0e14' }}>
           <DarkVeil hueShift={40} warpAmount={4} />
         </div>
         
         {/* Content */}
-        <div className="flex h-full gap-20 relative z-10">
+        <div className="flex h-full gap-20 relative z-10" style={{ backgroundColor: 'transparent' }}>
           {/* Left Section - Images Grid (wider) - Hidden on mobile */}
           <div className="hidden md:flex w-3/5 flex-col p-8 md:p-12">
             {/* Image Containers - Separate containers for independent positioning */}
