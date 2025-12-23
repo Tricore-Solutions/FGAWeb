@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { Calendar, Users } from 'lucide-react';
 import colors from './styles/design-tokens/colors';
 import Button from './components/Button';
 import TopBar from './components/TopBar';
@@ -25,6 +26,7 @@ import ProgramsManager from './pages/admin/ProgramsManager';
 import RegistrationsManager from './pages/admin/RegistrationsManager';
 import UsersManager from './pages/admin/UsersManager';
 import ProtectedRoute from './components/ProtectedRoute';
+import { Globe } from '@/components/ui/globe';
 
 function Branches() {
   const branches = [
@@ -97,6 +99,14 @@ function Branches() {
   );
 }
 
+function GlobeDemo() {
+  return (
+    <div className="relative flex w-full max-w-5xl items-start justify-start px-40 pb-[320px]">
+      <Globe className="top-0 translate-x-[80%]" />
+    </div>
+  );
+}
+
 function Camps() {
   const camps = [
     {
@@ -124,6 +134,14 @@ function Camps() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Globe Section - At the very top */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="w-full mx-auto px-4 md:px-8 flex justify-center">
+          <GlobeDemo />
+        </div>
+      </section>
+      
+      {/* Training Camps Section */}
       <section className="py-16 md:py-24">
         <div className="w-full mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
@@ -158,95 +176,80 @@ function Camps() {
 }
 
 function BranchesCamps() {
-  const branches = [
-    {
-      name: 'Downtown Branch',
-      address: '123 Main Street, City Center',
-      programs: ['Basketball', 'Soccer', 'Tennis'],
-      image: colors['gulf-stream']
-    },
-    {
-      name: 'North Branch',
-      address: '456 North Avenue, North District',
-      programs: ['Swimming', 'Volleyball', 'Track & Field'],
-      image: colors['river-bed']
-    },
-    {
-      name: 'South Branch',
-      address: '789 South Boulevard, South Quarter',
-      programs: ['Basketball', 'Soccer', 'Baseball'],
-      image: colors['gulf-stream']
-    }
-  ];
-
+  const [expandedCards, setExpandedCards] = useState({});
+  
+  const toggleCard = (index) => {
+    setExpandedCards(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
+  
+  const truncateText = (text, maxLength = 150) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+  
   const camps = [
     {
-      title: 'Summer Intensive Camp',
-      date: 'July 15-20, 2024',
-      duration: '6 Days',
-      description: 'An intensive training camp focusing on advanced techniques and team strategies.',
-      spots: 'Limited spots available'
+      title: 'Gabala, Azerbaijan',
+      date: '8 - 16 July 2023',
+      duration: '9 Days',
+      description: 'Future Generation Academy organized the first Omani football summer camp in Azerbaijan in July 2023 in collaboration with Gabala FC, a premier league club, demonstrates the academy\'s commitment to providing unique and valuable experiences for young football players from age 10 to 14 years old. The 9 days comprehensive program offered during the camp, including training sessions, friendly matches, a tournament organized by Gabala FC, entertainment programs, and tours, undoubtedly provided participants with a rich and immersive football experience.',
+      spots: 'Completed',
+      attendees: 20
     },
     {
-      title: 'Youth Development Camp',
-      date: 'August 1-5, 2024',
-      duration: '5 Days',
-      description: 'Perfect for young athletes looking to develop fundamental skills and build confidence.',
-      spots: 'Open for registration'
-    },
-    {
-      title: 'Elite Performance Camp',
-      date: 'August 15-22, 2024',
+      title: 'Almaty, Kazakhstan',
+      date: '5 - 12 July 2024',
       duration: '8 Days',
-      description: 'Advanced camp for experienced athletes seeking to reach the next level.',
-      spots: 'By invitation only'
+      description: 'Future Generation Academy\'s collaboration with FC Kairat and the Kazakhstan Sport Ministry to organize first football summer camp in Kazakhstan for an academy from Middle East is a commendable effort. Offering such opportunities for young players from Oman and the Middle East to engage in training sessions, friendly matches, entertainment programs, and tours in collaboration with a premier league club like FC Kairat did undoubtedly provide them with valuable experiences and exposure to international football standards. This camp was not only enhance their football skills but also foster cultural exchange and mutual understanding among participants from different backgrounds. It\'s great to see such initiatives promoting sports development and international cooperation.',
+      spots: 'Completed',
+      attendees: 28
+    },
+    {
+      title: 'Tbilisi, Georgia',
+      date: '26 - 21 July 2025',
+      duration: '6 Days',
+      description: 'Future Generation Academy proudly conducted its third international football training camp — becoming the first Middle Eastern academy to organize such a camp in Georgia. This prestigious program was conducted in collaboration with FC Dinamo Tbilisi, a top-tier Premier League club, and which was overseen by highly experienced, UEFA-licensed coaches. The camp was designed to offer players exceptional development opportunities, providing world-class training and exposure to international football standards, ensuring a truly enriching experience for all participants.',
+      spots: 'Upcoming',
+      attendees: 26
     }
   ];
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Branches Section */}
-      <section className="py-16 md:py-24">
-        <div className="w-full mx-auto px-4 md:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
-              Our Branches
-            </h1>
-            <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
-              Visit one of our state-of-the-art facilities located across the region.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {branches.map((branch, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
-                style={{ border: `1px solid ${colors['geyser']}` }}
+      {/* Globe Section - At the very top */}
+      <section className="pt-0 pb-[320px] bg-white overflow-visible">
+        <div className="w-full mx-auto px-4 md:px-8 flex justify-start items-start relative -ml-16 md:-ml-24">
+          <div className="absolute left-32 md:left-48 top-[60%] z-0">
+            <div className="flex flex-col items-start gap-1">
+              <h2 
+                className="text-6xl md:text-8xl font-heading font-bold uppercase tracking-sm leading-tight ml-32 md:ml-56"
+                style={{
+                  color: 'transparent',
+                  WebkitTextStroke: '3px #454f59',
+                  textStroke: '3px #454f59',
+                }}
               >
-                <div 
-                  className="h-48"
-                  style={{ backgroundColor: branch.image, opacity: 0.8 }}
-                />
-                <div className="p-6">
-                  <h3 className="text-xl font-heading font-semibold text-river-bed mb-2">
-                    {branch.name}
-                  </h3>
-                  <p className="text-oslo-gray mb-4">{branch.address}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {branch.programs.map((program, idx) => (
-                      <span
-                        key={idx}
-                        className="px-3 py-1 rounded-full text-sm"
-                        style={{ backgroundColor: colors['geyser'], color: colors['river-bed'] }}
-                      >
-                        {program}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
+                Training
+              </h2>
+              <h2 className="text-6xl md:text-8xl font-heading font-bold text-gulf-stream uppercase tracking-sm leading-tight ml-32 md:ml-56">
+                Beyond
+              </h2>
+              <h2 
+                className="text-6xl md:text-8xl font-heading font-bold uppercase tracking-sm leading-tight ml-32 md:ml-56"
+                style={{
+                  color: 'transparent',
+                  WebkitTextStroke: '3px #454f59',
+                  textStroke: '3px #454f59',
+                }}
+              >
+                Borders
+              </h2>
+            </div>
           </div>
+          <GlobeDemo />
         </div>
       </section>
 
@@ -254,29 +257,135 @@ function BranchesCamps() {
       <section className="py-16 md:py-24 bg-white">
         <div className="w-full mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-river-bed mb-4">
-              Training Camps
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-river-bed leading-tight tracking-tighter mb-4">
+              Overseas <span className="text-transparent bg-clip-text bg-gradient-to-r from-gulf-stream to-river-bed">Football Camps</span>
             </h1>
             <p className="text-lg text-oslo-gray max-w-2xl mx-auto">
               Join our specialized training camps designed to accelerate your development.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {camps.map((camp, index) => (
-              <Card key={index} title={camp.title} description={camp.description}>
-                <div className="space-y-2">
-                  <div className="text-sm text-oslo-gray">
-                    <span className="font-medium">📅</span> {camp.date}
+            {camps.map((camp, index) => {
+              const isExpanded = expandedCards[index];
+              const displayDescription = isExpanded ? camp.description : truncateText(camp.description, 150);
+              
+              return (
+                <Card key={index} title={camp.title}>
+                  <div>
+                    <p className="text-oslo-gray mb-4">
+                      {displayDescription}
+                      {camp.description.length > 150 && (
+                        <button
+                          onClick={() => toggleCard(index)}
+                          className="text-sm font-medium ml-1"
+                          style={{ color: colors['gulf-stream'] }}
+                        >
+                          {isExpanded ? ' Show Less' : ' Show More'}
+                        </button>
+                      )}
+                    </p>
+                    <div className="space-y-2">
+                      <div className="text-sm text-oslo-gray flex items-center gap-2">
+                        <Calendar size={16} style={{ color: colors['oslo-gray'] }} />
+                        <span>{camp.date}</span>
+                      </div>
+                      <div className="text-sm text-oslo-gray flex items-center gap-2">
+                        <Users size={16} style={{ color: colors['oslo-gray'] }} />
+                        <span>Number of Attendees: {camp.attendees}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-sm text-oslo-gray">
-                    <span className="font-medium">⏱️</span> {camp.duration}
-                  </div>
-                  <p className="text-sm font-medium" style={{ color: colors['gulf-stream'] }}>
-                    {camp.spots}
-                  </p>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Gallery Section - Bento Box Style */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="w-full mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-4">
+              <div className="inline-flex items-center gap-2 bg-geyser text-gulf-stream text-xs font-bold px-3 py-1 rounded-full tracking-wider">
+                <span className="w-2 h-2 bg-gulf-stream rounded-full"></span>
+                GALLERY
+              </div>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-river-bed leading-tight tracking-tighter mb-4">
+              The Academy in <span className="text-transparent bg-clip-text bg-gradient-to-r from-gulf-stream to-river-bed">Action</span>
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 md:p-8" style={{ gridAutoRows: 'minmax(200px, auto)' }}>
+            {/* Large vertical video - spans 2 rows */}
+            <div className="row-span-2 col-span-2 md:col-span-1 relative group overflow-hidden rounded-lg aspect-[3/4] md:aspect-auto">
+              <video
+                src="/videos/fga-gallery-1.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300"></div>
+            </div>
+            
+            {/* Medium horizontal image */}
+            <div className="col-span-2 md:col-span-2 relative group overflow-hidden rounded-lg aspect-video">
+              <img
+                src="/images/fga-gallery-6.jpg"
+                alt="Gallery"
+                className="w-full h-full object-cover"
+                style={{ objectPosition: 'center top' }}
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300"></div>
+            </div>
+            
+            {/* Small square image */}
+            <div className="col-span-1 relative group overflow-hidden rounded-lg aspect-[13/15]">
+              <img
+                src="/images/fga-gallery-4.jpg"
+                alt="Gallery"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300"></div>
+            </div>
+            
+            {/* Medium vertical video */}
+            <div className="row-span-2 col-span-2 md:col-span-1 relative group overflow-hidden rounded-lg aspect-[3/4] md:aspect-auto">
+              <video
+                src="/videos/fga-gallery-3.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300"></div>
+            </div>
+            
+            {/* Large horizontal video - spans 2 columns */}
+            <div className="col-span-2 md:col-span-2 relative group overflow-hidden rounded-lg aspect-video">
+              <video
+                src="/videos/fga-gallery-2.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300"></div>
+            </div>
+            
+            {/* Small square image */}
+            <div className="col-span-1 relative group overflow-hidden rounded-lg aspect-[13/15]">
+              <img
+                src="/images/fga-gallery-5.jpg"
+                alt="Gallery"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300"></div>
+            </div>
           </div>
         </div>
       </section>
