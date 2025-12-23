@@ -384,19 +384,13 @@ function About() {
               Comprehensive programs and services designed for athletes at every stage of their journey
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[
               {
                 title: 'Training Programs',
                 description: 'Comprehensive programs for all skill levels, from beginners to elite athletes.',
                 icon: Dumbbell,
                 image: '/images/fga-2.jpeg'
-              },
-              {
-                title: 'State-of-the-Art Facilities',
-                description: 'Modern equipment and facilities designed to enhance performance and safety.',
-                icon: Building2,
-                image: '/images/fga-5.jpg'
               },
               {
                 title: 'Expert Coaching',
@@ -412,16 +406,17 @@ function About() {
               }
             ].map((feature, index) => {
               const IconComponent = feature.icon;
-              const directions = ['left', 'right', 'left', 'right']; // Alternate directions
+              const directions = ['left', 'left', 'right']; // Alternate directions for three items (right-most tilts to the right)
               return (
               <div key={index} className="flex justify-center">
                 <TiltedCover
                   direction={directions[index]}
+                  tiltCover={index === 1 ? false : undefined}
                   image={{
                     src: feature.image,
                     alt: feature.title
                   }}
-                  className="w-full max-w-sm"
+                  className="w-full max-w-[14rem] h-[420px] sm:h-[460px] md:h-[420px] flex-shrink-0"
                 >
                   <div
                     style={{
@@ -432,17 +427,17 @@ function About() {
                       alignItems: "center",
                       justifyContent: "center",
                       backgroundColor: colors['gulf-stream'],
-                      padding: "2rem"
+                      padding: "1rem"
                     }}
                   >
                     <div className="text-center">
                       <div className="mb-4 flex justify-center">
-                        <IconComponent size={48} color="#ffffff" strokeWidth={1.5} />
+                        <IconComponent size={40} color="#ffffff" strokeWidth={1.5} />
                       </div>
-                      <h3 style={{ fontWeight: 900, fontSize: "1.5rem", color: "#ffffff", marginBottom: "0.5rem" }}>
+                      <h3 style={{ fontWeight: 900, fontSize: "1.125rem", color: "#ffffff", marginBottom: "0.5rem" }}>
                         {feature.title}
                       </h3>
-                      <p style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.9)", lineHeight: "1.5" }}>
+                      <p style={{ fontSize: "0.85rem", color: "rgba(255, 255, 255, 0.9)", lineHeight: "1.4" }}>
                         {feature.description}
                       </p>
                     </div>

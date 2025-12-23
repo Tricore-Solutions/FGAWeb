@@ -23,14 +23,16 @@ export default function TiltedCover({
   const factor = tiltLeft ? 1 : -1;
 
   return (
-    // The container has height and width set to the size of the content + padding.
-    <div className={cn("flex h-64 w-52 items-center justify-center overflow-hidden", className)} {...props}>
-      <div className="group relative h-52 w-40">
+    // Container is flexible — size is controlled by parent via className/width/height.
+    // Allow overflow so 3D transforms do not get clipped vertically.
+    <div className={cn("flex items-center justify-center overflow-visible", className)} {...props}>
+      <div className="group relative h-full w-full">
         {/* Background content */}
         <div
           className="pointer-events-none relative h-full w-full overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-500 ease-slow group-hover:!transform-none"
           style={{
             transform: `perspective(400px) rotateY(${factor * 20}deg) scale(0.85) translateX(${-factor * 20}%)`,
+            transformOrigin: 'center center',
           }}
         >
           {children}
@@ -48,6 +50,7 @@ export default function TiltedCover({
           )}
           style={{
             transform: tiltCover ? `perspective(400px) rotateY(${factor * 20}deg)` : undefined,
+            transformOrigin: 'center center',
           }}
         >
           <div className="h-full w-full rounded-md object-cover">
