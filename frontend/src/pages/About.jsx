@@ -1,7 +1,6 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useRef, useEffect, useState } from 'react';
 import { Dumbbell, Building2, Users, Trophy, Star, Handshake, Lightbulb } from 'lucide-react';
-import Button from '../components/Button';
 import Card from '../components/Card';
 import ChromaGrid from '../component/ChromaGrid';
 import TiltedCover from '../components/animata/image/TiltedCover';
@@ -9,7 +8,6 @@ import OutlinedHeading from '../components/OutlinedHeading';
 import colors from '../styles/design-tokens/colors';
 
 function About() {
-  const navigate = useNavigate();
   const location = useLocation();
   const videoRef = useRef(null);
   const imageSectionRef = useRef(null);
@@ -285,10 +283,16 @@ function About() {
       <section className="w-full py-12 sm:py-16 md:py-24">
         <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
           <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
-              Our Founders
+            <div className="flex justify-center mb-4">
+              <div className="inline-flex items-center gap-2 bg-geyser text-gulf-stream text-xs font-bold px-3 py-1 rounded-full tracking-wider">
+                <span className="w-2 h-2 bg-gulf-stream rounded-full"></span>
+                OUR FOUNDERS
+              </div>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-river-bed leading-tight tracking-tighter mb-4">
+              Meet the <span className="text-transparent bg-clip-text bg-gradient-to-r from-gulf-stream to-river-bed">Founders</span>
             </h2>
-            <p className="text-base sm:text-lg text-oslo-gray max-w-2xl mx-auto px-4">
+            <p className="text-river-bed mt-6 text-base sm:text-lg max-w-2xl mx-auto px-4">
               Meet the experienced professionals dedicated to your success
             </p>
           </div>
@@ -330,10 +334,16 @@ function About() {
       <section className="w-full py-12 sm:py-16 md:py-24" style={{ backgroundColor: colors['geyser'] }}>
         <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
           <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
-              Our Core Values
+            <div className="flex justify-center mb-4">
+              <div className="inline-flex items-center gap-2 bg-white text-gulf-stream text-xs font-bold px-3 py-1 rounded-full tracking-wider">
+                <span className="w-2 h-2 bg-gulf-stream rounded-full"></span>
+                CORE VALUES
+              </div>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-river-bed leading-tight tracking-tighter mb-4">
+              Our Game <span className="text-transparent bg-clip-text bg-gradient-to-r from-gulf-stream to-river-bed">Plan</span>
             </h2>
-            <p className="text-base sm:text-lg text-oslo-gray max-w-2xl mx-auto px-4">
+            <p className="text-river-bed mt-6 text-base sm:text-lg max-w-2xl mx-auto px-4">
               The principles that guide everything we do
             </p>
           </div>
@@ -374,17 +384,23 @@ function About() {
       </section>
 
       {/* What We Offer Section */}
-      <section className="w-full py-12 sm:py-16 md:py-24 bg-white">
+      <section className="w-full py-12 sm:py-16 md:py-24 bg-white overflow-x-hidden">
         <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
           <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-river-bed mb-4">
-              What We Offer
+            <div className="flex justify-center mb-4">
+              <div className="inline-flex items-center gap-2 bg-geyser text-gulf-stream text-xs font-bold px-3 py-1 rounded-full tracking-wider">
+                <span className="w-2 h-2 bg-gulf-stream rounded-full"></span>
+                OUR SERVICES
+              </div>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-river-bed leading-tight tracking-tighter mb-4">
+              What We <span className="text-transparent bg-clip-text bg-gradient-to-r from-gulf-stream to-river-bed">Offer</span>
             </h2>
-            <p className="text-base sm:text-lg text-oslo-gray max-w-2xl mx-auto px-4">
+            <p className="text-river-bed mt-6 text-base sm:text-lg max-w-2xl mx-auto px-4">
               Comprehensive programs and services designed for athletes at every stage of their journey
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 ml-4 sm:ml-6 lg:ml-8">
             {[
               {
                 title: 'Training Programs',
@@ -408,7 +424,7 @@ function About() {
               const IconComponent = feature.icon;
               const directions = ['left', 'left', 'right']; // Alternate directions for three items (right-most tilts to the right)
               return (
-              <div key={index} className="flex justify-center">
+              <div key={index} className={`flex justify-center ${index === 1 ? 'ml-4 sm:ml-6 lg:ml-8' : ''}`}>
                 <TiltedCover
                   direction={directions[index]}
                   tiltCover={index === 1 ? false : undefined}
@@ -416,7 +432,7 @@ function About() {
                     src: feature.image,
                     alt: feature.title
                   }}
-                  className="w-full max-w-[14rem] h-[420px] sm:h-[460px] md:h-[420px] flex-shrink-0"
+                  className="w-full max-w-[16rem] sm:max-w-[17rem] lg:max-w-[18rem] h-[420px] sm:h-[460px] md:h-[420px] flex-shrink-0"
                 >
                   <div
                     style={{
@@ -450,37 +466,6 @@ function About() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section 
-        className="w-full py-12 sm:py-16 md:py-20"
-        style={{ backgroundColor: colors['gulf-stream'] }}
-      >
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-white mb-4">
-            Join Our Community
-          </h2>
-          <p className="text-base sm:text-lg text-white mb-6 sm:mb-8 opacity-90 px-4">
-            Ready to start your journey with Future Generation Academy? Explore our programs and events today.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-            <Button
-              text="View Programs"
-              variant="secondary"
-              onClick={() => navigate('/programs')}
-            />
-            <Button
-              text="View Events"
-              variant="secondary"
-              onClick={() => navigate('/events')}
-            />
-            <Button
-              text="Contact Us"
-              variant="secondary"
-              onClick={() => navigate('/contact')}
-            />
-          </div>
-        </div>
-      </section>
     </>
   );
 }
