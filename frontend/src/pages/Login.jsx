@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -9,7 +9,8 @@ import AuthContext from '../context/AuthContext';
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login: loginContext } = useContext(AuthContext);
+  const { login: loginContext, isAuthenticated } = useContext(AuthContext);
+  const isLoggingInRef = useRef(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
