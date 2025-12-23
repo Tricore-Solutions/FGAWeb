@@ -193,6 +193,7 @@ function BranchesCamps() {
   const camps = [
     {
       title: 'Gabala, Azerbaijan',
+      flagCode: 'az',
       date: '8 - 16 July 2023',
       duration: '9 Days',
       description: 'Future Generation Academy organized the first Omani football summer camp in Azerbaijan in July 2023 in collaboration with Gabala FC, a premier league club, demonstrates the academy\'s commitment to providing unique and valuable experiences for young football players from age 10 to 14 years old. The 9 days comprehensive program offered during the camp, including training sessions, friendly matches, a tournament organized by Gabala FC, entertainment programs, and tours, undoubtedly provided participants with a rich and immersive football experience.',
@@ -201,6 +202,7 @@ function BranchesCamps() {
     },
     {
       title: 'Almaty, Kazakhstan',
+      flagCode: 'kz',
       date: '5 - 12 July 2024',
       duration: '8 Days',
       description: 'Future Generation Academy\'s collaboration with FC Kairat and the Kazakhstan Sport Ministry to organize first football summer camp in Kazakhstan for an academy from Middle East is a commendable effort. Offering such opportunities for young players from Oman and the Middle East to engage in training sessions, friendly matches, entertainment programs, and tours in collaboration with a premier league club like FC Kairat did undoubtedly provide them with valuable experiences and exposure to international football standards. This camp was not only enhance their football skills but also foster cultural exchange and mutual understanding among participants from different backgrounds. It\'s great to see such initiatives promoting sports development and international cooperation.',
@@ -209,6 +211,7 @@ function BranchesCamps() {
     },
     {
       title: 'Tbilisi, Georgia',
+      flagCode: 'ge',
       date: '26 - 21 July 2025',
       duration: '6 Days',
       description: 'Future Generation Academy proudly conducted its third international football training camp — becoming the first Middle Eastern academy to organize such a camp in Georgia. This prestigious program was conducted in collaboration with FC Dinamo Tbilisi, a top-tier Premier League club, and which was overseen by highly experienced, UEFA-licensed coaches. The camp was designed to offer players exceptional development opportunities, providing world-class training and exposure to international football standards, ensuring a truly enriching experience for all participants.',
@@ -270,7 +273,15 @@ function BranchesCamps() {
               const displayDescription = isExpanded ? camp.description : truncateText(camp.description, 150);
               
               return (
-                <Card key={index} title={camp.title}>
+                <Card 
+                  key={index} 
+                  title={
+                    <span className="flex items-center gap-2">
+                      <span className={`fi fi-${camp.flagCode}`}></span>
+                      {camp.title}
+                    </span>
+                  }
+                >
                   <div>
                     <p className="text-oslo-gray mb-4">
                       {displayDescription}
