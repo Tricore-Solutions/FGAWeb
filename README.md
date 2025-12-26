@@ -124,6 +124,8 @@ The system is designed for performance, scalability, and future expansion, such 
 
    # Install PixelTransition component  
    npx jsrepo@latest add https://reactbits.dev/r/PixelTransition-JS-CSS
+
+   npm install flag-icons
    ```
    
    **Note:** The TextHighlighter component is custom-built and already included in the repository - no installation needed.

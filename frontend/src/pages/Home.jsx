@@ -35,12 +35,11 @@ function Pricing4() {
     <button
       type="button"
       aria-label={label}
-      className={`w-full text-center py-3.5 rounded-lg font-semibold text-md transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+      className={`w-full text-center py-3.5 rounded-lg font-semibold text-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
         isFeatured
-          ? 'bg-white text-gulf-stream hover:text-river-bed ring-gulf-stream ring-offset-gulf-stream/10'
-          : 'bg-geyser text-river-bed hover:bg-oslo-gray ring-geyser ring-offset-white'
+          ? 'bg-white text-gulf-stream ring-gulf-stream ring-offset-gulf-stream/10'
+          : 'bg-geyser text-river-bed ring-geyser ring-offset-white'
       }`}
-      style={{ willChange: 'color, background-color' }}
     >
       {label}
     </button>
@@ -76,10 +75,10 @@ function Pricing4() {
 
   const PricingCard = ({ plan, price, description, features, isFeatured = false }) => (
     <article
-      className={`relative rounded-2xl group h-full flex items-center`}
+      className={`relative rounded-2xl h-full flex items-center`}
       aria-label={`${plan} plan`}
     >
-      <div className={`p-6 ${isFeatured ? 'md:p-10 lg:p-12' : 'md:p-8'} rounded-2xl transition-transform duration-300 ease-out transform group-hover:-translate-y-2 group-hover:shadow-xl will-change-transform ${isFeatured ? 'h-[480px] md:h-[540px] flex flex-col' : 'flex flex-col'} ${isFeatured ? 'bg-gradient-to-b from-gulf-stream to-river-bed text-white shadow-2xl' : 'bg-white text-river-bed shadow-lg'}`}>
+      <div className={`p-6 ${isFeatured ? 'md:p-10 lg:p-12' : 'md:p-8'} rounded-2xl w-full ${isFeatured ? 'h-[480px] md:h-[540px] flex flex-col' : 'flex flex-col'} ${isFeatured ? 'bg-gradient-to-b from-gulf-stream to-river-bed text-white shadow-2xl' : 'bg-white text-river-bed shadow-lg'}`}>
       {isFeatured && (
         <div className="absolute -top-3 right-6">
           <span className="inline-flex items-center rounded-full bg-white/20 text-white/90 text-xs font-semibold px-3 py-1 backdrop-blur">
@@ -119,7 +118,7 @@ function Pricing4() {
           </FeatureListItem>
         ))}
       </ul>
-    </div>
+      </div>
     </article>
   );
 
