@@ -83,10 +83,28 @@ export const cancelSubscription = async (subscriptionId) => {
   }
 };
 
+/**
+ * Reactivate a cancelled subscription
+ */
+export const reactivateSubscription = async (subscriptionId) => {
+  try {
+    const response = await axios.patch(
+      `${API_URL}/subscriptions/${subscriptionId}/reactivate`,
+      {},
+      getAuthConfig()
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error reactivating subscription:', error);
+    throw error;
+  }
+};
+
 export default {
   createSubscription,
   getActiveSubscription,
   getMySubscriptions,
-  cancelSubscription
+  cancelSubscription,
+  reactivateSubscription
 };
 

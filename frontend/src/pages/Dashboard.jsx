@@ -212,7 +212,7 @@ function Dashboard() {
                     </div>
                   </div>
                   <div className="pt-4 border-t border-white/20">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-4 mb-6">
                       <div>
                         <p className="text-sm opacity-75 mb-1">Start Date</p>
                         <p className="font-semibold">
@@ -235,6 +235,20 @@ function Dashboard() {
                           </p>
                         </div>
                       )}
+                    </div>
+                    <div className="flex gap-3">
+                      <Button
+                        text="Manage Subscription"
+                        variant="outline"
+                        onClick={() => navigate('/subscription')}
+                        className="flex-1 bg-white text-gulf-stream hover:bg-white/90 border-white"
+                      />
+                      <Button
+                        text="View Plans"
+                        variant="outline"
+                        onClick={() => navigate('/#membership-plans')}
+                        className="flex-1 bg-white text-gulf-stream hover:bg-white/90 border-white"
+                      />
                     </div>
                   </div>
                 </div>

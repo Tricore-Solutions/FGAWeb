@@ -157,5 +157,65 @@ router.patch('/:id/cancel', authMiddleware, async (req, res) => {
   }
 });
 
+// Reactivate subscription (uncancel)
+router.patch('/:id/reactivate', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const subscriptionId = req.params.id;
+
+    // Verify subscription belongs to user
+    const [subscriptions] = await pool.query(
+      'SELECT * FROM subscriptions WHERE id = ? AND user_id = ?',
+      [subscriptionId, userId]
+    );
+
+    if (subscriptions.length === 0) {
+      return res.status(404).json({ error: 'Subscription not found' });
+    }
+
+    const subscription = subscriptions[0];
+
+    // Check if subscription end_date is in the future
+    const endDate = new Date(subscription.end_date);
+    const now = new Date();
+
+    if (endDate < now) {
+      return res.status(400).json({ error: 'Subscription has expired. Please subscribe to a new plan.' });
+    }
+
+    // Deactivate any other active subscriptions
+    await pool.query(
+      'UPDATE subscriptions SET status = ? WHERE user_id = ? AND status = ? AND id != ?',
+      ['expired', userId, 'active', subscriptionId]
+    );
+
+    // Reactivate this subscription
+    await pool.query(
+      'UPDATE subscriptions SET status = ?, updated_at = NOW() WHERE id = ?',
+      ['active', subscriptionId]
+    );
+
+    // Update user's active_subscription_id
+    await pool.query(
+      'UPDATE users SET active_subscription_id = ? WHERE id = ?',
+      [subscriptionId, userId]
+    );
+
+    // Fetch the updated subscription
+    const [updated] = await pool.query(
+      'SELECT * FROM subscriptions WHERE id = ?',
+      [subscriptionId]
+    );
+
+    res.json({
+      message: 'Subscription reactivated successfully',
+      subscription: updated[0]
+    });
+  } catch (error) {
+    console.error('Error reactivating subscription:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;
 

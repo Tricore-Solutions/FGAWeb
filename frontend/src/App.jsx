@@ -23,6 +23,7 @@ import Dashboard from './pages/Dashboard';
 import Payment from './pages/Payment';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
+import SubscriptionManagement from './pages/SubscriptionManagement';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import EventsManager from './pages/admin/EventsManager';
 import ProgramsManager from './pages/admin/ProgramsManager';
@@ -642,6 +643,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/subscription" 
+            element={
+              <ProtectedRoute>
+                <SubscriptionManagement />
               </ProtectedRoute>
             } 
           />
