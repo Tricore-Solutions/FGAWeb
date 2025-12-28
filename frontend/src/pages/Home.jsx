@@ -6,6 +6,7 @@ import Card from '../components/Card';
 import LoadingSpinner from '../components/LoadingSpinner';
 import OutlinedHeading from '../components/OutlinedHeading';
 import TextHighlighter from '../component/TextHighlighter';
+import AnimatedList from '../components/AnimatedList';
 import colors from '../styles/design-tokens/colors';
 import { fetchEvents } from '../services/eventsService';
 import { useAuth } from '../context/AuthContext';
@@ -963,7 +964,7 @@ function Home() {
                 <img
                   src="/images/fga-achieve-2.png"
                   alt="Achievements"
-                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-auto object-contain pointer-events-none"
+                  className="absolute top-[17%] left-[59%] transform -translate-x-1/2 -translate-y-1/2 w-[83%] h-auto object-contain pointer-events-none"
                 />
                 <p className="text-center text-base md:text-lg text-river-bed mt-6">
                   Built for players who want more than just a match, because our work doesn't end when the game does
@@ -971,19 +972,32 @@ function Home() {
               </div>
               
               {/* Achievements list on the right */}
-              <div className="flex flex-col justify-center space-y-4 md:space-y-6">
-                <p className="text-lg md:text-xl text-river-bed font-semibold">
-                  Over 1,000 registered participants across four age categories
-                </p>
-                <p className="text-lg md:text-xl text-river-bed font-semibold">
-                  First Omani football academy to organize international camps in Azerbaijan, Kazakhstan, and Georgia
-                </p>
-                <p className="text-lg md:text-xl text-river-bed font-semibold">
-                  Partnerships with premier league clubs including Gabala FC, FC Kairat, and FC Dinamo Tbilisi
-                </p>
-                <p className="text-lg md:text-xl text-river-bed font-semibold">
-                  Established in 2021 with a mission to discover and nurture sporting talents
-                </p>
+              <div className="flex flex-col justify-center">
+                <AnimatedList
+                  items={[
+                    'First Omani football team - represented by academy coaches to participate in Mallorca Football Tournament in Spain in May 2022',
+                    'First Omani football academy to arrange a football summer camp in Azerbaijan in collaboration with Gabala FC; a premier League club in Azerbaijan in July 2023',
+                    'One of the academy\'s promising players has been selected by the Oman Football Association to join the Talent Center, recognizing him among the top academy talents in the Muscat Governorate',
+                    'The first Omani football academy to receive media coverage by the globally renowned sports network, beIN SPORTS, in October 2024',
+                    'The first Omani academy set to participate in the World Football Academies Cup in Azerbaijan – August 2025',
+                    'The academy was crowned the champion of the Sports Spark tournament in Muscat at Oman Exhibition and Convention Center September 2025',
+                    'The first Middle Eastern academy to organize a training camp in Georgia, in collaboration with FC Dinamo Tbilisi – July 2025',
+                    'The academy achieved over 1000 participants in its first year in 2021 - 2022',
+                    'First Omani football academy to conduct a scientific research on "The effect of dynamic balance exercises in soccer buds through speed and change of direction" in cooperation with Sultan Qaboos University in Oman which was presented to Qatar Olympic Academy under supervision of Qatar University by Future Generation Academy head coach, June - July 2022',
+                    'Organizing 1st edition of Future Generation Cup with participation of 16 teams from different academies in December 2022',
+                    'Implementing Smart football methodology using the Spanish football style since January 2023',
+                    'Participation of two academy players in Dubai International Tournament in March 2023',
+                    'The academy was crowned the champion of the friendly tournament in Azerbaijan July 2023',
+                    'First Middle Eastern academy to arrange a camp in Kazakhstan in collaboration with FC Kairat and Kazakhstan Sport Ministry in July 2024',
+                    'The academy achieved 2nd place at Kairat Football Club Friendly tournament in Kazakhstan - July 2024',
+                    'An initial collaboration between Future Generation academy and SL Benfica Club from Portugal was established - June 2024',
+                    'Future Generation Academy participated in Mazaya Exhibition at Sultan Qaboos University in October 2024'
+                  ]}
+                  onItemSelect={(item, index) => console.log(item, index)}
+                  showGradients={true}
+                  enableArrowNavigation={true}
+                  displayScrollbar={true}
+                />
               </div>
             </div>
           </div>

@@ -139,6 +139,9 @@ The system is designed for performance, scalability, and future expansion, such 
    npx jsrepo@latest add https://reactbits.dev/r/PixelTransition-JS-CSS
 
    npm install flag-icons
+
+   # Install AnimatedList component  
+   npx jsrepo@latest add https://reactbits.dev/r/AnimatedList-JS-CSS
    ```
    
    **Note:** The TextHighlighter component is custom-built and already included in the repository - no installation needed.
