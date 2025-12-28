@@ -331,54 +331,59 @@ function About() {
       </section>
 
       {/* Values Section */}
-      <section className="w-full py-12 sm:py-16 md:py-24" style={{ backgroundColor: colors['geyser'] }}>
-        <div className="w-full mx-auto px-4 sm:px-6 md:px-8">
-          <div className="text-center mb-8 sm:mb-12">
-            <div className="flex justify-center mb-4">
-              <div className="inline-flex items-center gap-2 bg-white text-gulf-stream text-xs font-bold px-3 py-1 rounded-full tracking-wider">
-                <span className="w-2 h-2 bg-gulf-stream rounded-full"></span>
-                CORE VALUES
+      <section className="w-full py-12 sm:py-16 md:py-24 bg-white">
+        <div className="w-full px-1.5 md:px-3 lg:px-4 pb-1.5 md:pb-3 lg:pb-4">
+          <div className="max-w-full bg-gulf-stream rounded-2xl mx-auto px-4 md:px-8 lg:px-12 py-16 md:py-24">
+            <div className="w-full mx-auto">
+              <div className="text-center mb-8 sm:mb-12">
+                <div className="flex justify-center mb-4">
+                  <div className="inline-flex items-center gap-2 bg-white text-gulf-stream text-xs font-bold px-3 py-1 rounded-full tracking-wider">
+                    <span className="w-2 h-2 bg-gulf-stream rounded-full"></span>
+                    CORE VALUES
+                  </div>
+                </div>
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tighter mb-4">
+                  Our Game <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/80">Plan</span>
+                </h2>
+                <p className="text-white/90 mt-6 text-base sm:text-lg max-w-2xl mx-auto px-4">
+                  The principles that guide everything we do
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                {[
+                  {
+                    title: 'Excellence',
+                    description: 'We strive for the highest standards in training, facilities, and athlete development, constantly pushing boundaries to achieve outstanding results.',
+                    icon: Star
+                  },
+                  {
+                    title: 'Integrity',
+                    description: 'We conduct ourselves with honesty, respect, and ethical behavior, building trust with athletes, families, and the community.',
+                    icon: Handshake
+                  },
+                  {
+                    title: 'Innovation',
+                    description: 'We embrace new training methods, technologies, and approaches to stay at the forefront of athletic development and performance.',
+                    icon: Lightbulb
+                  }
+                ].map((value, index) => {
+                  const IconComponent = value.icon;
+                  return (
+                  <Card
+                    key={index}
+                    title={value.title}
+                    description={value.description}
+                    variant="elevated"
+                    className="!rounded-[2.5rem]"
+                  >
+                    <div className="mb-2 text-center flex justify-center">
+                      <IconComponent size={48} color={colors['gulf-stream']} strokeWidth={1.5} />
+                    </div>
+                  </Card>
+                );
+                })}
               </div>
             </div>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-river-bed leading-tight tracking-tighter mb-4">
-              Our Game <span className="text-transparent bg-clip-text bg-gradient-to-r from-gulf-stream to-river-bed">Plan</span>
-            </h2>
-            <p className="text-river-bed mt-6 text-base sm:text-lg max-w-2xl mx-auto px-4">
-              The principles that guide everything we do
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
-            {[
-              {
-                title: 'Excellence',
-                description: 'We strive for the highest standards in training, facilities, and athlete development, constantly pushing boundaries to achieve outstanding results.',
-                icon: Star
-              },
-              {
-                title: 'Integrity',
-                description: 'We conduct ourselves with honesty, respect, and ethical behavior, building trust with athletes, families, and the community.',
-                icon: Handshake
-              },
-              {
-                title: 'Innovation',
-                description: 'We embrace new training methods, technologies, and approaches to stay at the forefront of athletic development and performance.',
-                icon: Lightbulb
-              }
-            ].map((value, index) => {
-              const IconComponent = value.icon;
-              return (
-              <Card
-                key={index}
-                title={value.title}
-                description={value.description}
-                variant="elevated"
-              >
-                <div className="mb-2 text-center flex justify-center">
-                  <IconComponent size={48} color={colors['gulf-stream']} strokeWidth={1.5} />
-                </div>
-              </Card>
-            );
-            })}
           </div>
         </div>
       </section>

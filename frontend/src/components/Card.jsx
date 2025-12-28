@@ -13,7 +13,9 @@ const Card = ({
 }) => {
   // Base styles common to all variants
   // Using rounded-lg (0.5rem / 8px) from design system
-  const baseStyles = 'bg-white rounded-lg overflow-hidden';
+  // Check if className contains a rounded class to avoid conflicts
+  const hasCustomRounded = className && /rounded-/.test(className);
+  const baseStyles = `bg-white ${hasCustomRounded ? '' : 'rounded-lg'} overflow-hidden`;
   
   // No base padding - padding is applied only to content area
   const paddingStyles = '';

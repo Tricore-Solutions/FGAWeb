@@ -877,6 +877,65 @@ function Home() {
         </div>
       </div>
 
+      {/* Achievements Section */}
+      <section className="w-full py-16 md:py-24 bg-white">
+        <div className="w-full mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-4">
+              <div className="inline-flex items-center gap-2 bg-geyser text-gulf-stream text-xs font-bold px-3 py-1 rounded-full tracking-wider">
+                <span className="w-2 h-2 bg-gulf-stream rounded-full"></span>
+                ACHIEVEMENTS
+              </div>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-river-bed leading-tight tracking-tighter mb-4">
+              Champions in the <span className="text-transparent bg-clip-text bg-gradient-to-r from-gulf-stream to-river-bed">Making</span>
+            </h2>
+          </div>
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+              {/* Card on the left */}
+              <div className="max-w-md mx-auto md:mx-0 relative mt-20 md:mt-28">
+                <div 
+                  className="bg-white rounded-[2.5rem] overflow-hidden border border-geyser shadow-xl"
+                >
+                  <div className="overflow-hidden h-64">
+                    <img
+                      src="/images/fga-achieve-1.jpg"
+                      alt="Achievements"
+                      className="w-full h-full object-cover scale-150 origin-center object-bottom -translate-y-8"
+                    />
+                  </div>
+                </div>
+                <img
+                  src="/images/fga-achieve-2.png"
+                  alt="Achievements"
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-auto object-contain pointer-events-none"
+                />
+                <p className="text-center text-base md:text-lg text-river-bed mt-6">
+                  Built for players who want more than just a match, because our work doesn't end when the game does
+                </p>
+              </div>
+              
+              {/* Achievements list on the right */}
+              <div className="flex flex-col justify-center space-y-4 md:space-y-6">
+                <p className="text-lg md:text-xl text-river-bed font-semibold">
+                  Over 1,000 registered participants across four age categories
+                </p>
+                <p className="text-lg md:text-xl text-river-bed font-semibold">
+                  First Omani football academy to organize international camps in Azerbaijan, Kazakhstan, and Georgia
+                </p>
+                <p className="text-lg md:text-xl text-river-bed font-semibold">
+                  Partnerships with premier league clubs including Gabala FC, FC Kairat, and FC Dinamo Tbilisi
+                </p>
+                <p className="text-lg md:text-xl text-river-bed font-semibold">
+                  Established in 2021 with a mission to discover and nurture sporting talents
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing / Subscription plans - placed after the statistics & calendar container */}
       <div className="w-full">
         <Pricing4 />
