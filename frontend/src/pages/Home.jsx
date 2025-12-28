@@ -606,8 +606,10 @@ function Home() {
               <p className="text-oslo-gray mb-4">{error}</p>
               <Button
                 text="View All Events"
-                variant="outline"
+                variant="slide-arrow"
+                primaryColor="#80b3b4"
                 onClick={() => navigate('/events')}
+                className="mx-auto"
               />
             </div>
           ) : events.length === 0 ? (
@@ -615,8 +617,10 @@ function Home() {
               <p className="text-oslo-gray mb-4">No upcoming events at this time.</p>
               <Button
                 text="View All Events"
-                variant="outline"
+                variant="slide-arrow"
+                primaryColor="#80b3b4"
                 onClick={() => navigate('/events')}
+                className="mx-auto"
               />
             </div>
           ) : (
@@ -624,19 +628,18 @@ function Home() {
               {/* Featured Event - Large Card */}
               {featuredEvent && (
                 <div 
-                  className="mb-8 cursor-pointer hover:opacity-95 transition-opacity"
+                  className="mb-8 cursor-pointer hover:opacity-95 transition-opacity max-w-6xl mx-auto"
                   onClick={() => navigate(`/events/${featuredEvent.id}`)}
                 >
                   <div 
-                    className="flex flex-col md:flex-row overflow-hidden rounded-lg bg-white"
-                    style={{ minHeight: '400px' }}
+                    className="flex flex-col md:flex-row overflow-hidden rounded-lg bg-white w-full"
                   >
                     {/* Image on the left */}
                     <div className="w-full md:w-1/2 flex-shrink-0">
                       <img
                         src={featuredEvent.image}
                         alt={featuredEvent.title}
-                        className="w-full h-full min-h-[400px] object-cover"
+                        className="w-full h-[300px] md:h-[400px] object-cover"
                       />
                     </div>
                     

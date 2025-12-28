@@ -1,7 +1,16 @@
 import axios from 'axios';
 
-// Get API URL from environment variable or use default
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Get API URL from environment variable or use default (use `/api` to leverage Vite proxy in dev)
+const rawApiUrl = import.meta.env.VITE_API_URL;
+let API_URL = '/api';
+
+// If a VITE_API_URL is provided, ensure it points to the API root.
+// If the provided URL doesn't already include '/api', append it so requests like `api.get('/events')`
+// will resolve to `<VITE_API_URL>/api/events` which matches the backend mount point.
+if (rawApiUrl) {
+  const trimmed = rawApiUrl.replace(/\/$/, '');
+  API_URL = trimmed.includes('/api') ? trimmed : `${trimmed}/api`;
+}
 
 // Log API URL in development for debugging
 if (import.meta.env.DEV) {
