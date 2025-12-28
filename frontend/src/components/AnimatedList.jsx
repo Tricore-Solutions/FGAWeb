@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, useInView } from 'motion/react';
+import { Trophy } from 'lucide-react';
 import './AnimatedList.css';
 
 const AnimatedItem = ({ children, delay = 0, index, onMouseEnter, onClick }) => {
@@ -46,9 +47,12 @@ const AnimatedList = ({
   itemClassName = '',
   displayScrollbar = true,
   initialSelectedIndex = -1
+  , autoScroll = false,
+  autoScrollInterval = 3000,
+  noBackground = false
 }) => {
   const listRef = useRef(null);
-  const [selectedIndex, setSelectedIndex] = useState(initialSelectedIndex);
+  const [selectedIndex, setSelectedIndex] = useState(autoScroll && initialSelectedIndex < 0 ? 0 : initialSelectedIndex);
   const [keyboardNav, setKeyboardNav] = useState(false);
   const [topGradientOpacity, setTopGradientOpacity] = useState(0);
   const [bottomGradientOpacity, setBottomGradientOpacity] = useState(1);
@@ -121,9 +125,46 @@ const AnimatedList = ({
     setKeyboardNav(false);
   }, [selectedIndex, keyboardNav]);
 
+  // Auto-scroll: advance selectedIndex on an interval and scroll to item
+  useEffect(() => {
+    if (!autoScroll || items.length === 0) return;
+    // ensure starting index
+    setSelectedIndex(prev => (prev < 0 ? 0 : prev));
+    const id = setInterval(() => {
+      setSelectedIndex(prev => {
+        const next = (prev + 1) % items.length;
+        return next;
+      });
+    }, autoScrollInterval);
+    return () => clearInterval(id);
+  }, [autoScroll, autoScrollInterval, items.length]);
+
+  useEffect(() => {
+    if (!listRef.current || selectedIndex < 0) return;
+    const container = listRef.current;
+    const selectedItem = container.querySelector(`[data-index="${selectedIndex}"]`);
+    if (selectedItem) {
+      const extraMargin = 20;
+      const containerScrollTop = container.scrollTop;
+      const containerHeight = container.clientHeight;
+      const itemTop = selectedItem.offsetTop;
+      const itemBottom = itemTop + selectedItem.offsetHeight;
+      if (itemTop < containerScrollTop + extraMargin) {
+        container.scrollTo({ top: itemTop - extraMargin, behavior: 'smooth' });
+      } else if (itemBottom > containerScrollTop + containerHeight - extraMargin) {
+        container.scrollTo({ top: itemBottom - containerHeight + extraMargin, behavior: 'smooth' });
+      }
+    }
+  }, [selectedIndex]);
+
   return (
     <div className={`scroll-list-container ${className}`}>
-      <div ref={listRef} className={`scroll-list ${!displayScrollbar ? 'no-scrollbar' : ''}`} onScroll={handleScroll}>
+      <div
+        ref={listRef}
+        className={`scroll-list ${!displayScrollbar ? 'no-scrollbar' : ''} ${autoScroll ? 'auto-scroll' : ''}`}
+        onScroll={handleScroll}
+        style={autoScroll ? { overflowY: 'hidden', pointerEvents: 'none' } : {}}
+      >
         {items.map((item, index) => (
           <AnimatedItem
             key={index}
@@ -132,8 +173,11 @@ const AnimatedList = ({
             onMouseEnter={() => handleItemMouseEnter(index)}
             onClick={() => handleItemClick(item, index)}
           >
-            <div className={`item ${selectedIndex === index ? 'selected' : ''} ${itemClassName}`}>
-              <p className="item-text">{item}</p>
+            <div className={`item ${selectedIndex === index ? 'selected' : ''} ${itemClassName} ${noBackground ? 'no-bg' : ''}`} data-item-index={index}>
+              <div className="flex items-start gap-3">
+                <Trophy className="w-6 h-6 text-gulf-stream flex-shrink-0" />
+                <p className="item-text">{item}</p>
+              </div>
             </div>
           </AnimatedItem>
         ))}

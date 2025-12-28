@@ -1,6 +1,7 @@
 .text-highlighter-container {
   position: relative;
-  display: inline;
+  display: inline-block;
+  vertical-align: middle;
   overflow: hidden;
   padding: 0.15em 0.3em;
   margin: -0.15em -0.3em;
@@ -22,7 +23,7 @@
   z-index: 1;
   transition: width var(--highlight-duration, 1000ms) var(--highlight-easing, ease-out);
   background-color: var(--highlight-color, #80b3b4);
-  opacity: 0.3;
+  opacity: 0.35;
   pointer-events: none;
   border-radius: 0.5em;
 }

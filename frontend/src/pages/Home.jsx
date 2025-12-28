@@ -938,14 +938,17 @@ function Home() {
       {/* Achievements Section */}
       <section className="w-full py-16 md:py-24 bg-white">
         <div className="w-full mx-auto px-4 md:px-8">
-          <div className="text-center mb-12">
+            <div className="text-center mb-12">
             <div className="flex justify-center mb-4">
               <div className="inline-flex items-center gap-2 bg-geyser text-gulf-stream text-xs font-bold px-3 py-1 rounded-full tracking-wider">
                 <span className="w-2 h-2 bg-gulf-stream rounded-full"></span>
                 ACHIEVEMENTS
               </div>
             </div>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-river-bed leading-tight tracking-tighter mb-4">
+            <h2
+              className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-river-bed leading-tight tracking-tighter mb-8"
+              style={{ marginBottom: '3rem' }}
+            >
               Champions in the <span className="text-transparent bg-clip-text bg-gradient-to-r from-gulf-stream to-river-bed">Making</span>
             </h2>
           </div>
@@ -967,10 +970,34 @@ function Home() {
                 <img
                   src="/images/fga-achieve-2.png"
                   alt="Achievements"
-                  className="absolute top-[17%] left-[59%] transform -translate-x-1/2 -translate-y-1/2 w-[83%] h-auto object-contain pointer-events-none"
+                  className="absolute top-[15%] left-[59%] transform -translate-x-1/2 -translate-y-1/2 w-[83%] h-auto object-contain pointer-events-none"
                 />
-                <p className="text-center text-base md:text-lg text-river-bed mt-6">
-                  Built for players who want more than just a match, because our work doesn't end when the game does
+                <p className="text-left text-lg md:text-xl text-river-bed mt-12">
+                  Built for players who want{' '}
+                  <TextHighlighter
+                    trigger="auto"
+                    direction="left"
+                    color={colors['gulf-stream']}
+                    duration={2000}
+                    threshold={0.5}
+                    rootMargin="-50px"
+                    as="span"
+                  >
+                    more than just a match
+                  </TextHighlighter>
+                  , because{' '}
+                  <TextHighlighter
+                    trigger="auto"
+                    direction="left"
+                    color={colors['gulf-stream']}
+                    duration={2000}
+                    threshold={0.5}
+                    rootMargin="-50px"
+                    as="span"
+                  >
+                    our work doesn't end
+                  </TextHighlighter>
+                  {' '}when the game does
                 </p>
               </div>
               
@@ -997,9 +1024,12 @@ function Home() {
                     'Future Generation Academy participated in Mazaya Exhibition at Sultan Qaboos University in October 2024'
                   ]}
                   onItemSelect={(item, index) => console.log(item, index)}
-                  showGradients={true}
-                  enableArrowNavigation={true}
-                  displayScrollbar={true}
+                  showGradients={false}
+                  enableArrowNavigation={false}
+                  displayScrollbar={false}
+                  autoScroll={true}
+                  autoScrollInterval={2500}
+                  noBackground={true}
                 />
               </div>
             </div>

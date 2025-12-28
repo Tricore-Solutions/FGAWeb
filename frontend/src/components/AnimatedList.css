@@ -50,6 +50,28 @@
   transition: all 0.2s ease;
 }
 
+.item.no-bg {
+  background-color: transparent;
+  border: none;
+  padding-left: 0;
+  padding-right: 0;
+  margin-bottom: 0.75rem;
+}
+
+.item.no-bg.selected {
+  background-color: transparent;
+  border-color: #80b3b4;
+  box-shadow: none;
+}
+
+.scroll-list.auto-scroll {
+  overflow-y: hidden;
+}
+
+.scroll-list.auto-scroll.no-scrollbar {
+  pointer-events: none;
+}
+
 .item.selected {
   background-color: #d5e0e1;
   border-color: #80b3b4;
