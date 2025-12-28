@@ -265,6 +265,7 @@ function Dashboard() {
                     text="View Plans"
                     variant="primary"
                     onClick={() => navigate('/#membership-plans')}
+                    className="inline-flex items-center gap-2 rounded-lg hover:bg-opacity-90 w-max mx-auto px-3 py-2 md:px-4 md:py-2"
                   />
                 </div>
               )}
