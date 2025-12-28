@@ -6,7 +6,7 @@ import api from './api';
  */
 export const fetchEvents = async () => {
   try {
-    const response = await api.get('/api/events');
+    const response = await api.get('/events');
     return response.data;
   } catch (error) {
     console.error('Error fetching events:', error);
@@ -21,7 +21,7 @@ export const fetchEvents = async () => {
  */
 export const fetchEventById = async (id) => {
   try {
-    const response = await api.get(`/api/events/${id}`);
+    const response = await api.get(`/events/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event:', error);

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, Calendar, MapPin, Clock } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -8,9 +8,10 @@ import OutlinedHeading from '../components/OutlinedHeading';
 import TextHighlighter from '../component/TextHighlighter';
 import colors from '../styles/design-tokens/colors';
 import { fetchEvents } from '../services/eventsService';
+import { useAuth } from '../context/AuthContext';
 
 // Subscription / Pricing section adapted to FGA color scheme
-function Pricing4() {
+function Pricing4({ isAuthenticated, navigate }) {
   
   const CheckIcon = ({ className = 'w-6 h-6' }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3} aria-hidden="true">
@@ -73,15 +74,15 @@ function Pricing4() {
     </header>
   );
 
-  const PricingCard = ({ plan, price, description, features, isFeatured = false }) => (
+  const PricingCard = ({ plan, price, description, features, isFeatured = false, onSubscribe }) => (
     <article
       className={`relative rounded-2xl h-full flex items-center`}
       aria-label={`${plan} plan`}
     >
       <div className={`p-6 ${isFeatured ? 'md:p-10 lg:p-12' : 'md:p-8'} rounded-2xl w-full ${isFeatured ? 'h-[480px] md:h-[540px] flex flex-col' : 'flex flex-col'} ${isFeatured ? 'bg-gradient-to-b from-gulf-stream to-river-bed text-white shadow-2xl' : 'bg-white text-river-bed shadow-lg'}`}>
       {isFeatured && (
-        <div className="absolute -top-3 right-6">
-          <span className="inline-flex items-center rounded-full bg-white/20 text-white/90 text-xs font-semibold px-3 py-1 backdrop-blur">
+        <div className="absolute -top-3 right-6 z-0">
+          <span className="inline-flex items-center rounded-full bg-white/20 text-white/90 text-xs font-semibold px-3 py-1 backdrop-blur pointer-events-none">
             Most popular
           </span>
         </div>
@@ -99,7 +100,7 @@ function Pricing4() {
           </>
         ) : (
           <>
-            <span className={`text-4xl sm:text-5xl font-bold ${isFeatured ? 'text-white' : 'text-river-bed'}`}>${price}</span>
+            <span className={`text-4xl sm:text-5xl font-bold ${isFeatured ? 'text-white' : 'text-river-bed'}`}>{price} OMR</span>
             <span className={`${isFeatured ? 'text-white/70' : 'text-oslo-gray'} text-sm`}>&nbsp;/ month</span>
           </>
         )}
@@ -108,7 +109,18 @@ function Pricing4() {
       <p className={`mb-8 min-h-[4.5rem] text-sm ${isFeatured ? 'text-white/85' : 'text-oslo-gray'}`}>{description}</p>
 
       <div className="mb-8">
-        <GetStartedButton isFeatured={isFeatured} label={price === 0 ? 'Get Started Free' : 'Get Started'} />
+        <button
+          onClick={onSubscribe}
+          type="button"
+          aria-label={`Get ${plan}`}
+          className={`w-full text-center py-3.5 rounded-lg font-semibold text-md cursor-pointer hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 relative z-10 ${
+            isFeatured
+              ? 'bg-white text-gulf-stream ring-gulf-stream ring-offset-gulf-stream/10'
+              : 'bg-geyser text-river-bed ring-geyser ring-offset-white'
+          }`}
+        >
+          Get {plan}
+        </button>
       </div>
 
       <ul className="space-y-4 mt-auto">
@@ -125,7 +137,7 @@ function Pricing4() {
   const pricingPlans = [
     {
       plan: 'Starter',
-      price: 0,
+      price: 10,
       description: 'For individuals or small teams getting started.',
       features: ['Weekly training sessions', 'Access to basic facilities', 'Event notifications'],
       isFeatured: false
@@ -162,7 +174,34 @@ function Pricing4() {
           <Header />
           <main className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 items-start lg:items-center max-w-6xl mx-auto pricing-grid">
             {pricingPlans.map((plan, index) => (
-              <PricingCard key={`${plan.plan}-${index}`} {...plan} />
+              <PricingCard 
+                key={`${plan.plan}-${index}`} 
+                {...plan}
+                onSubscribe={() => {
+                  if (isAuthenticated) {
+                    // User is logged in, redirect to payment
+                    navigate('/payment', {
+                      state: {
+                        plan: plan.plan,
+                        amount: plan.price,
+                        description: plan.description
+                      }
+                    });
+                  } else {
+                    // User is not logged in, redirect to login with return path
+                    navigate('/login', {
+                      state: {
+                        from: '/payment',
+                        paymentData: {
+                          plan: plan.plan,
+                          amount: plan.price,
+                          description: plan.description
+                        }
+                      }
+                    });
+                  }
+                }}
+              />
             ))}
           </main>
         </div>
@@ -174,6 +213,8 @@ function Pricing4() {
 
 function Home() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const videoRef = useRef(null);
   const eventsSectionRef = useRef(null);
   const statsSectionRef = useRef(null);
@@ -205,6 +246,19 @@ function Home() {
       });
     }
   }, [isMobile]);
+
+  // Handle scrolling to membership plans section when hash is present
+  useEffect(() => {
+    if (location.hash === '#membership-plans') {
+      // Small delay to ensure the component has mounted
+      setTimeout(() => {
+        const element = document.getElementById('membership-plans');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, [location]);
 
   // Scroll-linked animation for Upcoming Events heading (optimized with requestAnimationFrame)
   useEffect(() => {
@@ -937,8 +991,8 @@ function Home() {
       </section>
 
       {/* Pricing / Subscription plans - placed after the statistics & calendar container */}
-      <div className="w-full">
-        <Pricing4 />
+      <div id="membership-plans" className="w-full">
+        <Pricing4 isAuthenticated={isAuthenticated} navigate={navigate} />
       </div>
 
     </>

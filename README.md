@@ -31,9 +31,10 @@ The system is designed for performance, scalability, and future expansion, such 
 - Structured, reliable & simple for beginners
 - Supports future scaling
 
-### Payments — Stripe
-- Easiest and safest payment gateway for developers
-- Supports secure membership subscription payments
+### Payments — AmwalPay
+- Local Omani payment gateway
+- Supports secure membership subscription payments in OMR
+- Test and production environments available
 
 ### Hosting
 - Frontend: Vercel or Netlify  
@@ -74,11 +75,19 @@ The system is designed for performance, scalability, and future expansion, such 
      ```sql
      CREATE DATABASE fgaweb;
      ```
-   - Run the schema file:
+   - Run the schema file to create all tables (including subscriptions for AmwalPay):
      ```bash
      mysql -u root -p fgaweb < database/schema.sql
      ```
      Or import it through MySQL Workbench/phpMyAdmin
+     
+   **Database Tables Created:**
+   - `users` - User accounts
+   - `events` - Events and tournaments
+   - `programs` - Academy programs
+   - `registrations` - User registrations for events/programs
+   - `payments` - General payment records
+   - `subscriptions` - Membership plans and subscriptions (AmwalPay integration)
 
 3. **Configure environment variables:**
    - Copy `.env.example` to `.env`:
@@ -94,6 +103,8 @@ The system is designed for performance, scalability, and future expansion, such 
      JWT_SECRET=your_secure_random_string_here
      PORT=5000
      ```
+     
+   **Note:** AmwalPay credentials are configured in `frontend/src/services/amwalpayService.js` for UAT testing. For production, these should be moved to environment variables.
 
 4. **Start the server:**
    ```bash
@@ -107,6 +118,8 @@ The system is designed for performance, scalability, and future expansion, such 
    cd frontend
    npm install
    ```
+   
+   **Note:** The frontend includes AmwalPay integration which requires `crypto-js` for secure hash generation. This is automatically installed with `npm install`.
 
 2. **Install ReactBits components:**
    After running `npm install`, you need to install ReactBits components using jsrepo:

@@ -7,7 +7,7 @@ import api from './api';
  */
 export const registerForEvent = async (eventId) => {
   try {
-    const response = await api.post('/api/registrations/event', {
+    const response = await api.post('/registrations/event', {
       event_id: eventId
     });
     return response.data;
@@ -24,7 +24,7 @@ export const registerForEvent = async (eventId) => {
  */
 export const registerForProgram = async (programId) => {
   try {
-    const response = await api.post('/api/registrations/program', {
+    const response = await api.post('/registrations/program', {
       program_id: programId
     });
     return response.data;
@@ -40,7 +40,7 @@ export const registerForProgram = async (programId) => {
  */
 export const getMyRegistrations = async () => {
   try {
-    const response = await api.get('/api/registrations/my');
+    const response = await api.get('/registrations/my');
     return response.data;
   } catch (error) {
     console.error('Error fetching registrations:', error);
@@ -54,7 +54,7 @@ export const getMyRegistrations = async () => {
  */
 export const getAllRegistrations = async () => {
   try {
-    const response = await api.get('/api/registrations/all');
+    const response = await api.get('/registrations/all');
     return response.data;
   } catch (error) {
     console.error('Error fetching all registrations:', error);

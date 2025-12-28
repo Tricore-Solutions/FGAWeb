@@ -22,10 +22,21 @@ function Login() {
   // Redirect if already authenticated (but not during login process)
   useEffect(() => {
     if (isAuthenticated && !loading && !isLoggingInRef.current) {
-      const redirectTo = new URLSearchParams(location.search).get('redirect') || '/dashboard';
-      navigate(redirectTo, { replace: true });
+      // Check if there's payment data to redirect to payment page
+      if (location.state?.paymentData) {
+        navigate('/payment', {
+          state: {
+            plan: location.state.paymentData.plan,
+            amount: location.state.paymentData.amount,
+            description: location.state.paymentData.description
+          }
+        });
+      } else {
+        const redirectTo = new URLSearchParams(location.search).get('redirect') || location.state?.from || '/dashboard';
+        navigate(redirectTo, { replace: true });
+      }
     }
-  }, [isAuthenticated, navigate, location.search, loading]);
+  }, [isAuthenticated, navigate, location.search, location.state, loading]);
 
   // Check for success message from signup redirect
   useEffect(() => {
@@ -117,9 +128,20 @@ function Login() {
         formData.password
       );
 
-      // Redirect based on redirect parameter or default to dashboard
-      const redirectTo = new URLSearchParams(location.search).get('redirect') || '/dashboard';
-      navigate(redirectTo);
+      // Check if there's payment data to redirect to payment page
+      if (location.state?.paymentData) {
+        navigate('/payment', {
+          state: {
+            plan: location.state.paymentData.plan,
+            amount: location.state.paymentData.amount,
+            description: location.state.paymentData.description
+          }
+        });
+      } else {
+        // Redirect based on redirect parameter or default to dashboard
+        const redirectTo = new URLSearchParams(location.search).get('redirect') || location.state?.from || '/dashboard';
+        navigate(redirectTo);
+      }
     } catch (error) {
       console.error('Login error:', error);
       

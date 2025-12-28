@@ -20,6 +20,9 @@ import Programs from './pages/Programs';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Payment from './pages/Payment';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentCancel from './pages/PaymentCancel';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import EventsManager from './pages/admin/EventsManager';
 import ProgramsManager from './pages/admin/ProgramsManager';
@@ -631,6 +634,9 @@ function App() {
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/payment/success" element={<PaymentSuccess />} />
+          <Route path="/payment/cancel" element={<PaymentCancel />} />
           <Route 
             path="/dashboard" 
             element={

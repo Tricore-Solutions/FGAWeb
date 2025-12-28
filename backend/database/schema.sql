@@ -68,3 +68,25 @@ CREATE TABLE IF NOT EXISTS payments (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- Subscriptions table (AmwalPay Integration)
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  plan_name VARCHAR(50) NOT NULL,
+  plan_amount DECIMAL(10, 3) NOT NULL,
+  currency VARCHAR(10) DEFAULT 'OMR',
+  status VARCHAR(20) DEFAULT 'active',
+  payment_id VARCHAR(255),
+  merchant_reference VARCHAR(255) UNIQUE,
+  transaction_id VARCHAR(255),
+  retrieval_reference VARCHAR(255),
+  start_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+  end_date DATETIME,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_user_id (user_id),
+  INDEX idx_status (status),
+  INDEX idx_merchant_reference (merchant_reference)
+);

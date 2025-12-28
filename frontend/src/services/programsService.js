@@ -6,7 +6,7 @@ import api from './api';
  */
 export const fetchPrograms = async () => {
   try {
-    const response = await api.get('/api/programs');
+    const response = await api.get('/programs');
     return response.data;
   } catch (error) {
     console.error('Error fetching programs:', error);
@@ -21,7 +21,7 @@ export const fetchPrograms = async () => {
  */
 export const fetchProgramById = async (id) => {
   try {
-    const response = await api.get(`/api/programs/${id}`);
+    const response = await api.get(`/programs/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching program:', error);

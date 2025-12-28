@@ -1,10 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, Users, Clock, ArrowRight, Package, User, Mail } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, ArrowRight, Package, User, Mail, CreditCard, CheckCircle } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { getMyRegistrations } from '../services/registrationService';
+import { getActiveSubscription } from '../services/subscriptionService';
 import AuthContext from '../context/AuthContext';
 import colors from '../styles/design-tokens/colors';
 
@@ -12,12 +13,13 @@ function Dashboard() {
   const navigate = useNavigate();
   const { user, isAuthenticated, loading: authLoading } = useContext(AuthContext);
   const [registrations, setRegistrations] = useState([]);
+  const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch user registrations
+  // Fetch user registrations and subscription
   useEffect(() => {
-    const loadRegistrations = async () => {
+    const loadDashboardData = async () => {
       if (!isAuthenticated) {
         setLoading(false);
         return;
@@ -26,14 +28,21 @@ function Dashboard() {
       try {
         setLoading(true);
         setError(null);
-        const data = await getMyRegistrations();
-        setRegistrations(Array.isArray(data) ? data : []);
+        
+        // Fetch registrations and subscription in parallel
+        const [registrationsData, subscriptionData] = await Promise.all([
+          getMyRegistrations(),
+          getActiveSubscription()
+        ]);
+        
+        setRegistrations(Array.isArray(registrationsData) ? registrationsData : []);
+        setSubscription(subscriptionData?.subscription || null);
       } catch (err) {
-        console.error('Failed to fetch registrations:', err);
+        console.error('Failed to fetch dashboard data:', err);
         if (err.response?.status === 401) {
           setError('Please log in to view your dashboard');
         } else {
-          setError('Failed to load your registrations. Please try again.');
+          setError('Failed to load your dashboard. Please try again.');
         }
       } finally {
         setLoading(false);
@@ -41,7 +50,7 @@ function Dashboard() {
     };
 
     if (!authLoading) {
-      loadRegistrations();
+      loadDashboardData();
     }
   }, [isAuthenticated, authLoading]);
 
@@ -172,6 +181,79 @@ function Dashboard() {
                   </div>
                 </div>
               </div>
+            </div>
+          </Card>
+
+          {/* Active Subscription Section */}
+          <Card className="mb-8">
+            <div className="p-6">
+              <h2 className="text-2xl font-heading font-bold text-river-bed mb-6">
+                Membership Plan
+              </h2>
+              {subscription ? (
+                <div className="bg-gradient-to-r from-gulf-stream to-river-bed rounded-xl p-6 text-white">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <CheckCircle className="w-5 h-5" />
+                        <span className="text-sm font-semibold uppercase tracking-wide">Active Plan</span>
+                      </div>
+                      <h3 className="text-3xl font-heading font-bold mb-2">
+                        {subscription.plan_name}
+                      </h3>
+                      <p className="text-xl font-semibold opacity-90">
+                        {subscription.currency} {parseFloat(subscription.plan_amount).toFixed(3)} / month
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
+                        <CreditCard className="w-8 h-8" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="pt-4 border-t border-white/20">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm opacity-75 mb-1">Start Date</p>
+                        <p className="font-semibold">
+                          {new Date(subscription.start_date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                      {subscription.end_date && (
+                        <div>
+                          <p className="text-sm opacity-75 mb-1">Renewal Date</p>
+                          <p className="font-semibold">
+                            {new Date(subscription.end_date).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8 bg-geyser rounded-xl">
+                  <CreditCard className="w-16 h-16 text-oslo-gray mx-auto mb-4" />
+                  <h3 className="text-xl font-heading font-semibold text-river-bed mb-2">
+                    No Active Plan
+                  </h3>
+                  <p className="text-oslo-gray mb-6">
+                    Subscribe to a membership plan to access exclusive benefits
+                  </p>
+                  <Button
+                    text="View Plans"
+                    variant="primary"
+                    onClick={() => navigate('/#membership-plans')}
+                  />
+                </div>
+              )}
             </div>
           </Card>
 
