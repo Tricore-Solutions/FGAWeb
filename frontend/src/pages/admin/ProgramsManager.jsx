@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { 
   Package, 
+  Trophy,
   Plus,
   Edit,
   Trash2,
@@ -376,6 +377,28 @@ function ProgramsManager() {
             >
               <Calendar className="w-5 h-5" />
               {sidebarOpen && <span className="font-heading font-medium">Events</span>}
+            </Link>
+            <Link
+              to="/admin/tournaments"
+              className={`flex items-center gap-3 ${sidebarOpen ? 'px-4 py-3' : 'px-0 py-3 justify-center'} rounded-lg transition-colors duration-fast ${
+                isActive('/admin/tournaments')
+                  ? 'bg-gulf-stream text-white'
+                  : 'text-white/80 hover:bg-gulf-stream/20'
+              }`}
+            >
+              <Trophy className="w-5 h-5" />
+              {sidebarOpen && <span className="font-heading font-medium">Tournaments</span>}
+            </Link>
+            <Link
+              to="/admin/matches"
+              className={`flex items-center gap-3 ${sidebarOpen ? 'px-4 py-3' : 'px-0 py-3 justify-center'} rounded-lg transition-colors duration-fast ${
+                isActive('/admin/matches')
+                  ? 'bg-gulf-stream text-white'
+                  : 'text-white/80 hover:bg-gulf-stream/20'
+              }`}
+            >
+              <Calendar className="w-5 h-5" />
+              {sidebarOpen && <span className="font-heading font-medium">Matches</span>}
             </Link>
             <Link
               to="/admin/programs"

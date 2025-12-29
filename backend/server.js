@@ -47,6 +47,14 @@ app.use('/api/users', userRoutes);
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 app.use('/api/subscriptions', subscriptionRoutes);
 
+// Tournament routes
+const tournamentRoutes = require('./routes/tournamentRoutes');
+app.use('/api/tournaments', tournamentRoutes);
+
+// Match routes
+const matchRoutes = require('./routes/matchRoutes');
+app.use('/api/matches', matchRoutes);
+
 // Upload routes
 const uploadRoutes = require('./routes/uploadRoutes');
 app.use('/api/upload', uploadRoutes);

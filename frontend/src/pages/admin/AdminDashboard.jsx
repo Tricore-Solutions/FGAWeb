@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { 
   Calendar, 
+  Trophy,
   Package, 
   Users, 
   FileText, 
@@ -64,9 +65,11 @@ function AdminDashboard() {
     description: '',
     date: '',
     location: '',
-    image_url: '',
     max_participants: ''
   });
+  const [selectedEventImage, setSelectedEventImage] = useState(null);
+  const [eventImagePreview, setEventImagePreview] = useState(null);
+  const [uploadingEventImage, setUploadingEventImage] = useState(false);
   const [eventFormErrors, setEventFormErrors] = useState({});
   const [createEventLoading, setCreateEventLoading] = useState(false);
 
@@ -143,6 +146,65 @@ function AdminDashboard() {
     }
   };
 
+  // Handle event image file selection
+  const handleEventImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setEventFormErrors(prev => ({
+          ...prev,
+          image: 'Please select an image file'
+        }));
+        return;
+      }
+      
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setEventFormErrors(prev => ({
+          ...prev,
+          image: 'Image size must be less than 5MB'
+        }));
+        return;
+      }
+
+      setSelectedEventImage(file);
+      setEventFormErrors(prev => ({
+        ...prev,
+        image: ''
+      }));
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEventImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Upload image to server
+  const uploadEventImage = async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      // Note: baseURL already includes '/api', so we use '/upload/image' not '/api/upload/image'
+      const response = await api.post('/upload/image', formData);
+      // Get the base URL without /api since static files are served at root level
+      let baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      // Remove /api from the end if it exists (static files are served at /uploads, not /api/uploads)
+      baseUrl = baseUrl.replace(/\/api\/?$/, '');
+      const imageUrl = response.data.imageUrl.startsWith('http') 
+        ? response.data.imageUrl 
+        : `${baseUrl}${response.data.imageUrl}`;
+      return imageUrl;
+    } catch (error) {
+      console.error('Image upload error:', error);
+      throw new Error(error.response?.data?.error || 'Failed to upload image');
+    }
+  };
+
   const validateEventForm = () => {
     const errors = {};
     if (!eventFormData.title.trim()) {
@@ -168,23 +230,41 @@ function AdminDashboard() {
     try {
       setCreateEventLoading(true);
       setEventFormErrors({});
+      setUploadingEventImage(true);
+
+      // Upload image if one is selected
+      let imageUrl = null;
+      if (selectedEventImage) {
+        try {
+          imageUrl = await uploadEventImage(selectedEventImage);
+        } catch (error) {
+          setEventFormErrors({ submit: error.message });
+          setUploadingEventImage(false);
+          setCreateEventLoading(false);
+          return;
+        }
+      }
+
+      setUploadingEventImage(false);
+
       const payload = {
         title: eventFormData.title.trim(),
         description: eventFormData.description.trim() || null,
         date: eventFormData.date,
         location: eventFormData.location.trim() || null,
-        image_url: eventFormData.image_url.trim() || null,
+        image_url: imageUrl,
         max_participants: eventFormData.max_participants ? parseInt(eventFormData.max_participants) : null
       };
-      await api.post('/api/events', payload);
+      await api.post('/events', payload);
       setEventFormData({
         title: '',
         description: '',
         date: '',
         location: '',
-        image_url: '',
         max_participants: ''
       });
+      setSelectedEventImage(null);
+      setEventImagePreview(null);
       setShowCreateEventModal(false);
       // Refresh dashboard data
       const eventsData = await fetchEvents();
@@ -335,6 +415,39 @@ function AdminDashboard() {
             >
               <Calendar className="w-5 h-5" />
               {sidebarOpen && <span className="font-heading font-medium">Events</span>}
+            </Link>
+            <Link
+              to="/admin/tournaments"
+              className={`flex items-center gap-3 ${sidebarOpen ? 'px-4 py-3' : 'px-0 py-3 justify-center'} rounded-lg transition-colors duration-fast ${
+                isActive('/admin/tournaments')
+                  ? 'bg-gulf-stream text-white'
+                  : 'text-white/80 hover:bg-gulf-stream/20 hover:text-white'
+              }`}
+            >
+              <Trophy className="w-5 h-5" />
+              {sidebarOpen && <span className="font-heading font-medium">Tournaments</span>}
+            </Link>
+            <Link
+              to="/admin/matches"
+              className={`flex items-center gap-3 ${sidebarOpen ? 'px-4 py-3' : 'px-0 py-3 justify-center'} rounded-lg transition-colors duration-fast ${
+                isActive('/admin/matches')
+                  ? 'bg-gulf-stream text-white'
+                  : 'text-white/80 hover:bg-gulf-stream/20 hover:text-white'
+              }`}
+            >
+              <Calendar className="w-5 h-5" />
+              {sidebarOpen && <span className="font-heading font-medium">Matches</span>}
+            </Link>
+            <Link
+              to="/admin/programs"
+              className={`flex items-center gap-3 ${sidebarOpen ? 'px-4 py-3' : 'px-0 py-3 justify-center'} rounded-lg transition-colors duration-fast ${
+                isActive('/admin/tournaments')
+                  ? 'bg-gulf-stream text-white'
+                  : 'text-white/80 hover:bg-gulf-stream/20 hover:text-white'
+              }`}
+            >
+              <Trophy className="w-5 h-5" />
+              {sidebarOpen && <span className="font-heading font-medium">Tournaments</span>}
             </Link>
             <Link
               to="/admin/programs"
@@ -685,9 +798,10 @@ function AdminDashboard() {
                     description: '',
                     date: '',
                     location: '',
-                    image_url: '',
                     max_participants: ''
                   });
+                  setSelectedEventImage(null);
+                  setEventImagePreview(null);
                   setEventFormErrors({});
                 }}
                 className="text-oslo-gray hover:text-river-bed transition-colors"
@@ -758,19 +872,35 @@ function AdminDashboard() {
                 />
               </div>
 
+              {/* Image Upload */}
               <div className="mb-4">
-                <label htmlFor="event_image_url" className="block text-sm font-medium text-river-bed mb-2">
-                  Image URL
+                <label htmlFor="event_image" className="block text-sm font-medium text-river-bed mb-2">
+                  Event Image
                 </label>
-                <Input
-                  type="url"
-                  id="event_image_url"
-                  name="image_url"
-                  placeholder="https://example.com/image.jpg"
-                  value={eventFormData.image_url}
-                  onChange={handleEventInputChange}
-                  error={eventFormErrors.image_url}
+                <input
+                  type="file"
+                  id="event_image"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleEventImageChange}
+                  className="w-full px-4 py-2 rounded-lg border border-geyser focus:outline-none focus:[box-shadow:0_0_0_2px_#80b3b4]"
                 />
+                {eventFormErrors.image && (
+                  <p className="mt-1 text-sm text-red-500">{eventFormErrors.image}</p>
+                )}
+                {eventImagePreview && (
+                  <div className="mt-4">
+                    <p className="text-sm text-oslo-gray mb-2">Preview:</p>
+                    <img
+                      src={eventImagePreview}
+                      alt="Preview"
+                      className="w-full max-w-xs h-48 object-cover rounded-lg border border-geyser"
+                    />
+                  </div>
+                )}
+                {uploadingEventImage && (
+                  <p className="mt-2 text-sm text-oslo-gray">Uploading image...</p>
+                )}
               </div>
 
               <div className="mb-6">
@@ -801,18 +931,19 @@ function AdminDashboard() {
               <div className="flex gap-4 justify-end">
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowCreateEventModal(false);
-                    setEventFormData({
-                      title: '',
-                      description: '',
-                      date: '',
-                      location: '',
-                      image_url: '',
-                      max_participants: ''
-                    });
-                    setEventFormErrors({});
-                  }}
+                onClick={() => {
+                  setShowCreateEventModal(false);
+                  setEventFormData({
+                    title: '',
+                    description: '',
+                    date: '',
+                    location: '',
+                    max_participants: ''
+                  });
+                  setSelectedEventImage(null);
+                  setEventImagePreview(null);
+                  setEventFormErrors({});
+                }}
                   className="px-6 py-2 border border-geyser text-river-bed rounded-lg hover:bg-geyser transition-colors duration-fast font-heading font-medium"
                   disabled={createEventLoading}
                 >

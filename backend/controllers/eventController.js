@@ -87,13 +87,15 @@ const updateEvent = async (req, res) => {
     const existingEvent = events[0];
 
     // Validate ownership or admin role
-    if (existingEvent.user_id !== undefined) {
-      // If user_id field exists, check ownership
+    // If user_id is NULL or doesn't match, only admin can update
+    if (existingEvent.user_id !== null && existingEvent.user_id !== undefined) {
+      // If user_id exists and matches, allow update
+      // If user_id exists but doesn't match, only admin can update
       if (existingEvent.user_id !== userId && userRole !== 'admin') {
         return res.status(403).json({ error: 'You can only update your own events' });
       }
     } else {
-      // If no user_id field, only admin can update
+      // If user_id is NULL, only admin can update
       if (userRole !== 'admin') {
         return res.status(403).json({ error: 'Admin access required' });
       }
@@ -171,13 +173,15 @@ const deleteEvent = async (req, res) => {
     const existingEvent = events[0];
 
     // Validate ownership or admin role
-    if (existingEvent.user_id !== undefined) {
-      // If user_id field exists, check ownership
+    // If user_id is NULL or doesn't match, only admin can delete
+    if (existingEvent.user_id !== null && existingEvent.user_id !== undefined) {
+      // If user_id exists and matches, allow delete
+      // If user_id exists but doesn't match, only admin can delete
       if (existingEvent.user_id !== userId && userRole !== 'admin') {
         return res.status(403).json({ error: 'You can only delete your own events' });
       }
     } else {
-      // If no user_id field, only admin can delete
+      // If user_id is NULL, only admin can delete
       if (userRole !== 'admin') {
         return res.status(403).json({ error: 'Admin access required' });
       }

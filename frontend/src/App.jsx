@@ -26,7 +26,10 @@ import PaymentCancel from './pages/PaymentCancel';
 import SubscriptionManagement from './pages/SubscriptionManagement';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import EventsManager from './pages/admin/EventsManager';
+import TournamentsManager from './pages/admin/TournamentsManager';
+import MatchesManager from './pages/admin/MatchesManager';
 import ProgramsManager from './pages/admin/ProgramsManager';
+import { fetchTournaments } from './services/tournamentsService';
 import RegistrationsManager from './pages/admin/RegistrationsManager';
 import UsersManager from './pages/admin/UsersManager';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -409,29 +412,43 @@ function BranchesCamps() {
 }
 
 function Tournaments() {
-  const tournaments = [
-    {
-      name: 'Regional Championship',
-      date: 'September 10-12, 2024',
-      location: 'Main Arena',
-      status: 'Upcoming',
-      participants: 24
-    },
-    {
-      name: 'Youth League Finals',
-      date: 'October 5-7, 2024',
-      location: 'North Branch',
-      status: 'Registration Open',
-      participants: 16
-    },
-    {
-      name: 'Elite Tournament',
-      date: 'November 15-17, 2024',
-      location: 'Downtown Branch',
-      status: 'Upcoming',
-      participants: 32
+  const [tournaments, setTournaments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const loadTournaments = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await fetchTournaments();
+        setTournaments(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error('Failed to fetch tournaments:', err);
+        setError('Failed to load tournaments. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTournaments();
+  }, []);
+
+  // Get status badge color
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Registration Open':
+        return '#10b981'; // green-500
+      case 'Upcoming':
+        return colors['gulf-stream'];
+      case 'In Progress':
+        return '#3b82f6'; // blue-500
+      case 'Completed':
+        return '#6b7280'; // gray-500
+      default:
+        return colors['gulf-stream'];
     }
-  ];
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -445,41 +462,82 @@ function Tournaments() {
               Compete in our exciting tournaments and showcase your skills.
             </p>
           </div>
-          <div className="space-y-6">
-            {tournaments.map((tournament, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300"
-                style={{ border: `1px solid ${colors['geyser']}` }}
-              >
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-heading font-semibold text-river-bed mb-2">
-                      {tournament.name}
-                    </h3>
-                    <div className="flex flex-wrap gap-4 text-oslo-gray text-sm">
-                      <span>📅 {tournament.date}</span>
-                      <span>📍 {tournament.location}</span>
-                      <span>👥 {tournament.participants} Teams</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span 
-                      className="px-4 py-2 rounded-lg text-sm font-medium text-white"
-                      style={{ backgroundColor: colors['gulf-stream'] }}
-                    >
-                      {tournament.status}
-                    </span>
-                    <Button 
-                      text="View Details"
-                      onClick={() => {}}
-                      variant="outline"
-                    />
-                  </div>
-                </div>
+
+          {/* Loading State */}
+          {loading && (
+            <div className="flex justify-center py-12">
+              <LoadingSpinner message="Loading tournaments..." />
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !loading && (
+            <Card>
+              <div className="p-8 text-center">
+                <p className="text-red-600 mb-4">{error}</p>
+                <Button
+                  text="Try Again"
+                  variant="primary"
+                  onClick={() => window.location.reload()}
+                />
               </div>
-            ))}
-          </div>
+            </Card>
+          )}
+
+          {/* Tournaments List */}
+          {!loading && !error && (
+            <>
+              {tournaments.length > 0 ? (
+                <div className="space-y-6">
+                  {tournaments.map((tournament) => (
+                    <div
+                      key={tournament.id}
+                      className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300"
+                      style={{ border: `1px solid ${colors['geyser']}` }}
+                    >
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div className="flex-1">
+                          <h3 className="text-xl font-heading font-semibold text-river-bed mb-2">
+                            {tournament.name}
+                          </h3>
+                          {tournament.description && (
+                            <p className="text-oslo-gray text-sm mb-3 line-clamp-2">
+                              {tournament.description}
+                            </p>
+                          )}
+                          <div className="flex flex-wrap gap-4 text-oslo-gray text-sm">
+                            {tournament.date && (
+                              <span>📅 {tournament.date}</span>
+                            )}
+                            {tournament.location && (
+                              <span>📍 {tournament.location}</span>
+                            )}
+                            <span>👥 {tournament.participants || 0} Teams</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <span 
+                            className="px-4 py-2 rounded-lg text-sm font-medium text-white"
+                            style={{ backgroundColor: getStatusColor(tournament.status) }}
+                          >
+                            {tournament.status || 'Upcoming'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <div className="p-12 text-center">
+                    <p className="text-oslo-gray text-lg">
+                      No tournaments available at the moment. Check back soon!
+                    </p>
+                  </div>
+                </Card>
+              )}
+            </>
+          )}
         </div>
       </section>
     </div>
@@ -667,6 +725,22 @@ function App() {
             element={
               <ProtectedRoute requiredRole="admin">
                 <EventsManager />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/tournaments" 
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <TournamentsManager />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/matches" 
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <MatchesManager />
               </ProtectedRoute>
             } 
           />

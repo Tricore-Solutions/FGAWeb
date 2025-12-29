@@ -9,6 +9,7 @@ import TextHighlighter from '../component/TextHighlighter';
 import AnimatedList from '../components/AnimatedList';
 import colors from '../styles/design-tokens/colors';
 import { fetchEvents } from '../services/eventsService';
+import { fetchMatches } from '../services/matchesService';
 import { useAuth } from '../context/AuthContext';
 
 // Subscription / Pricing section adapted to FGA color scheme
@@ -220,6 +221,7 @@ function Home() {
   const eventsSectionRef = useRef(null);
   const statsSectionRef = useRef(null);
   const [events, setEvents] = useState([]);
+  const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [headingScrollProgress, setHeadingScrollProgress] = useState(0);
@@ -403,12 +405,39 @@ function Home() {
     };
   }, [hasAnimated]);
 
+  // Fetch matches on component mount
+  useEffect(() => {
+    const loadMatches = async () => {
+      try {
+        const data = await fetchMatches();
+        // Filter to only upcoming matches and sort by date
+        const upcomingMatches = Array.isArray(data) 
+          ? data
+              .filter(match => new Date(match.match_date) > new Date())
+              .sort((a, b) => new Date(a.match_date) - new Date(b.match_date))
+          : [];
+        setMatches(upcomingMatches);
+      } catch (err) {
+        console.error('Failed to fetch matches:', err);
+        // Don't set error state, just log it - matches are optional
+      }
+    };
+
+    loadMatches();
+  }, []);
+
   // Countdown timer for next match
   useEffect(() => {
-    // Set next match date (example: 7 days from now)
-    const nextMatchDate = new Date();
-    nextMatchDate.setDate(nextMatchDate.getDate() + 7);
-    nextMatchDate.setHours(18, 30, 0, 0);
+    // Get the next match from the matches array
+    const nextMatch = matches.length > 0 ? matches[0] : null;
+    
+    if (!nextMatch) {
+      // If no matches, set countdown to 0
+      setCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      return;
+    }
+
+    const nextMatchDate = new Date(nextMatch.match_date);
 
     const updateCountdown = () => {
       const now = new Date().getTime();
@@ -430,7 +459,7 @@ function Home() {
     const interval = setInterval(updateCountdown, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [matches]);
 
   // Helper function to format date
   const formatDate = (dateString) => {
@@ -874,62 +903,68 @@ function Home() {
 
             {/* Match Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-              {/* Match Card 1 */}
-              <div className="bg-white rounded-lg border border-geyser p-6 flex flex-col">
-                <div className="text-xs text-oslo-gray mb-4 uppercase">Next Match 1XBET</div>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center">
-                    <span className="text-2xl">⚽</span>
-                  </div>
-                  <div className="text-3xl font-bold text-river-bed">VS</div>
-                  <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center">
-                    <span className="text-2xl">⚽</span>
-                  </div>
+              {matches.length === 0 ? (
+                <div className="col-span-3 bg-white rounded-lg border border-geyser p-6 text-center">
+                  <p className="text-oslo-gray">No upcoming matches scheduled.</p>
                 </div>
-                <div className="space-y-2 mb-6">
-                  <div className="text-sm font-bold text-river-bed">Saturday, December 06, 18:30</div>
-                  <div className="text-sm text-river-bed">La Liga, Matchday 15</div>
-                  <div className="text-sm text-river-bed">Estadio La Cartuja de Sevilla</div>
-                </div>
-              </div>
-
-              {/* Match Card 2 */}
-              <div className="bg-white rounded-lg border border-geyser p-6 flex flex-col">
-                <div className="text-xs text-oslo-gray mb-4 uppercase">UEFA CHAMPIONS LEAGUE</div>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center">
-                    <span className="text-2xl">⚽</span>
-                  </div>
-                  <div className="text-3xl font-bold text-river-bed">VS</div>
-                  <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center">
-                    <span className="text-2xl">⚽</span>
-                  </div>
-                </div>
-                <div className="space-y-2 mb-6">
-                  <div className="text-sm font-bold text-river-bed">Tuesday, December 09, 21:00</div>
-                  <div className="text-sm text-river-bed">UEFA Champions League, Matchday 6</div>
-                  <div className="text-sm text-river-bed">Spotify Camp Nou</div>
-                </div>
-              </div>
-
-              {/* Match Card 3 */}
-              <div className="bg-white rounded-lg border border-geyser p-6 flex flex-col">
-                <div className="text-xs text-oslo-gray mb-4 uppercase">La Liga</div>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center">
-                    <span className="text-2xl">⚽</span>
-                  </div>
-                  <div className="text-3xl font-bold text-river-bed">VS</div>
-                  <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center">
-                    <span className="text-2xl">⚽</span>
-                  </div>
-                </div>
-                <div className="space-y-2 mb-6">
-                  <div className="text-sm font-bold text-river-bed">Saturday, December 13, 18:30</div>
-                  <div className="text-sm text-river-bed">La Liga, Matchday 16</div>
-                  <div className="text-sm text-river-bed">Spotify Camp Nou</div>
-                </div>
-              </div>
+              ) : (
+                matches.slice(0, 3).map((match) => {
+                  const matchDate = new Date(match.match_date);
+                  const formattedDate = matchDate.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  });
+                  
+                  return (
+                    <div key={match.id} className="bg-white rounded-lg border border-geyser p-6 flex flex-col">
+                      <div className="text-xs text-oslo-gray mb-4 uppercase">
+                        {match.tournament || 'Upcoming Match'}
+                      </div>
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center overflow-hidden">
+                          {match.team1_image_url ? (
+                            <img
+                              src={match.team1_image_url}
+                              alt={match.team1_name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-2xl">⚽</span>
+                          )}
+                        </div>
+                        <div className="text-3xl font-bold text-river-bed">VS</div>
+                        <div className="w-16 h-16 rounded-full bg-geyser flex items-center justify-center overflow-hidden">
+                          {match.team2_image_url ? (
+                            <img
+                              src={match.team2_image_url}
+                              alt={match.team2_name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-2xl">⚽</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="space-y-2 mb-6">
+                        <div className="text-sm font-bold text-river-bed">{formattedDate}</div>
+                        {match.tournament && match.matchday && (
+                          <div className="text-sm text-river-bed">{match.tournament}, {match.matchday}</div>
+                        )}
+                        {match.tournament && !match.matchday && (
+                          <div className="text-sm text-river-bed">{match.tournament}</div>
+                        )}
+                        {match.venue && (
+                          <div className="text-sm text-river-bed">{match.venue}</div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </section>
         </div>

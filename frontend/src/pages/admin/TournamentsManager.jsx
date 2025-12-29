@@ -1,8 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { 
-  Calendar, 
-  Trophy,
+  Trophy, 
   Plus,
   Edit,
   Trash2,
@@ -13,6 +12,7 @@ import {
   Package,
   FileText,
   User,
+  Calendar,
   ChevronLeft,
   ChevronRight,
   X
@@ -23,47 +23,41 @@ import Card from '../../components/Card';
 import Input from '../../components/Input';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import AuthContext from '../../context/AuthContext';
-import { fetchEvents } from '../../services/eventsService';
+import { fetchTournaments } from '../../services/tournamentsService';
 import api from '../../services/api';
 import colors from '../../styles/design-tokens/colors';
 
-function EventsManager() {
+function TournamentsManager() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isAdmin, logout } = useContext(AuthContext);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [events, setEvents] = useState([]);
+  const [tournaments, setTournaments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
+    name: '',
     description: '',
     date: '',
     location: '',
-    image_url: '',
-    max_participants: ''
+    status: 'Upcoming',
+    participants: ''
   });
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [uploadingImage, setUploadingImage] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [createLoading, setCreateLoading] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null);
+  const [editingTournament, setEditingTournament] = useState(null);
   const [editFormData, setEditFormData] = useState({
-    title: '',
+    name: '',
     description: '',
     date: '',
     location: '',
-    image_url: '',
-    max_participants: ''
+    status: 'Upcoming',
+    participants: ''
   });
-  const [selectedEditImage, setSelectedEditImage] = useState(null);
-  const [editImagePreview, setEditImagePreview] = useState(null);
-  const [uploadingEditImage, setUploadingEditImage] = useState(false);
   const [editFormErrors, setEditFormErrors] = useState({});
   const [editLoading, setEditLoading] = useState(false);
 
@@ -74,40 +68,40 @@ function EventsManager() {
     return current === target;
   };
 
-  // Fetch events
+  // Fetch tournaments
   useEffect(() => {
-    const loadEvents = async () => {
+    const loadTournaments = async () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await fetchEvents();
-        setEvents(Array.isArray(data) ? data : []);
+        const data = await fetchTournaments();
+        setTournaments(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error('Failed to fetch events:', err);
-        setError('Failed to load events. Please try again.');
+        console.error('Failed to fetch tournaments:', err);
+        setError('Failed to load tournaments. Please try again.');
       } finally {
         setLoading(false);
       }
     };
 
-    loadEvents();
+    loadTournaments();
   }, []);
 
-  // Delete event
-  const handleDelete = async (eventId) => {
-    if (!window.confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+  // Delete tournament
+  const handleDelete = async (tournamentId) => {
+    if (!window.confirm('Are you sure you want to delete this tournament? This action cannot be undone.')) {
       return;
     }
 
     try {
-      setDeleteLoading(eventId);
-      await api.delete(`/api/events/${eventId}`);
+      setDeleteLoading(tournamentId);
+      await api.delete(`/tournaments/${tournamentId}`);
       
-      // Remove event from list
-      setEvents(events.filter(event => event.id !== eventId));
+      // Remove tournament from list
+      setTournaments(tournaments.filter(tournament => tournament.id !== tournamentId));
     } catch (err) {
-      console.error('Failed to delete event:', err);
-      alert(err.response?.data?.error || 'Failed to delete event. Please try again.');
+      console.error('Failed to delete tournament:', err);
+      alert(err.response?.data?.error || 'Failed to delete tournament. Please try again.');
     } finally {
       setDeleteLoading(null);
     }
@@ -130,83 +124,21 @@ function EventsManager() {
     }
   };
 
-  // Handle image file selection
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setFormErrors(prev => ({
-          ...prev,
-          image: 'Please select an image file'
-        }));
-        return;
-      }
-      
-      // Validate file size (5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setFormErrors(prev => ({
-          ...prev,
-          image: 'Image size must be less than 5MB'
-        }));
-        return;
-      }
-
-      setSelectedImage(file);
-      setFormErrors(prev => ({
-        ...prev,
-        image: ''
-      }));
-
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Upload image to server
-  const uploadImage = async (file) => {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      // Note: baseURL already includes '/api', so we use '/upload/image' not '/api/upload/image'
-      const response = await api.post('/upload/image', formData);
-      // Get the base URL without /api since static files are served at root level
-      let baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      // Remove /api from the end if it exists (static files are served at /uploads, not /api/uploads)
-      baseUrl = baseUrl.replace(/\/api\/?$/, '');
-      const imageUrl = response.data.imageUrl.startsWith('http') 
-        ? response.data.imageUrl 
-        : `${baseUrl}${response.data.imageUrl}`;
-      return imageUrl;
-    } catch (error) {
-      console.error('Image upload error:', error);
-      throw new Error(error.response?.data?.error || 'Failed to upload image');
-    }
-  };
 
   // Validate form
   const validateForm = () => {
     const errors = {};
 
-    if (!formData.title.trim()) {
-      errors.title = 'Title is required';
+    if (!formData.name.trim()) {
+      errors.name = 'Name is required';
     }
 
-    if (!formData.date) {
-      errors.date = 'Date is required';
+    if (formData.participants && isNaN(formData.participants)) {
+      errors.participants = 'Must be a valid number';
     }
 
-    if (formData.max_participants && isNaN(formData.max_participants)) {
-      errors.max_participants = 'Must be a valid number';
-    }
-
-    if (formData.max_participants && parseInt(formData.max_participants) < 1) {
-      errors.max_participants = 'Must be at least 1';
+    if (formData.participants && parseInt(formData.participants) < 0) {
+      errors.participants = 'Must be 0 or greater';
     }
 
     setFormErrors(errors);
@@ -214,7 +146,7 @@ function EventsManager() {
   };
 
   // Handle form submission
-  const handleCreateEvent = async (e) => {
+  const handleCreateTournament = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -224,56 +156,38 @@ function EventsManager() {
     try {
       setCreateLoading(true);
       setFormErrors({});
-      setUploadingImage(true);
-
-      // Upload image if one is selected
-      let imageUrl = formData.image_url.trim() || null;
-      if (selectedImage) {
-        try {
-          imageUrl = await uploadImage(selectedImage);
-        } catch (error) {
-          setFormErrors({ submit: error.message });
-          setUploadingImage(false);
-          setCreateLoading(false);
-          return;
-        }
-      }
-
-      setUploadingImage(false);
 
       const payload = {
-        title: formData.title.trim(),
+        name: formData.name.trim(),
         description: formData.description.trim() || null,
-        date: formData.date,
+        date: formData.date.trim() || null,
         location: formData.location.trim() || null,
-        image_url: imageUrl,
-        max_participants: formData.max_participants ? parseInt(formData.max_participants) : null
+        status: formData.status || 'Upcoming',
+        participants: formData.participants ? parseInt(formData.participants) : 0
       };
 
-      const response = await api.post('/events', payload);
+      const response = await api.post('/tournaments', payload);
 
       // Reset form and close modal
       setFormData({
-        title: '',
+        name: '',
         description: '',
         date: '',
         location: '',
-        image_url: '',
-        max_participants: ''
+        status: 'Upcoming',
+        participants: ''
       });
-      setSelectedImage(null);
-      setImagePreview(null);
       setShowCreateModal(false);
 
-      // Refresh events list
-      const data = await fetchEvents();
-      setEvents(Array.isArray(data) ? data : []);
+      // Refresh tournaments list
+      const data = await fetchTournaments();
+      setTournaments(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error('Failed to create event:', err);
+      console.error('Failed to create tournament:', err);
       if (err.response?.status === 400) {
-        setFormErrors({ submit: err.response.data?.error || 'Invalid event data' });
+        setFormErrors({ submit: err.response.data?.error || 'Invalid tournament data' });
       } else {
-        setFormErrors({ submit: err.response?.data?.error || 'Failed to create event. Please try again.' });
+        setFormErrors({ submit: err.response?.data?.error || 'Failed to create tournament. Please try again.' });
       }
     } finally {
       setCreateLoading(false);
@@ -284,48 +198,27 @@ function EventsManager() {
   const handleCloseModal = () => {
     setShowCreateModal(false);
     setFormData({
-      title: '',
+      name: '',
       description: '',
       date: '',
       location: '',
-      image_url: '',
-      max_participants: ''
+      status: 'Upcoming',
+      participants: ''
     });
-    setSelectedImage(null);
-    setImagePreview(null);
     setFormErrors({});
   };
 
-  // Helper function to convert ISO date to datetime-local format
-  const formatDateForInput = (dateString) => {
-    if (!dateString) return '';
-    try {
-      const date = new Date(dateString);
-      // Get local date/time components
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      return `${year}-${month}-${day}T${hours}:${minutes}`;
-    } catch (e) {
-      return '';
-    }
-  };
-
-  // Open edit modal with event data
-  const handleOpenEditModal = (event) => {
-    setEditingEvent(event);
+  // Open edit modal with tournament data
+  const handleOpenEditModal = (tournament) => {
+    setEditingTournament(tournament);
     setEditFormData({
-      title: event.title || '',
-      description: event.description || '',
-      date: formatDateForInput(event.date),
-      location: event.location || '',
-      image_url: event.image_url || '',
-      max_participants: event.max_participants !== null ? String(event.max_participants) : ''
+      name: tournament.name || '',
+      description: tournament.description || '',
+      date: tournament.date || '',
+      location: tournament.location || '',
+      status: tournament.status || 'Upcoming',
+      participants: tournament.participants !== null ? String(tournament.participants) : '0'
     });
-    setSelectedEditImage(null);
-    setEditImagePreview(event.image_url || null);
     setEditFormErrors({});
     setShowEditModal(true);
   };
@@ -347,61 +240,21 @@ function EventsManager() {
     }
   };
 
-  // Handle edit image file selection
-  const handleEditImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setEditFormErrors(prev => ({
-          ...prev,
-          image: 'Please select an image file'
-        }));
-        return;
-      }
-      
-      // Validate file size (5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setEditFormErrors(prev => ({
-          ...prev,
-          image: 'Image size must be less than 5MB'
-        }));
-        return;
-      }
-
-      setSelectedEditImage(file);
-      setEditFormErrors(prev => ({
-        ...prev,
-        image: ''
-      }));
-
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setEditImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   // Validate edit form
   const validateEditForm = () => {
     const errors = {};
 
-    if (!editFormData.title.trim()) {
-      errors.title = 'Title is required';
+    if (!editFormData.name.trim()) {
+      errors.name = 'Name is required';
     }
 
-    if (!editFormData.date) {
-      errors.date = 'Date is required';
+    if (editFormData.participants && isNaN(editFormData.participants)) {
+      errors.participants = 'Must be a valid number';
     }
 
-    if (editFormData.max_participants && isNaN(editFormData.max_participants)) {
-      errors.max_participants = 'Must be a valid number';
-    }
-
-    if (editFormData.max_participants && parseInt(editFormData.max_participants) < 1) {
-      errors.max_participants = 'Must be at least 1';
+    if (editFormData.participants && parseInt(editFormData.participants) < 0) {
+      errors.participants = 'Must be 0 or greater';
     }
 
     setEditFormErrors(errors);
@@ -409,7 +262,7 @@ function EventsManager() {
   };
 
   // Handle edit form submission
-  const handleUpdateEvent = async (e) => {
+  const handleUpdateTournament = async (e) => {
     e.preventDefault();
 
     if (!validateEditForm()) {
@@ -419,59 +272,51 @@ function EventsManager() {
     try {
       setEditLoading(true);
       setEditFormErrors({});
-      setUploadingEditImage(true);
-
-      // Upload image if a new one is selected
-      let imageUrl = editFormData.image_url.trim() || null;
-      if (selectedEditImage) {
-        try {
-          imageUrl = await uploadImage(selectedEditImage);
-        } catch (error) {
-          setEditFormErrors({ submit: error.message });
-          setUploadingEditImage(false);
-          setEditLoading(false);
-          return;
-        }
-      }
-
-      setUploadingEditImage(false);
 
       const payload = {
-        title: editFormData.title.trim(),
+        name: editFormData.name.trim(),
         description: editFormData.description.trim() || null,
-        date: editFormData.date,
+        date: editFormData.date.trim() || null,
         location: editFormData.location.trim() || null,
-        image_url: imageUrl,
-        max_participants: editFormData.max_participants ? parseInt(editFormData.max_participants) : null
+        status: editFormData.status || 'Upcoming',
+        participants: editFormData.participants ? parseInt(editFormData.participants) : 0
       };
 
-      await api.put(`/events/${editingEvent.id}`, payload);
+      const response = await api.put(`/tournaments/${editingTournament.id}`, payload);
+      
+      // Check if update was successful
+      if (response.data && response.data.tournament) {
+        // Update the tournament in the list immediately for better UX
+        setTournaments(prevTournaments => 
+          prevTournaments.map(t => 
+            t.id === editingTournament.id ? response.data.tournament : t
+          )
+        );
+      } else {
+        // Fallback: Refresh tournaments list
+        const data = await fetchTournaments();
+        setTournaments(Array.isArray(data) ? data : []);
+      }
 
       // Close modal and reset form
       setShowEditModal(false);
-      setEditingEvent(null);
+      setEditingTournament(null);
       setEditFormData({
-        title: '',
+        name: '',
         description: '',
         date: '',
         location: '',
-        image_url: '',
-        max_participants: ''
+        status: 'Upcoming',
+        participants: ''
       });
-      setSelectedEditImage(null);
-      setEditImagePreview(null);
-
-      // Refresh events list
-      const data = await fetchEvents();
-      setEvents(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error('Failed to update event:', err);
+      console.error('Failed to update tournament:', err);
       if (err.response?.status === 400) {
-        setEditFormErrors({ submit: err.response.data?.error || 'Invalid event data' });
+        setEditFormErrors({ submit: err.response.data?.error || 'Invalid tournament data' });
       } else if (err.response?.status === 403) {
-        setEditFormErrors({ submit: err.response.data?.error || 'You do not have permission to edit this event' });
+        setEditFormErrors({ submit: err.response.data?.error || 'You do not have permission to edit this tournament' });
       } else {
-        setEditFormErrors({ submit: err.response?.data?.error || 'Failed to update event. Please try again.' });
+        setEditFormErrors({ submit: err.response?.data?.error || 'Failed to update tournament. Please try again.' });
       }
     } finally {
       setEditLoading(false);
@@ -481,41 +326,26 @@ function EventsManager() {
   // Close edit modal and reset form
   const handleCloseEditModal = () => {
     setShowEditModal(false);
-    setEditingEvent(null);
+    setEditingTournament(null);
     setEditFormData({
-      title: '',
+      name: '',
       description: '',
       date: '',
       location: '',
-      image_url: '',
-      max_participants: ''
+      status: 'Upcoming',
+      participants: ''
     });
-    setSelectedEditImage(null);
-    setEditImagePreview(null);
     setEditFormErrors({});
   };
 
-  // Helper function to format date
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Date TBD';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
-
-  // Filter events based on search term
-  const filteredEvents = events.filter(event => {
+  // Filter tournaments based on search term
+  const filteredTournaments = tournaments.filter(tournament => {
     const searchLower = searchTerm.toLowerCase();
     return (
-      event.title?.toLowerCase().includes(searchLower) ||
-      event.description?.toLowerCase().includes(searchLower) ||
-      event.location?.toLowerCase().includes(searchLower)
+      tournament.name?.toLowerCase().includes(searchLower) ||
+      tournament.description?.toLowerCase().includes(searchLower) ||
+      tournament.location?.toLowerCase().includes(searchLower) ||
+      tournament.status?.toLowerCase().includes(searchLower)
     );
   });
 
@@ -656,10 +486,10 @@ function EventsManager() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <h1 className="text-3xl md:text-4xl font-heading font-bold text-white mb-2">
-                  Events Management
+                  Tournaments Management
                 </h1>
                 <p className="text-white/90">
-                  Create, edit, and manage events
+                  Create, edit, and manage tournaments
                 </p>
               </div>
               <button
@@ -667,7 +497,7 @@ function EventsManager() {
                 className="flex items-center gap-2 px-6 py-3 bg-white text-gulf-stream rounded-lg hover:bg-geyser transition-colors duration-fast font-heading font-medium"
               >
                 <Plus className="w-4 h-4" />
-                Create Event
+                Create Tournament
               </button>
             </div>
           </div>
@@ -683,7 +513,7 @@ function EventsManager() {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-oslo-gray w-5 h-5" />
                   <input
                     type="text"
-                    placeholder="Search events by title, description, or location..."
+                    placeholder="Search tournaments by name, description, location, or status..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border border-geyser rounded-lg focus:outline-none focus:ring-2 focus:ring-gulf-stream focus:border-transparent"
@@ -695,7 +525,7 @@ function EventsManager() {
             {/* Loading State */}
             {loading && (
               <div className="flex justify-center py-12">
-                <LoadingSpinner message="Loading events..." />
+                <LoadingSpinner message="Loading tournaments..." />
               </div>
             )}
 
@@ -713,87 +543,80 @@ function EventsManager() {
               </Card>
             )}
 
-            {/* Events Table */}
+            {/* Tournaments Table */}
             {!loading && !error && (
               <>
-                {filteredEvents.length > 0 ? (
+                {filteredTournaments.length > 0 ? (
                   <Card>
                     <div className="overflow-x-auto">
                       <table className="w-full">
                         <thead>
                           <tr className="border-b border-geyser">
-                            <th className="text-left py-4 px-4 font-heading font-semibold text-river-bed">Title</th>
+                            <th className="text-left py-4 px-4 font-heading font-semibold text-river-bed">Name</th>
                             <th className="text-left py-4 px-4 font-heading font-semibold text-river-bed">Date</th>
                             <th className="text-left py-4 px-4 font-heading font-semibold text-river-bed">Location</th>
-                            <th className="text-left py-4 px-4 font-heading font-semibold text-river-bed">Max Participants</th>
+                            <th className="text-left py-4 px-4 font-heading font-semibold text-river-bed">Participants</th>
                             <th className="text-left py-4 px-4 font-heading font-semibold text-river-bed">Status</th>
                             <th className="text-right py-4 px-4 font-heading font-semibold text-river-bed">Actions</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredEvents.map((event, index) => (
+                          {filteredTournaments.map((tournament, index) => (
                             <tr 
-                              key={event.id} 
+                              key={tournament.id} 
                               className={`border-b border-geyser hover:bg-geyser/20 transition-colors ${
                                 index % 2 === 0 ? 'bg-white' : 'bg-geyser/5'
                               }`}
                             >
                               <td className="py-4 px-4">
-                                <div className="flex items-center gap-3">
-                                  {event.image_url && (
-                                    <img
-                                      src={event.image_url}
-                                      alt={event.title}
-                                      className="w-12 h-12 object-cover rounded"
-                                    />
-                                  )}
-                                  <div>
-                                    <div className="font-heading font-semibold text-river-bed">
-                                      {event.title || 'Untitled Event'}
-                                    </div>
-                                    {event.description && (
-                                      <div className="text-sm text-oslo-gray line-clamp-1 max-w-md">
-                                        {event.description}
-                                      </div>
-                                    )}
+                                <div>
+                                  <div className="font-heading font-semibold text-river-bed">
+                                    {tournament.name || 'Untitled Tournament'}
                                   </div>
+                                  {tournament.description && (
+                                    <div className="text-sm text-oslo-gray line-clamp-1 max-w-md">
+                                      {tournament.description}
+                                    </div>
+                                  )}
                                 </div>
                               </td>
                               <td className="py-4 px-4 text-oslo-gray">
-                                {event.date ? formatDate(event.date) : 'Date TBD'}
+                                {tournament.date || 'Date TBD'}
                               </td>
                               <td className="py-4 px-4 text-oslo-gray">
-                                {event.location || 'Location TBD'}
+                                {tournament.location || 'Location TBD'}
                               </td>
                               <td className="py-4 px-4 text-oslo-gray">
-                                {event.max_participants !== null ? event.max_participants : 'Unlimited'}
+                                {tournament.participants || 0} Teams
                               </td>
                               <td className="py-4 px-4">
                                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                  event.registration_open
+                                  tournament.status === 'Registration Open' || tournament.status === 'Upcoming'
                                     ? 'bg-green-100 text-green-800'
-                                    : 'bg-red-100 text-red-800'
+                                    : tournament.status === 'Completed'
+                                    ? 'bg-blue-100 text-blue-800'
+                                    : 'bg-gray-100 text-gray-800'
                                 }`}>
-                                  {event.registration_open ? 'Open' : 'Closed'}
+                                  {tournament.status || 'Upcoming'}
                                 </span>
                               </td>
                               <td className="py-4 px-4">
                                 <div className="flex items-center justify-end gap-2">
                                   <button
-                                    onClick={() => handleOpenEditModal(event)}
+                                    onClick={() => handleOpenEditModal(tournament)}
                                     className="flex items-center gap-2 px-4 py-2 text-sm border-2 border-gulf-stream text-gulf-stream rounded-lg hover:bg-gulf-stream hover:text-white transition-colors duration-fast font-heading font-medium"
-                                    title="Edit event"
+                                    title="Edit tournament"
                                   >
                                     <Edit className="w-4 h-4" />
                                     Edit
                                   </button>
                                   <button
-                                    onClick={() => handleDelete(event.id)}
-                                    disabled={deleteLoading === event.id}
+                                    onClick={() => handleDelete(tournament.id)}
+                                    disabled={deleteLoading === tournament.id}
                                     className="flex items-center gap-2 px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-fast font-heading font-medium"
-                                    title="Delete event"
+                                    title="Delete tournament"
                                   >
-                                    {deleteLoading === event.id ? (
+                                    {deleteLoading === tournament.id ? (
                                       <LoadingSpinner />
                                     ) : (
                                       <>
@@ -813,14 +636,14 @@ function EventsManager() {
                 ) : (
                   <Card>
                     <div className="p-12 text-center">
-                      <Calendar className="w-16 h-16 text-oslo-gray mx-auto mb-4" />
+                      <Trophy className="w-16 h-16 text-oslo-gray mx-auto mb-4" />
                       <h3 className="text-xl font-heading font-semibold text-river-bed mb-2">
-                        {searchTerm ? 'No Events Found' : 'No Events'}
+                        {searchTerm ? 'No Tournaments Found' : 'No Tournaments'}
                       </h3>
                       <p className="text-oslo-gray mb-6">
                         {searchTerm
                           ? 'Try adjusting your search terms.'
-                          : 'Get started by creating your first event.'}
+                          : 'Get started by creating your first tournament.'}
                       </p>
                       {!searchTerm && (
                         <button
@@ -828,7 +651,7 @@ function EventsManager() {
                           className="flex items-center gap-2 px-6 py-3 bg-gulf-stream text-white rounded-lg hover:bg-river-bed transition-colors duration-fast font-heading font-medium mx-auto"
                         >
                           <Plus className="w-4 h-4" />
-                          Create Event
+                          Create Tournament
                         </button>
                       )}
                     </div>
@@ -840,13 +663,13 @@ function EventsManager() {
         </section>
       </div>
 
-      {/* Create Event Modal */}
+      {/* Create Tournament Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
             <div className="sticky top-0 bg-white border-b border-geyser px-6 py-4 flex items-center justify-between">
               <h2 className="text-2xl font-heading font-bold text-river-bed">
-                Create New Event
+                Create New Tournament
               </h2>
               <button
                 onClick={handleCloseModal}
@@ -856,20 +679,20 @@ function EventsManager() {
               </button>
             </div>
 
-            <form onSubmit={handleCreateEvent} className="p-6">
-              {/* Title */}
+            <form onSubmit={handleCreateTournament} className="p-6">
+              {/* Name */}
               <div className="mb-4">
-                <label htmlFor="title" className="block text-sm font-medium text-river-bed mb-2">
-                  Title <span className="text-red-500">*</span>
+                <label htmlFor="name" className="block text-sm font-medium text-river-bed mb-2">
+                  Name <span className="text-red-500">*</span>
                 </label>
                 <Input
                   type="text"
-                  id="title"
-                  name="title"
-                  placeholder="Enter event title"
-                  value={formData.title}
+                  id="name"
+                  name="name"
+                  placeholder="Enter tournament name"
+                  value={formData.name}
                   onChange={handleInputChange}
-                  error={formErrors.title}
+                  error={formErrors.name}
                 />
               </div>
 
@@ -881,7 +704,7 @@ function EventsManager() {
                 <textarea
                   id="description"
                   name="description"
-                  placeholder="Enter event description"
+                  placeholder="Enter tournament description"
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={4}
@@ -899,12 +722,13 @@ function EventsManager() {
               {/* Date */}
               <div className="mb-4">
                 <label htmlFor="date" className="block text-sm font-medium text-river-bed mb-2">
-                  Date & Time <span className="text-red-500">*</span>
+                  Date
                 </label>
                 <Input
-                  type="datetime-local"
+                  type="text"
                   id="date"
                   name="date"
+                  placeholder="e.g., September 10-12, 2024"
                   value={formData.date}
                   onChange={handleInputChange}
                   error={formErrors.date}
@@ -920,62 +744,54 @@ function EventsManager() {
                   type="text"
                   id="location"
                   name="location"
-                  placeholder="Enter event location"
+                  placeholder="Enter tournament location"
                   value={formData.location}
                   onChange={handleInputChange}
                   error={formErrors.location}
                 />
               </div>
 
-              {/* Image Upload */}
+              {/* Status */}
               <div className="mb-4">
-                <label htmlFor="image" className="block text-sm font-medium text-river-bed mb-2">
-                  Event Image
+                <label htmlFor="status" className="block text-sm font-medium text-river-bed mb-2">
+                  Status
                 </label>
-                <input
-                  type="file"
-                  id="image"
-                  name="image"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="w-full px-4 py-2 rounded-lg border border-geyser focus:outline-none focus:[box-shadow:0_0_0_2px_#80b3b4]"
-                />
-                {formErrors.image && (
-                  <p className="mt-1 text-sm text-red-500">{formErrors.image}</p>
-                )}
-                {imagePreview && (
-                  <div className="mt-4">
-                    <p className="text-sm text-oslo-gray mb-2">Preview:</p>
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="w-full max-w-xs h-48 object-cover rounded-lg border border-geyser"
-                    />
-                  </div>
-                )}
-                {uploadingImage && (
-                  <p className="mt-2 text-sm text-oslo-gray">Uploading image...</p>
+                <select
+                  id="status"
+                  name="status"
+                  value={formData.status}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-2 rounded-lg border transition-all duration-fast ${
+                    formErrors.status
+                      ? 'border-red-500'
+                      : 'border-geyser'
+                  } focus:outline-none focus:[box-shadow:0_0_0_2px_#80b3b4]`}
+                >
+                  <option value="Upcoming">Upcoming</option>
+                  <option value="Registration Open">Registration Open</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+                {formErrors.status && (
+                  <p className="mt-1 text-sm text-red-500">{formErrors.status}</p>
                 )}
               </div>
 
-              {/* Max Participants */}
-              <div className="mb-6">
-                <label htmlFor="max_participants" className="block text-sm font-medium text-river-bed mb-2">
-                  Max Participants
+              {/* Participants */}
+              <div className="mb-4">
+                <label htmlFor="participants" className="block text-sm font-medium text-river-bed mb-2">
+                  Number of Teams
                 </label>
                 <Input
                   type="number"
-                  id="max_participants"
-                  name="max_participants"
-                  placeholder="Leave empty for unlimited"
-                  value={formData.max_participants}
+                  id="participants"
+                  name="participants"
+                  placeholder="Enter number of teams"
+                  value={formData.participants}
                   onChange={handleInputChange}
-                  error={formErrors.max_participants}
-                  min="1"
+                  error={formErrors.participants}
+                  min="0"
                 />
-                <p className="mt-1 text-sm text-oslo-gray">
-                  Leave empty for unlimited participants
-                </p>
               </div>
 
               {/* Submit Error */}
@@ -996,7 +812,7 @@ function EventsManager() {
                   Cancel
                 </button>
                 <Button
-                  text={createLoading ? 'Creating...' : 'Create Event'}
+                  text={createLoading ? 'Creating...' : 'Create Tournament'}
                   variant="primary"
                   type="submit"
                   disabled={createLoading}
@@ -1007,13 +823,13 @@ function EventsManager() {
         </div>
       )}
 
-      {/* Edit Event Modal */}
-      {showEditModal && editingEvent && (
+      {/* Edit Tournament Modal */}
+      {showEditModal && editingTournament && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
             <div className="sticky top-0 bg-white border-b border-geyser px-6 py-4 flex items-center justify-between">
               <h2 className="text-2xl font-heading font-bold text-river-bed">
-                Edit Event
+                Edit Tournament
               </h2>
               <button
                 onClick={handleCloseEditModal}
@@ -1023,20 +839,20 @@ function EventsManager() {
               </button>
             </div>
 
-            <form onSubmit={handleUpdateEvent} className="p-6">
-              {/* Title */}
+            <form onSubmit={handleUpdateTournament} className="p-6">
+              {/* Name */}
               <div className="mb-4">
-                <label htmlFor="edit_title" className="block text-sm font-medium text-river-bed mb-2">
-                  Title <span className="text-red-500">*</span>
+                <label htmlFor="edit_name" className="block text-sm font-medium text-river-bed mb-2">
+                  Name <span className="text-red-500">*</span>
                 </label>
                 <Input
                   type="text"
-                  id="edit_title"
-                  name="title"
-                  placeholder="Enter event title"
-                  value={editFormData.title}
+                  id="edit_name"
+                  name="name"
+                  placeholder="Enter tournament name"
+                  value={editFormData.name}
                   onChange={handleEditInputChange}
-                  error={editFormErrors.title}
+                  error={editFormErrors.name}
                 />
               </div>
 
@@ -1048,7 +864,7 @@ function EventsManager() {
                 <textarea
                   id="edit_description"
                   name="description"
-                  placeholder="Enter event description"
+                  placeholder="Enter tournament description"
                   value={editFormData.description}
                   onChange={handleEditInputChange}
                   rows={4}
@@ -1066,12 +882,13 @@ function EventsManager() {
               {/* Date */}
               <div className="mb-4">
                 <label htmlFor="edit_date" className="block text-sm font-medium text-river-bed mb-2">
-                  Date & Time <span className="text-red-500">*</span>
+                  Date
                 </label>
                 <Input
-                  type="datetime-local"
+                  type="text"
                   id="edit_date"
                   name="date"
+                  placeholder="e.g., September 10-12, 2024"
                   value={editFormData.date}
                   onChange={handleEditInputChange}
                   error={editFormErrors.date}
@@ -1087,64 +904,54 @@ function EventsManager() {
                   type="text"
                   id="edit_location"
                   name="location"
-                  placeholder="Enter event location"
+                  placeholder="Enter tournament location"
                   value={editFormData.location}
                   onChange={handleEditInputChange}
                   error={editFormErrors.location}
                 />
               </div>
 
-              {/* Image Upload */}
+              {/* Status */}
               <div className="mb-4">
-                <label htmlFor="edit_image" className="block text-sm font-medium text-river-bed mb-2">
-                  Event Image
+                <label htmlFor="edit_status" className="block text-sm font-medium text-river-bed mb-2">
+                  Status
                 </label>
-                <input
-                  type="file"
-                  id="edit_image"
-                  name="image"
-                  accept="image/*"
-                  onChange={handleEditImageChange}
-                  className="w-full px-4 py-2 rounded-lg border border-geyser focus:outline-none focus:[box-shadow:0_0_0_2px_#80b3b4]"
-                />
-                {editFormErrors.image && (
-                  <p className="mt-1 text-sm text-red-500">{editFormErrors.image}</p>
-                )}
-                {editImagePreview && (
-                  <div className="mt-4">
-                    <p className="text-sm text-oslo-gray mb-2">
-                      {selectedEditImage ? 'New Preview:' : 'Current Image:'}
-                    </p>
-                    <img
-                      src={editImagePreview}
-                      alt="Preview"
-                      className="w-full max-w-xs h-48 object-cover rounded-lg border border-geyser"
-                    />
-                  </div>
-                )}
-                {uploadingEditImage && (
-                  <p className="mt-2 text-sm text-oslo-gray">Uploading image...</p>
+                <select
+                  id="edit_status"
+                  name="status"
+                  value={editFormData.status}
+                  onChange={handleEditInputChange}
+                  className={`w-full px-4 py-2 rounded-lg border transition-all duration-fast ${
+                    editFormErrors.status
+                      ? 'border-red-500'
+                      : 'border-geyser'
+                  } focus:outline-none focus:[box-shadow:0_0_0_2px_#80b3b4]`}
+                >
+                  <option value="Upcoming">Upcoming</option>
+                  <option value="Registration Open">Registration Open</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+                {editFormErrors.status && (
+                  <p className="mt-1 text-sm text-red-500">{editFormErrors.status}</p>
                 )}
               </div>
 
-              {/* Max Participants */}
-              <div className="mb-6">
-                <label htmlFor="edit_max_participants" className="block text-sm font-medium text-river-bed mb-2">
-                  Max Participants
+              {/* Participants */}
+              <div className="mb-4">
+                <label htmlFor="edit_participants" className="block text-sm font-medium text-river-bed mb-2">
+                  Number of Teams
                 </label>
                 <Input
                   type="number"
-                  id="edit_max_participants"
-                  name="max_participants"
-                  placeholder="Leave empty for unlimited"
-                  value={editFormData.max_participants}
+                  id="edit_participants"
+                  name="participants"
+                  placeholder="Enter number of teams"
+                  value={editFormData.participants}
                   onChange={handleEditInputChange}
-                  error={editFormErrors.max_participants}
-                  min="1"
+                  error={editFormErrors.participants}
+                  min="0"
                 />
-                <p className="mt-1 text-sm text-oslo-gray">
-                  Leave empty for unlimited participants
-                </p>
               </div>
 
               {/* Submit Error */}
@@ -1165,7 +972,7 @@ function EventsManager() {
                   Cancel
                 </button>
                 <Button
-                  text={editLoading ? 'Updating...' : 'Update Event'}
+                  text={editLoading ? 'Updating...' : 'Update Tournament'}
                   variant="primary"
                   type="submit"
                   disabled={editLoading}
@@ -1179,5 +986,5 @@ function EventsManager() {
   );
 }
 
-export default EventsManager;
+export default TournamentsManager;
 
