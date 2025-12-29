@@ -673,7 +673,7 @@ function AdminDashboard() {
                             <Button
                               text="Edit"
                               variant="outline"
-                              onClick={() => navigate(`/admin/events/${event.id}/edit`)}
+                              onClick={() => navigate('/admin/events')}
                               className="text-xs px-3 py-1"
                             >
                               <Edit className="w-3 h-3" />
@@ -730,7 +730,7 @@ function AdminDashboard() {
                             <Button
                               text="Edit"
                               variant="outline"
-                              onClick={() => navigate(`/admin/programs/${program.id}/edit`)}
+                              onClick={() => navigate('/admin/programs')}
                               className="text-xs px-3 py-1"
                             >
                               <Edit className="w-3 h-3" />

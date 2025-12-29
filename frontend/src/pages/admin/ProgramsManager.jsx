@@ -95,7 +95,7 @@ function ProgramsManager() {
 
     try {
       setDeleteLoading(programId);
-      await api.delete(`/api/programs/${programId}`);
+      await api.delete(`/programs/${programId}`);
       
       // Remove program from list
       setPrograms(programs.filter(program => program.id !== programId));
@@ -165,7 +165,7 @@ function ProgramsManager() {
         is_active: formData.is_active
       };
 
-      await api.post('/api/programs', payload);
+      await api.post('/programs', payload);
 
       // Reset form and close modal
       setFormData({
@@ -280,7 +280,7 @@ function ProgramsManager() {
         is_active: editFormData.is_active
       };
 
-      await api.put(`/api/programs/${editingProgram.id}`, payload);
+      await api.put(`/programs/${editingProgram.id}`, payload);
 
       // Close modal and reset form
       setShowEditModal(false);
