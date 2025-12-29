@@ -24,9 +24,14 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 
     // Deactivate any existing active subscriptions for this user
+    // Only expire subscriptions that haven't been cancelled or have passed their end_date
     await pool.query(
-      'UPDATE subscriptions SET status = ? WHERE user_id = ? AND status = ?',
-      ['expired', userId, 'active']
+      `UPDATE subscriptions 
+       SET status = ? 
+       WHERE user_id = ? 
+       AND status = 'active' 
+       AND (cancelled_at IS NULL OR end_date <= NOW())`,
+      ['expired', userId]
     );
 
     // Create new subscription
@@ -84,9 +89,13 @@ router.get('/active', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
 
+    // Get active subscription: status='active' AND (not cancelled OR cancelled but end_date hasn't passed)
     const [subscriptions] = await pool.query(
       `SELECT * FROM subscriptions 
-       WHERE user_id = ? AND status = 'active' 
+       WHERE user_id = ? 
+       AND status = 'active' 
+       AND (cancelled_at IS NULL OR end_date > NOW())
+       AND (end_date IS NULL OR end_date > NOW())
        ORDER BY created_at DESC 
        LIMIT 1`,
       [userId]
@@ -138,19 +147,30 @@ router.patch('/:id/cancel', authMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'Subscription not found' });
     }
 
-    // Update subscription status to cancelled
+    const subscription = subscriptions[0];
+
+    // Check if already cancelled
+    if (subscription.cancelled_at) {
+      return res.status(400).json({ error: 'Subscription is already cancelled' });
+    }
+
+    // Set cancelled_at but keep status as 'active' and keep active_subscription_id
+    // The subscription will remain active until end_date
     await pool.query(
-      'UPDATE subscriptions SET status = ?, updated_at = NOW() WHERE id = ?',
-      ['cancelled', subscriptionId]
+      'UPDATE subscriptions SET cancelled_at = NOW(), updated_at = NOW() WHERE id = ?',
+      [subscriptionId]
     );
 
-    // Update user's active_subscription_id if this was the active one
-    await pool.query(
-      'UPDATE users SET active_subscription_id = NULL WHERE id = ? AND active_subscription_id = ?',
-      [userId, subscriptionId]
+    // Fetch the updated subscription
+    const [updated] = await pool.query(
+      'SELECT * FROM subscriptions WHERE id = ?',
+      [subscriptionId]
     );
 
-    res.json({ message: 'Subscription cancelled successfully' });
+    res.json({ 
+      message: 'Subscription cancelled successfully. Your access will continue until the end of your billing period.',
+      subscription: updated[0]
+    });
   } catch (error) {
     console.error('Error cancelling subscription:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -189,9 +209,9 @@ router.patch('/:id/reactivate', authMiddleware, async (req, res) => {
       ['expired', userId, 'active', subscriptionId]
     );
 
-    // Reactivate this subscription
+    // Reactivate this subscription (clear cancelled_at)
     await pool.query(
-      'UPDATE subscriptions SET status = ?, updated_at = NOW() WHERE id = ?',
+      'UPDATE subscriptions SET status = ?, cancelled_at = NULL, updated_at = NOW() WHERE id = ?',
       ['active', subscriptionId]
     );
 
