@@ -46,5 +46,6 @@ coverage/
 .temp/
 
 .history/
-
 dev_files/
+deploy/
+.cursor/
